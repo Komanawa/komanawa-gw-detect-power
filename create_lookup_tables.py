@@ -9,43 +9,9 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import py7zr
-
 from change_detection_v2 import DetectionPowerCalculator
-
-implementation_times = [5, 10, 20, 30, 50, 75, 100]
-sampling_times = [5, 10, 15, 20, 25, 30, 50]
-nsamps_per_year = [1, 4, 12, 26, 52]
-n_noises = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 1.5, 2, 2.5, 3, 4,
-            5, 7.5]
-start_concs = [4, 5.6, 6, 7, 8, 9, 10, 11.3, 15, 20]
-per_reductions = (np.array([5, 10, 15, 20, 25, 30, 40, 50, 75]) / 100).round(2)
-
-# lag options
-pf_mrts = [1, 3, 5, 7, 10, 12, 15]
-epfm_mrts = [1, 2, 5, 7, 10, 15, 20, 30, 40, 50, 75, 100]
-epfm_fracs = [0.1, 0.25, 0.5, 0.75, 0.9]
-
-outdir = Path(__file__).parent.joinpath('lookup_tables')
-outdir = Path(__file__).home().joinpath('unbacked', 'lookup_tables2') # todo DADB
-outdir.mkdir(exist_ok=True)
-
-base_vars = [implementation_times, per_reductions, sampling_times, nsamps_per_year, n_noises, start_concs, ]
-
-base_outkeys = [
-    'power',
-    'error',
-    'samp_years',
-    'samp_per_year',
-    'implementation_time',
-    'initial_conc',
-    'target_conc',
-    'percent_reduction',
-]
-
-other_outkeys = [
-    'mrt',
-    'frac_p1',
-]
+from lookup_table_inits import implementation_times, per_reductions, base_vars, base_outkeys, other_outkeys, pf_mrts, \
+    epfm_mrts, epfm_fracs, lookup_dir
 
 
 def _save_compressed_file(outdata, outpath, ziplib=None):
@@ -56,18 +22,22 @@ def _save_compressed_file(outdata, outpath, ziplib=None):
         with tempfile.TemporaryDirectory() as tdir:
             tdir = Path(tdir)
             tpath = tdir.joinpath(outpath.name)
-            # todo write a excel function in a front sheet
             outdata.to_excel(tpath)
 
             if ziplib == '7z':
                 with py7zr.SevenZipFile(outpath.with_suffix('.7z'), 'w') as archive:
                     archive.write(tpath, arcname=outpath.name)
             else:
-                with zipfile.ZipFile(outpath.with_suffix('.zip'), mode="w",compresslevel=9) as zf:
+                with zipfile.ZipFile(outpath.with_suffix('.zip'), mode="w", compresslevel=9) as zf:
                     zf.write(tpath, arcname=outpath.name)
 
 
 def no_lag_table(test_size=False):
+    """
+    generate the no lag table.  This table is hosted in the github repo
+    :param test_size: bool if true just write dummy data to assess the table size
+    :return:
+    """
     indata = pd.DataFrame(columns=['imp_t', 'red', 'samp_t', 'nsamp', 'n_noise', 'start'],
                           data=itertools.product(*base_vars))
     indata['target'] = indata.start - indata.start * indata.red
@@ -83,7 +53,7 @@ def no_lag_table(test_size=False):
             'start': 'initial_conc',
             'target': 'target_conc',
         })
-        outdata['power'] = np.random.random(len(outdata))
+        outdata['power'] = np.random.random(len(outdata)) * 100
 
     else:
         dpc = DetectionPowerCalculator()
@@ -106,15 +76,22 @@ def no_lag_table(test_size=False):
             f_p1_vals=None,
             f_p2_vals=None,
             seed=5585,
-            run=False,
+            run=run_model,
         )
-        # todo add percent reduction
+        if outdata is None:
+            return  # for testing the multiprocess setup
+        # add percent reduction
+        outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.inital_conc * 100
     outdata = outdata[base_outkeys]
-    _save_compressed_file(outdata, outdir.joinpath('no_lag_table.xlsx'))
-
+    _save_compressed_file(outdata, lookup_dir.joinpath('no_lag_table.xlsx'))
 
 
 def piston_flow_lag_table(test_size=False):
+    """
+    generate the piston flow lag table.  This table is hosted in the github repo
+    :param test_size: bool if true just write dummy data to assess the table size
+    :return:
+    """
     for imp_time in implementation_times:
         indata = pd.DataFrame(columns=['red', 'samp_t', 'nsamp', 'n_noise', 'start', 'mrt'],
                               data=itertools.product(*(base_vars[1:] + [pf_mrts]))
@@ -132,16 +109,48 @@ def piston_flow_lag_table(test_size=False):
                 'start': 'initial_conc',
                 'target': 'target_conc',
             })
-            outdata['power'] = np.random.random(len(outdata))
+            outdata['power'] = np.random.random(len(outdata)) * 100
 
         else:
-            raise NotImplementedError
-            # todo add percent reduction
+            dpc = DetectionPowerCalculator()
+            outdata = dpc.mulitprocess_power_calcs(
+                outpath=None,
+                id_vals=indata.index.values,
+                error_vals=indata.n_noise.values,
+                samp_years_vals=indata.samp_t.values,
+                samp_per_year_vals=indata.nsamp.values,
+                implementation_time_vals=indata.imp_t.values,
+                initial_conc_vals=indata.start.values,
+                target_conc_vals=indata.target.values,
+                previous_slope_vals=0,
+                max_conc_vals=indata.start.values,
+                min_conc_vals=0,
+                mrt_model_vals='piston_flow',
+                mrt_vals=indata.mrt.values,
+                mrt_p1_vals=None,
+                frac_p1_vals=None,
+                f_p1_vals=None,
+                f_p2_vals=None,
+                seed=5585,
+                run=run_model,
+            )
+            if outdata is None:
+                continue  # for testing the multiprocess setup
+            # add percent reduction
+            outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.inital_conc * 100
         outdata = outdata[base_outkeys + other_outkeys[:1]]
-        _save_compressed_file(outdata, outdir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
+        _save_compressed_file(outdata, lookup_dir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
 
 
-def epfm_lag_table(test_size=False): # todo tooo big, make this an option for a local user to run if they want.
+def epfm_lag_table(test_size=False):
+    """
+    generate the epfm lag table.  These tables are too large to host in the github repo. The function here is provided
+    so that an experienced users can generate the tables if they want and then host them locally.
+    :param epfm_outdir:
+    :param test_size:
+    :return:
+    """
+    all_outdata = {}
     for imp_time, per_red in itertools.product(implementation_times, per_reductions):
         indata = pd.DataFrame(columns=['samp_t', 'nsamp', 'n_noise', 'start', 'mrt', 'f1'],
                               data=itertools.product(*(base_vars[2:] + [epfm_mrts, epfm_fracs]))
@@ -160,18 +169,44 @@ def epfm_lag_table(test_size=False): # todo tooo big, make this an option for a 
                 'start': 'initial_conc',
                 'target': 'target_conc',
             })
-            outdata['power'] = np.random.random(len(outdata))
+            outdata['power'] = np.random.random(len(outdata)) * 100
 
         else:
-            raise NotImplementedError
-            # todo add percent reduction
-        outdata = outdata[base_outkeys + other_outkeys[:1]]
-        _save_compressed_file(outdata, outdir.joinpath(
-            f'EPFM_lag_table_imp_{imp_time}_perred_{int(per_red * 100)}.xlsx'))
+            dpc = DetectionPowerCalculator()
+            outdata = dpc.mulitprocess_power_calcs(
+                outpath=None,
+                id_vals=indata.index.values,
+                error_vals=indata.n_noise.values,
+                samp_years_vals=indata.samp_t.values,
+                samp_per_year_vals=indata.nsamp.values,
+                implementation_time_vals=indata.imp_t.values,
+                initial_conc_vals=indata.start.values,
+                target_conc_vals=indata.target.values,
+                previous_slope_vals=0,
+                max_conc_vals=indata.start.values,
+                min_conc_vals=0,
+                mrt_model_vals='binary_exponential_piston_flow',
+                mrt_vals=indata.mrt.values,
+                mrt_p1_vals=indata.mrt.values,
+                frac_p1_vals=1,
+                f_p1_vals=indata.f1.values,
+                f_p2_vals=0.8,  # dummy value
+                seed=5585,
+                run=run_model,
+            )
+            if outdata is None:
+                continue  # for testing the multiprocess setup
+            # add percent reduction
+            outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.inital_conc * 100
+        save_data = (outdata['power'].values).astype(np.uint8)
+        all_outdata[f'imp_{imp_time}_perred_{int(per_red * 100)}'] = save_data
+    outpath = lookup_dir.joinpath('epfm.npz')
+    np.savez_compressed(outpath, **all_outdata)
 
 
 if __name__ == '__main__':
-    test_size = True
-    no_lag_table(test_size)
+    run_model = False  # a flag it True will run the model if false will just setup and check inputs
+    test_size = False  # todo run the models (and the test)
     epfm_lag_table(test_size)
+    no_lag_table(test_size)
     piston_flow_lag_table(test_size)

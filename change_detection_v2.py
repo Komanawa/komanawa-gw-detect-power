@@ -276,7 +276,7 @@ class DetectionPowerCalculator:
         :param true_conc_ts: the true concentration timeseries (only used for
                         pass_true_conc model)
         :param seed: int or None for random seed
-        :return: pd.DataFrame with the power calc results (len=1)
+        :return: pd.DataFrame with the power calc results (len=1) note power is percent 0-100
         """
 
         assert mrt_model in self.implemented_mrt_models, f'mrt_model must be one of: {self.implemented_mrt_models}'
@@ -544,7 +544,7 @@ class DetectionPowerCalculator:
                                     lengths for each simulation, Numpy does not support jagged arrays
         :param seed: ndarray (integer seeds), None (no seeds), or int (1 seed for all simulations)
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
-        :return:
+        :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
         """
         if isinstance(outpath, str):
             outpath = Path(outpath)

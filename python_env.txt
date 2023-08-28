@@ -1,1 +1,1 @@
-conda create -c conda-forge --name gw_detect  python numpy pandas scipy matplotlib pytables psutil
+conda create -c conda-forge --name gw_detect  python numpy pandas scipy matplotlib pytables psutil openpyxl
