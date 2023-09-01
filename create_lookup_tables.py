@@ -205,8 +205,8 @@ def epfm_lag_table(test_size=False):
 
 
 if __name__ == '__main__':
-    run_model = False  # a flag it True will run the model if false will just setup and check inputs
-    test_size = False  # todo run the models (and the test)
+    run_model = True  # a flag it True will run the model if false will just setup and check inputs
+    test_size = False
     epfm_lag_table(test_size)
     no_lag_table(test_size)
     piston_flow_lag_table(test_size)
