@@ -142,7 +142,7 @@ def piston_flow_lag_table(test_size=False):
         _save_compressed_file(outdata, lookup_dir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
 
 
-def epfm_lag_table(test_size=False):
+def epfm_lag_table(test_size=False):  # todo just too big
     """
     generate the epfm lag table.  These tables are too large to host in the github repo. The function here is provided
     so that an experienced users can generate the tables if they want and then host them locally.
@@ -207,6 +207,6 @@ def epfm_lag_table(test_size=False):
 if __name__ == '__main__':
     run_model = True  # a flag it True will run the model if false will just setup and check inputs
     test_size = False
-    epfm_lag_table(test_size)
+    # epfm_lag_table(test_size) # just too big
     no_lag_table(test_size)
     piston_flow_lag_table(test_size)
