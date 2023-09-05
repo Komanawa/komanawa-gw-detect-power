@@ -56,7 +56,7 @@ def no_lag_table(test_size=False):
         outdata['power'] = np.random.random(len(outdata)) * 100
 
     else:
-        dpc = DetectionPowerCalculator()
+        dpc = DetectionPowerCalculator(min_samples=5)
         outdata = dpc.mulitprocess_power_calcs(
             outpath=None,
             id_vals=indata.index.values,
@@ -67,8 +67,8 @@ def no_lag_table(test_size=False):
             initial_conc_vals=indata.start.values,
             target_conc_vals=indata.target.values,
             previous_slope_vals=0,
-            max_conc_vals=None,
-            min_conc_vals=None,
+            max_conc_vals=25,
+            min_conc_vals=25,
             mrt_model_vals='piston_flow',
             mrt_vals=0.0,
             mrt_p1_vals=None,
@@ -81,7 +81,7 @@ def no_lag_table(test_size=False):
         if outdata is None:
             return  # for testing the multiprocess setup
         # add percent reduction
-        outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.inital_conc * 100
+        outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.initial_conc * 100
     outdata = outdata[base_outkeys]
     _save_compressed_file(outdata, lookup_dir.joinpath('no_lag_table.xlsx'))
 
@@ -112,7 +112,7 @@ def piston_flow_lag_table(test_size=False):
             outdata['power'] = np.random.random(len(outdata)) * 100
 
         else:
-            dpc = DetectionPowerCalculator()
+            dpc = DetectionPowerCalculator(min_samples=5)
             outdata = dpc.mulitprocess_power_calcs(
                 outpath=None,
                 id_vals=indata.index.values,
@@ -137,12 +137,12 @@ def piston_flow_lag_table(test_size=False):
             if outdata is None:
                 continue  # for testing the multiprocess setup
             # add percent reduction
-            outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.inital_conc * 100
+            outdata['percent_reduction'] = (outdata.initial_conc - outdata.target_conc) / outdata.initial_conc * 100
         outdata = outdata[base_outkeys + other_outkeys[:1]]
         _save_compressed_file(outdata, lookup_dir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
 
 
-def epfm_lag_table(test_size=False):  # todo just too big
+def epfm_lag_table(test_size=False):  # just too big
     """
     generate the epfm lag table.  These tables are too large to host in the github repo. The function here is provided
     so that an experienced users can generate the tables if they want and then host them locally.
@@ -205,6 +205,7 @@ def epfm_lag_table(test_size=False):  # todo just too big
 
 
 if __name__ == '__main__':
+    # todo run this!!!!
     run_model = True  # a flag it True will run the model if false will just setup and check inputs
     test_size = False
     # epfm_lag_table(test_size) # just too big
