@@ -265,7 +265,7 @@ def _old_smk(df, data_col, season_col, alpha=0.05, rm_na=True):
     return trend, h, p, z, s, var_s
 
 
-class MannKendall(object):  # todo write tests
+class MannKendall(object):
     """
     an object to hold and calculate kendall trends
 
@@ -282,6 +282,7 @@ class MannKendall(object):  # todo write tests
     "assumes a pandas dataframe or series with a time index"
 
     def __init__(self, data, alpha=0.05, data_col=None, rm_na=True):
+        self.trend_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
         self.alpha = alpha
 
         if data_col is not None:
@@ -296,10 +297,10 @@ class MannKendall(object):  # todo write tests
         self.trend, self.h, self.p, self.z, self.s, self.var_s = _mann_kendall_from_sarray(test_data, alpha=alpha)
 
     def calc_senslope(self):
-        senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(self.data, self.data.index)
+        senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(self.data, self.data.index, alpha=self.alpha)
         return senslope, senintercept, lo_slope, up_slope
 
-    def plot_data(self, ax):
+    def plot_data(self, ax=None):
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 8))
         else:
@@ -313,11 +314,21 @@ class MannKendall(object):  # todo write tests
 
         ax.scatter(self.data.index, self.data.values, c='k', label=f'raw data')
 
-        ax.legend()
+        handles, labels = ax.get_legend_handles_labels()
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'sen slope fit: {sslope:.2e}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'sen intercept: {sintercept:.2e}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'trend: {self.trend_dict[self.trend]}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'p: {self.p:0.3f}')
+
+        ax.legend(handles, labels)
         return fig, ax
 
 
-class SeasonalKendall(object):  # todo write tests
+class SeasonalKendall(object):
     """
     an object to hold and calculate seasonal kendall trends
 
@@ -350,19 +361,21 @@ class SeasonalKendall(object):  # todo write tests
         :param freq_limit: the maximum difference in frequency between seasons (as a fraction),
                        if greater than this will raise a warning
         """
+        self.trend_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
         assert isinstance(df, pd.DataFrame), 'df must be a pandas DataFrame'
 
         self.freq_limit = freq_limit
         if rm_na:
-            self.data = df.dropna(subset=[data_col, season_col])
+            self.data = df.dropna(subset=[data_col, season_col]).sort_index()
         else:
-            self.data = df.copy(deep=True)
+            self.data = df.copy(deep=True).sort_index()
         self.data_col = data_col
         self.season_col = season_col
         self.alpha = alpha
 
-        x = self.data[data_col].sort_index()
-        self.season_data = season_data = self.data[season_col].sort_index()
+
+        x = self.data[data_col]
+        self.season_data = season_data = self.data[season_col]
 
         trend, h, p, z, s, var_s = _seasonal_mann_kendall_from_sarray(x, season_data, alpha=self.alpha, sarray=None,
                                                                       freq_limit=self.freq_limit)
@@ -377,11 +390,11 @@ class SeasonalKendall(object):  # todo write tests
 
     def calc_senslope(self):
         senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(self.data[self.data_col],
-                                                                                 self.season_data,
-                                                                                 self.data_col)
+                                                                                 self.season_data, x=self.data.index,
+                                                                                 alpha=self.alpha)
         return senslope, senintercept, lo_slope, lo_intercept
 
-    def plot_data(self, ax):
+    def plot_data(self, ax=None):
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 8))
         else:
@@ -393,13 +406,23 @@ class SeasonalKendall(object):  # todo write tests
         y = x * sslope + sintercept
         ax.plot(x, y, color='k', ls='--', label=f'sen slope fit')
 
-        ax.scatter(self.data.index, self.data.values, c=self.season_data, label=f'raw data')
+        ax.scatter(self.data.index, self.data[self.data_col], c=self.season_data, label=f'raw data')
 
-        ax.legend()
+        handles, labels = ax.get_legend_handles_labels()
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'sen slope fit: {sslope:.2e}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'sen intercept: {sintercept:.2e}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'trend: {self.trend_dict[self.trend]}')
+        handles.append(Line2D([0], [0], color='w', ls='--'))
+        labels.append(f'p: {self.p:.3f}')
+
+        ax.legend(handles, labels)
         return fig, ax
 
 
-class MultiPartKendall():  # todo test
+class MultiPartKendall():
     """
     multi part mann kendall test to indentify a change point(s) in a time series
     after Frollini et al., 2020, DOI: 10.1007/s11356-020-11998-0
@@ -444,7 +467,7 @@ class MultiPartKendall():  # todo test
         :param initalize: if True will initalize the class from the data, only set to False used in self.from_file
         :return:
         """
-        self.expect_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
+        self.trend_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
 
         if not initalize:
             assert all([e is None for e in
@@ -536,7 +559,7 @@ class MultiPartKendall():  # todo test
 
         return outdata, kendal_stats
 
-    def plot_data_from_breakpoints(self, breakpoints, ax=None):  # todo test
+    def plot_data_from_breakpoints(self, breakpoints, ax=None):
         """
         plot the data from the breakpoints including the senslope fits
         :param breakpoints:
@@ -560,7 +583,7 @@ class MultiPartKendall():  # todo test
             sslope = kendal_stats.loc[f"p{i}", "sen_slope"]
             sintercept = kendal_stats.loc[f"p{i}", "sen_intercept"]
             ax.text((prev_bp + bp) / 2, 0.9,
-                    f'expected: {self.expect_dict[self.expect_part[i]]}\n'
+                    f'expected: {self.trend_dict[self.expect_part[i]]}\n'
                     f'got: slope: {sslope:.3e}, '
                     f'pval:{round(kendal_stats.loc[f"p{i}", "p"], 3)}',
                     transform=trans)
@@ -764,9 +787,10 @@ class MultiPartKendall():  # todo test
     def _calc_senslope(self, data):
 
         if isinstance(self.data, pd.DataFrame):
-            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data[self.data_col], data.index)
+            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data[self.data_col], data.index,
+                                                                            alpha=self.alpha)
         else:
-            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data, data.index)
+            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data, data.index, alpha=self.alpha)
         return senslope, senintercept
 
     def _calc_mann_kendall(self):
@@ -856,7 +880,7 @@ class MultiPartKendall():  # todo test
         return mpk
 
 
-class SeasonalMultiPartKendall(MultiPartKendall):  # todo test
+class SeasonalMultiPartKendall(MultiPartKendall):
     """
     multi part mann kendall test to indentify a change point(s) in a time series
     after Frollini et al., 2020, DOI: 10.1007/s11356-020-11998-0
@@ -965,25 +989,158 @@ class SeasonalMultiPartKendall(MultiPartKendall):  # todo test
                                                              + ['trend', 'h', 'p', 'z', 's', 'var_s'])
 
     def _calc_senslope(self, data):
-        senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(data, self.season_data,
-                                                                                 self.data_col)
+        senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(data[self.data_col], self.season_data,
+                                                                                 x=data.index, alpha=self.alpha)
         return np.senslope, senintercept
 
 
-def _calc_seasonal_senslope(data, season_data, data_col):
-    slopes = []
-    intercepts = []
-    lo_slope = []
-    up_slope = []
-    for season in np.unique(season_data.unique()):
-        temp = data.loc[season_data == season]
+def _calc_seasonal_senslope(y, season, x=None, alpha=0.95, method='separate'):
+    """
+    modified from scipy/stats/_stats_mstats_common.py
+    Computes the Theil-Sen estimator for a set of points (x, y).
 
-        senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(temp[data_col], temp.index)
-        slopes.append(senslope)
-        intercepts.append(senintercept)
-        lo_slope.append(lo_slope)
-        up_slope.append(up_slope)
-    return np.mean(senslope), np.mean(senintercept), np.mean(lo_slope), np.mean(up_slope)
+    `theilslopes` implements a method for robust linear regression.  It
+    computes the slope as the median of all slopes between paired values.
+
+    Parameters
+    ----------
+    y : array_like
+        Dependent variable.
+    x : array_like or None, optional
+        Independent variable. If None, use ``arange(len(y))`` instead.
+    alpha : float, optional
+        Confidence degree between 0 and 1. Default is 95% confidence.
+        Note that `alpha` is symmetric around 0.5, i.e. both 0.1 and 0.9 are
+        interpreted as "find the 90% confidence interval".
+    method : {'joint', 'separate'}, optional
+        Method to be used for computing estimate for intercept.
+        Following methods are supported,
+
+            * 'joint': Uses np.median(y - slope * x) as intercept.
+            * 'separate': Uses np.median(y) - slope * np.median(x)
+                          as intercept.
+
+        The default is 'separate'.
+
+        .. versionadded:: 1.8.0
+
+    Returns
+    -------
+    result : ``TheilslopesResult`` instance
+        The return value is an object with the following attributes:
+
+        slope : float
+            Theil slope.
+        intercept : float
+            Intercept of the Theil line.
+        low_slope : float
+            Lower bound of the confidence interval on `slope`.
+        high_slope : float
+            Upper bound of the confidence interval on `slope`.
+
+    See Also
+    --------
+    siegelslopes : a similar technique using repeated medians
+
+    Notes
+    -----
+    The implementation of `theilslopes` follows [1]_. The intercept is
+    not defined in [1]_, and here it is defined as ``median(y) -
+    slope*median(x)``, which is given in [3]_. Other definitions of
+    the intercept exist in the literature such as  ``median(y - slope*x)``
+    in [4]_. The approach to compute the intercept can be determined by the
+    parameter ``method``. A confidence interval for the intercept is not
+    given as this question is not addressed in [1]_.
+
+    For compatibility with older versions of SciPy, the return value acts
+    like a ``namedtuple`` of length 4, with fields ``slope``, ``intercept``,
+    ``low_slope``, and ``high_slope``, so one can continue to write::
+
+        slope, intercept, low_slope, high_slope = theilslopes(y, x)
+
+    References
+    ----------
+    .. [1] P.K. Sen, "Estimates of the regression coefficient based on
+           Kendall's tau", J. Am. Stat. Assoc., Vol. 63, pp. 1379-1389, 1968.
+    .. [2] H. Theil, "A rank-invariant method of linear and polynomial
+           regression analysis I, II and III",  Nederl. Akad. Wetensch., Proc.
+           53:, pp. 386-392, pp. 521-525, pp. 1397-1412, 1950.
+    .. [3] W.L. Conover, "Practical nonparametric statistics", 2nd ed.,
+           John Wiley and Sons, New York, pp. 493.
+    .. [4] https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator
+"""
+    if method not in ['joint', 'separate']:
+        raise ValueError("method must be either 'joint' or 'separate'."
+                         "'{}' is invalid.".format(method))
+    # We copy both x and y so we can use _find_repeats.
+    y = np.array(y).flatten()
+    season = np.array(season).flatten()
+    if len(season) != len(y):
+        raise ValueError("Incompatible lengths ! (%s<>%s)" %
+                         (len(y), len(season)))
+
+    if x is None:
+        x = np.arange(len(y), dtype=float)
+    else:
+        x = np.array(x, dtype=float).flatten()
+        if len(x) != len(y):
+            raise ValueError("Incompatible lengths ! (%s<>%s)" %
+                             (len(y), len(x)))
+    if len(x) == 1:
+        msg = "Theil-Sen estimator is not defined for a single point."
+        warnings.warn(msg, RuntimeWarning, stacklevel=2)
+        return np.nan, np.nan, np.nan, np.nan
+    # Compute sorted slopes only when deltax > 0
+    deltax = x[:, np.newaxis] - x
+    deltay = y[:, np.newaxis] - y
+
+    # remove slopes where the seasons do not match
+    seasons_array_i = np.repeat(season[:, np.newaxis], len(season), axis=1)
+    seasons_array_j = np.repeat(season[np.newaxis, :], len(season), axis=0)
+    seasons_array = seasons_array_i == seasons_array_j
+    deltax[~seasons_array] = 0
+    deltay[~seasons_array] = 0
+
+    slopes = deltay[deltax > 0] / deltax[deltax > 0]
+    if not slopes.size:
+        msg = "All `x` coordinates are identical."
+        warnings.warn(msg, RuntimeWarning, stacklevel=2)
+
+
+    slopes.sort()
+    medslope = np.nanmedian(slopes)
+    if method == 'joint':
+        medinter = np.median(y - medslope * x)
+    else:
+        medinter = np.median(y) - medslope * np.median(x)
+    # Now compute confidence intervals
+    if alpha > 0.5:
+        alpha = 1. - alpha
+    from scipy.stats import distributions
+
+    z = distributions.norm.ppf(alpha / 2.)
+    # This implements (2.6) from Sen (1968)
+    _, nxreps = _find_repeats(x)
+    _, nyreps = _find_repeats(y)
+    nt = len(slopes)  # N in Sen (1968)
+    ny = len(y)  # n in Sen (1968)
+    # Equation 2.6 in Sen (1968):
+    sigsq = 1 / 18. * (ny * (ny - 1) * (2 * ny + 5) -
+                       sum(k * (k - 1) * (2 * k + 5) for k in nxreps) -
+                       sum(k * (k - 1) * (2 * k + 5) for k in nyreps))
+    # Find the confidence interval indices in `slopes`
+    try:  # todo need to do
+        sigma = np.sqrt(sigsq)
+        Ru = min(int(np.round((nt - z * sigma) / 2.)), len(slopes) - 1)
+        Rl = max(int(np.round((nt + z * sigma) / 2.)) - 1, 0)
+        delta = slopes[[Rl, Ru]]
+    except (ValueError, IndexError):
+        delta = (np.nan, np.nan)
+    low_slope = delta[0]
+    high_slope = delta[1]
+    slope = medslope
+    intercept = medinter
+    return slope, intercept, low_slope, high_slope
 
 
 def get_colors(vals, cmap='tab10'):
@@ -1001,6 +1158,26 @@ def get_colors(vals, cmap='tab10'):
             if i == 20:
                 i = 0
     return colors
+
+
+def _find_repeats(arr):
+    # taken from scipy.stats._stats_mstats_common._find_repeats
+    # This function assumes it may clobber its input.
+    if len(arr) == 0:
+        return np.array(0, np.float64), np.array(0, np.intp)
+
+    # XXX This cast was previously needed for the Fortran implementation,
+    # should we ditch it?
+    arr = np.asarray(arr, np.float64).ravel()
+    arr.sort()
+
+    # Taken from NumPy 1.9's np.unique.
+    change = np.concatenate(([True], arr[1:] != arr[:-1]))
+    unique = arr[change]
+    change_idx = np.concatenate(np.nonzero(change) + ([arr.size],))
+    freq = np.diff(change_idx)
+    atleast2 = freq > 1
+    return unique[atleast2], freq[atleast2]
 
 
 if __name__ == '__main__':
