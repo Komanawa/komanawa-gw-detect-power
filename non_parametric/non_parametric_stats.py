@@ -287,13 +287,34 @@ class MannKendall(object):  # todo write tests
         if data_col is not None:
             test_data = data[data_col]
         else:
-            test_data = data
+            test_data = pd.Series(data)
         if rm_na:
             test_data = test_data.dropna(how='any')
         test_data = test_data.sort_index()
         self.data = test_data
         self.data_col = data_col
         self.trend, self.h, self.p, self.z, self.s, self.var_s = _mann_kendall_from_sarray(test_data, alpha=alpha)
+
+    def calc_senslope(self):
+        senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(self.data, self.data.index)
+        return senslope, senintercept, lo_slope, up_slope
+
+    def plot_data(self, ax):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 8))
+        else:
+            fig = ax.figure()
+
+        sslope, sintercept, lo_slope, up_slope = self.calc_senslope()
+        # plot the senslope fit and intercept
+        x = self.data.index
+        y = x * sslope + sintercept
+        ax.plot(x, y, color='k', ls='--', label=f'sen slope fit')
+
+        ax.scatter(self.data.index, self.data.values, c='k', label=f'raw data')
+
+        ax.legend()
+        return fig, ax
 
 
 class SeasonalKendall(object):  # todo write tests
@@ -329,6 +350,7 @@ class SeasonalKendall(object):  # todo write tests
         :param freq_limit: the maximum difference in frequency between seasons (as a fraction),
                        if greater than this will raise a warning
         """
+        assert isinstance(df, pd.DataFrame), 'df must be a pandas DataFrame'
 
         self.freq_limit = freq_limit
         if rm_na:
@@ -340,7 +362,7 @@ class SeasonalKendall(object):  # todo write tests
         self.alpha = alpha
 
         x = self.data[data_col].sort_index()
-        season_data = self.data[season_col].sort_index()
+        self.season_data = season_data = self.data[season_col].sort_index()
 
         trend, h, p, z, s, var_s = _seasonal_mann_kendall_from_sarray(x, season_data, alpha=self.alpha, sarray=None,
                                                                       freq_limit=self.freq_limit)
@@ -350,7 +372,31 @@ class SeasonalKendall(object):  # todo write tests
         self.z = z
         self.s = s
         self.var_s = var_s
+
         # -1 decreasing, 0 no trend, 1 increasing
+
+    def calc_senslope(self):
+        senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(self.data[self.data_col],
+                                                                                 self.season_data,
+                                                                                 self.data_col)
+        return senslope, senintercept, lo_slope, lo_intercept
+
+    def plot_data(self, ax):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 8))
+        else:
+            fig = ax.figure()
+
+        sslope, sintercept, lo_slope, up_slope = self.calc_senslope()
+        # plot the senslope fit and intercept
+        x = self.data.index
+        y = x * sslope + sintercept
+        ax.plot(x, y, color='k', ls='--', label=f'sen slope fit')
+
+        ax.scatter(self.data.index, self.data.values, c=self.season_data, label=f'raw data')
+
+        ax.legend()
+        return fig, ax
 
 
 class MultiPartKendall():  # todo test
@@ -525,21 +571,28 @@ class MultiPartKendall():  # todo test
             ax.plot(x, y, color='k', ls='--')
             prev_bp = bp
 
-        colors = get_colors(data)
-        for i, ds, c in enumerate(zip(data, colors)):
-            if isinstance(self.data, pd.DataFrame):
-                ax.scatter(ds.index, ds[self.data_col], c=c, label=f'part {i}')
-            else:
-                ax.scatter(ds.index, ds, c=c, label=f'part {i}')
+        if self.season_data is None:
+            colors = get_colors(data)
+            for i, (ds, c) in enumerate(zip(data, colors)):
+                if isinstance(self.data, pd.DataFrame):
+                    ax.scatter(ds.index, ds[self.data_col], c=c, label=f'part {i}')
+                else:
+                    ax.scatter(ds.index, ds, c=c, label=f'part {i}')
+        else:
+            seasons = np.unique(self.season_data)
+            colors = get_colors(seasons)
+            for i, ds in enumerate(data):
+                for s, c in zip(seasons, colors):
+                    ax.scatter(ds.index, ds[self.data_col], c=c, label=f'season: {s}')
 
         legend_handles = [Line2D([0], [0], color='k', ls=':'),
                           Line2D([0], [0], color='k', ls='--')]
 
         legend_labels = ['breakpoint', 'sen slope fit', ]
-
-        nhandls, nlabels = ax.get_legend_handles_labels()
-        legend_handles.extend(nhandls)
-        legend_labels.extend(nlabels)
+        nhandles, nlabels = ax.get_legend_handles_labels()
+        temp = dict(zip(nlabels, nhandles))
+        legend_handles.extend(temp.values())
+        legend_labels.extend(temp.keys())
         ax.legend(legend_handles, legend_labels, loc='best')
         return fig, ax
 
@@ -912,15 +965,25 @@ class SeasonalMultiPartKendall(MultiPartKendall):  # todo test
                                                              + ['trend', 'h', 'p', 'z', 's', 'var_s'])
 
     def _calc_senslope(self, data):
-        slopes = []
-        intercepts = []
-        for season in np.unique(self.season_data.unique()):
-            temp = data.loc[self.season_data == season]
+        senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(data, self.season_data,
+                                                                                 self.data_col)
+        return np.senslope, senintercept
 
-            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(temp[self.data_col], temp.index)
-            slopes.append(senslope)
-            intercepts.append(senintercept)
-        return np.mean(senslope), np.mean(senintercept)
+
+def _calc_seasonal_senslope(data, season_data, data_col):
+    slopes = []
+    intercepts = []
+    lo_slope = []
+    up_slope = []
+    for season in np.unique(season_data.unique()):
+        temp = data.loc[season_data == season]
+
+        senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(temp[data_col], temp.index)
+        slopes.append(senslope)
+        intercepts.append(senintercept)
+        lo_slope.append(lo_slope)
+        up_slope.append(up_slope)
+    return np.mean(senslope), np.mean(senintercept), np.mean(lo_slope), np.mean(up_slope)
 
 
 def get_colors(vals, cmap='tab10'):
