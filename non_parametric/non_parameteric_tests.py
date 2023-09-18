@@ -3,7 +3,9 @@ created matt_dumont
 on: 15/09/23
 """
 import numpy as np
-from non_parametric.non_parametric_stats import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old
+import pandas as pd
+
+from non_parametric.non_parametric_stats import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old, _seasonal_mann_kendall_from_sarray, _old_smk
 
 
 def _quick_test_s():
@@ -38,3 +40,16 @@ def test_part_mann_kendall():
         assert old == new
 
 
+def test_seasonal_kendall_sarray():
+    x = np.random.rand(500)
+    seasons = np.repeat(np.arange(4), 125)
+    new = _seasonal_mann_kendall_from_sarray(x, seasons)
+    old = _old_smk(pd.DataFrame(dict(x=x, seasons=seasons)), 'x', 'seasons')
+    assert new == old
+
+
+if __name__ == '__main__':
+    _quick_test_s()
+    test_new_old_mann_kendall()
+    test_part_mann_kendall()
+    test_seasonal_kendall_sarray()

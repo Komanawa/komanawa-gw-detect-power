@@ -6,16 +6,17 @@ import itertools
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
+from scipy.stats import norm, mstats
 from copy import deepcopy
 import warnings
+import matplotlib.pyplot as plt
+from matplotlib.cm import get_cmap
+from matplotlib.transforms import blended_transform_factory
+from matplotlib.lines import Line2D
+from pyhomogeneity import pettitt_test
 
 
 # todo add this to ksl tools or own repo for easy internal use
-
-def pettit_test():  # todo
-    raise NotImplementedError
-
 
 def _make_s_array(x):
     """
@@ -48,11 +49,9 @@ def _seasonal_mann_kendall_from_sarray(x, season_data, alpha=0.05, sarray=None,
     # calculate the unique data
     x = np.atleast_1d(x)
     season_data = np.atleast_1d(season_data)
-    assert np.issubdtype(season_data.dtype, int) or np.issubdtype(season_data.dtype, np.string_),(
+    assert np.issubdtype(season_data.dtype, int) or np.issubdtype(season_data.dtype, np.string_), (
         'season data must be a string, or integer to avoid errors associated with float precision'
     )
-    assert not np.issubdtype(season_data.dtype, np.number), 'season data must be a string, object, or integer'
-
     # get unique values convert to integers
     unique_seasons, season_data = np.unique(season_data, return_inverse=True)
 
@@ -60,7 +59,7 @@ def _seasonal_mann_kendall_from_sarray(x, season_data, alpha=0.05, sarray=None,
     unique_season_ints, counts = np.unique(season_data, return_counts=True)
 
     relaive_freq = np.abs(counts - counts.mean()) / counts.mean()
-    if relaive_freq > freq_limit:
+    if (relaive_freq > freq_limit).any():
         warnings.warn(f'the discrepancy of frequency of seasons is greater than the limit({freq_limit})'
                       f' this may affect the test'
                       f' the frequency of seasons are {counts}')
@@ -85,11 +84,12 @@ def _seasonal_mann_kendall_from_sarray(x, season_data, alpha=0.05, sarray=None,
         season_idx = (season_k_array == season) & (season_j_array == season)
         temp_s = sarray[season_idx].sum()
         temp_x = x[season_data == season]
+        n0 = len(temp_x)
 
         # calculate the var(s)
         unique_x, unique_counts = np.unique(temp_x, return_counts=True)
         unique_mod = (unique_counts * (unique_counts - 1) * (2 * unique_counts + 5)).sum() * (unique_counts > 1).sum()
-        temp_var_s = (n * (n - 1) * (2 * n + 5) + unique_mod) / 18
+        temp_var_s = (n0 * (n0 - 1) * (2 * n0 + 5) + unique_mod) / 18
 
         s += temp_s
         var_s += temp_var_s
@@ -101,7 +101,7 @@ def _seasonal_mann_kendall_from_sarray(x, season_data, alpha=0.05, sarray=None,
 
     trend = np.sign(z) * h
     # -1 decreasing, 0 no trend, 1 increasing
-    return trend, h, p, z, s, var_s  # todo check this is consistant with the other implmenetation, then implment
+    return trend, h, p, z, s, var_s
 
 
 def _mann_kendall_from_sarray(x, alpha=0.05, sarray=None):
@@ -231,10 +231,59 @@ def _generate_startpoints(n, min_size, nparts, test=False):
     return all_start_points_out
 
 
+def _old_smk(df, data_col, season_col, alpha=0.05, rm_na=True):
+    warnings.warn('this function is depreciated, use _mann_kendall_from_sarray', DeprecationWarning)
+    if rm_na:
+        data = df.dropna(subset=[data_col, season_col])
+    else:
+        data = df.copy(deep=True)
+    data_col = data_col
+    season_col = season_col
+    alpha = alpha
+
+    # get list of seasons
+    season_vals = np.unique(data[season_col])
+
+    # calulate the seasonal MK values
+    _season_outputs = {}
+    s = 0
+    var_s = 0
+    for season in season_vals:
+        tempdata = data[data_col][data[season_col] == season].sort_index()
+        _season_outputs[season] = MannKendall(data=tempdata, alpha=alpha, rm_na=rm_na)
+        temp = _season_outputs[season].var_s
+        var_s += _season_outputs[season].var_s
+        s += _season_outputs[season].s
+
+    # calculate the z value
+    z = np.abs(np.sign(s)) * (s - np.sign(s)) / np.sqrt(var_s)
+
+    h = abs(z) > norm.ppf(1 - alpha / 2)
+    p = 2 * (1 - norm.cdf(abs(z)))  # two tail test
+    trend = np.sign(z) * h
+    # -1 decreasing, 0 no trend, 1 increasing
+    return trend, h, p, z, s, var_s
+
+
 class MannKendall(object):  # todo write tests
+    """
+    an object to hold and calculate kendall trends
+
+    :ivar trend: the trend of the data, -1 decreasing, 0 no trend, 1 increasing
+    :ivar h: boolean, True if the trend is significant
+    :ivar p: the p value of the trend
+    :ivar z: the z value of the trend
+    :ivar s: the s value of the trend
+    :ivar var_s: the variance of the s value
+    :ivar alpha: the alpha value used to calculate the trend
+    :ivar data: the data used to calculate the trend
+    :ivar data_col: the column of the data used to calculate the trend
+    """
     "assumes a pandas dataframe or series with a time index"
 
     def __init__(self, data, alpha=0.05, data_col=None, rm_na=True):
+        self.alpha = alpha
+
         if data_col is not None:
             test_data = data[data_col]
         else:
@@ -242,15 +291,46 @@ class MannKendall(object):  # todo write tests
         if rm_na:
             test_data = test_data.dropna(how='any')
         test_data = test_data.sort_index()
+        self.data = test_data
+        self.data_col = data_col
         self.trend, self.h, self.p, self.z, self.s, self.var_s = _mann_kendall_from_sarray(test_data, alpha=alpha)
 
 
 class SeasonalKendall(object):  # todo write tests
     """
     an object to hold and calculate seasonal kendall trends
+
+    :ivar trend: the trend of the data, -1 decreasing, 0 no trend, 1 increasing
+    :ivar h: boolean, True if the trend is significant
+    :ivar p: the p value of the trend
+    :ivar z: the z value of the trend
+    :ivar s: the s value of the trend
+    :ivar var_s: the variance of the s value
+    :ivar alpha: the alpha value used to calculate the trend
+    :ivar data: the data used to calculate the trend
+    :ivar data_col: the column of the data used to calculate the trend
+    :ivar season_col: the column of the season data used to calculate the trend
+    :ivar freq_limit: the maximum difference in frequency between seasons (as a fraction),
+                        if greater than this will raise a warning
     """
 
-    def __init__(self, df, data_col, season_col, alpha=0.05, rm_na=True):
+    def __init__(self, df, data_col, season_col, alpha=0.05, rm_na=True,
+                 freq_limit=0.05):
+        """
+        intis and calculate the seasonal mann kendall
+        outputs are held by
+
+        :param df: pd.DataFrame holding the season and data columns, expect the index to be the time index
+                    e.g. sort_index will sort the data by time
+        :param data_col: name of the data column
+        :param season_col: name of the season column
+        :param alpha: the alpha limit for the p value
+        :param rm_na: boolean dropna
+        :param freq_limit: the maximum difference in frequency between seasons (as a fraction),
+                       if greater than this will raise a warning
+        """
+
+        self.freq_limit = freq_limit
         if rm_na:
             self.data = df.dropna(subset=[data_col, season_col])
         else:
@@ -259,33 +339,52 @@ class SeasonalKendall(object):  # todo write tests
         self.season_col = season_col
         self.alpha = alpha
 
-        # get list of seasons
-        self.season_vals = np.unique(self.data[self.season_col])
+        x = self.data[data_col].sort_index()
+        season_data = self.data[season_col].sort_index()
 
-        # calulate the seasonal MK values  # todo implment _seasonal_mann_kendall_from_sarray
-        self._season_outputs = {}
-        self.s = 0
-        self.var_s = 0
-        for season in self.season_vals:
-            tempdata = self.data[data_col][self.data[season_col] == season].sort_index()
-            self._season_outputs[season] = MannKendall(data=tempdata, alpha=self.alpha, rm_na=rm_na)
-            self.var_s += self._season_outputs[season].var_s
-            self.s += self._season_outputs[season].s
-
-        # calculate the z value
-        z = np.abs(np.sign(self.s)) * (self.s - np.sign(self.s)) / np.sqrt(self.var_s)
-
-        h = abs(z) > norm.ppf(1 - alpha / 2)
-        self.trend = np.sign(z) * h
+        trend, h, p, z, s, var_s = _seasonal_mann_kendall_from_sarray(x, season_data, alpha=self.alpha, sarray=None,
+                                                                      freq_limit=self.freq_limit)
+        self.trend = trend
+        self.h = h
+        self.p = p
+        self.z = z
+        self.s = s
+        self.var_s = var_s
         # -1 decreasing, 0 no trend, 1 increasing
 
 
 class MultiPartKendall():  # todo test
+    """
+    multi part mann kendall test to indentify a change point(s) in a time series
+    after Frollini et al., 2020, DOI: 10.1007/s11356-020-11998-0
+    :ivar acceptable_matches: (boolean index) the acceptable matches for the trend, i.e. the trend is the expected trend
+    :ivar all_start_points: all the start points for the mann kendall tests
+    :ivar alpha: the alpha value used to calculate the trend
+    :ivar data: the data used to calculate the trend
+    :ivar data_col: the column of the data used to calculate the trend
+    :ivar datasets: a dictionary of the datasets {f'p{i}':pd.DataFrame for i in range(nparts)}
+                    each dataset contains the mann kendall results for each part of the time series
+                    (trend (1=increasing, -1=decreasing, 0=no trend), h, p, z, s, var_s)
+    :ivar expect_part: the expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)
+    :ivar idx_values: the index values of the data used to calculate the trend used in internal plotting
+    :ivar min_size: the minimum size for all parts of the timeseries
+    :ivar n: number of data points
+    :ivar nparts: number of parts to split the time series into
+    :ivar rm_na: boolean dropna
+    :ivar s_array: the s array used to calculate the trend
+    :ivar season_col: the column of the season data used to calculate the trend (not used for this class)
+    :ivar season_data: the season data used to calculate the trend (not used for this class)
+    :ivar serialise: boolean, True if the class is serialised
+    :ivar serialise_path: path to the serialised file
+    :ivar x: the data
+    """
+
     def __init__(self, data, nparts=2, expect_part=(1, -1), min_size=10, alpha=0.05, data_col=None, rm_na=True,
                  serialise_path=None, recalc=False, initalize=True):
         """
         multi part mann kendall test to indentify a change point(s) in a time series
         after Frollini et al., 2020, DOI: 10.1007/s11356-020-11998-0
+        note where the expected trend is zero the lack of a trend is considered significant if p > 1-alpha
         :param data: time series data, if DataFrame or Series, expects the index to be sample order (will sort on index)
                      if np.array or list expects the data to be in sample order
         :param nparts: number of parts to split the time series into
@@ -299,6 +398,8 @@ class MultiPartKendall():  # todo test
         :param initalize: if True will initalize the class from the data, only set to False used in self.from_file
         :return:
         """
+        self.expect_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
+
         if not initalize:
             assert all([e is None for e in
                         [data, nparts, expect_part, min_size, alpha, data_col, rm_na, serialise_path, recalc]])
@@ -350,30 +451,97 @@ class MultiPartKendall():  # todo test
         return outdata
 
     def get_data_from_breakpoints(self, breakpoints):
+        """
+
+        :param breakpoints: beakpoints to split the data, e.g. from self.get_acceptable_matches
+        :return: outdata: list of dataframes for each part of the time series
+                 senslopes: list of senslopes for each part of the time series
+                 senintercepts: list of senintercepts for each part of the time series
+                 kendal_stats: dataframe of kendal stats for each part of the time series
+        """
         assert len(breakpoints) == self.nparts - 1
         outdata = []
+        kendal_stats = pd.DataFrame(index=[f'p{i}' for i in range(self.nparts)],
+                                    columns=['trend', 'h', 'p', 'z', 's', 'var_s', 'senslope',
+                                             'senintercept'])
+        for p, ds in enumerate(self.datasets):
+            temp = ds.set_index([f'split_point_{i}' for i in range(1, self.nparts)])
+            outcols = ['trend', 'h', 'p', 'z', 's', 'var_s']
+            kendal_stats.loc[f'p{p}', outcols] = temp.loc[breakpoints, outcols].values
+
         start = 0
         for i, bp in enumerate(breakpoints):
             if i == self.nparts - 1:
                 end = self.n
             else:
                 end = bp
-                if isinstance(self.data, pd.DataFrame):
-                    outdata.append(self.data.loc[self.idx_values[start:end]])
-                else:
-                    outdata.append(deepcopy(self.data[self.idx_values[start:end]]))
-                start = end
-        return outdata
+            if isinstance(self.data, pd.DataFrame):
+                outdata.append(self.data.loc[self.idx_values[start:end]])
+            else:
+                outdata.append(deepcopy(
+                    pd.Series(index=self.idx_values[start:end], data=self.data[self.idx_values[start:end]])))
+            start = end
 
-    def get_best_match(self):
-        # todo now need to find the best split point(s) optimise for the expected trend, the smallest/largest pvalue, and the most even split of data?
+        # calculate the senslope stats
+        for i, ds in enumerate(outdata):
+            senslope, senintercept = self._calc_senslope(ds)
+            kendal_stats.loc[f'p{i}', 'sen_slope'] = senslope
+            kendal_stats.locf[f'p{i}', 'sen_intercept'] = senintercept
 
-        acceptable_matches = self.get_acceptable_matches()
+        return outdata, kendal_stats
 
-        raise NotImplementedError
+    def plot_data_from_breakpoints(self, breakpoints, ax=None):  # todo test
+        """
+        plot the data from the breakpoints including the senslope fits
+        :param breakpoints:
+        :param ax: ax to plot on if None then create the ax
+        :return:
+        """
 
-    def plot_data_from_breakpoints(self, breakpoints, ax=None, **kwargs):  # todo, test
-        raise NotImplementedError
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 8))
+        else:
+            fig = ax.figure()
+
+        data, kendal_stats = self.get_data_from_breakpoints(breakpoints)
+        trans = blended_transform_factory(ax.transData, ax.transAxes)
+
+        # axhlines at breakpoints
+        prev_bp = 0
+        for i, bp in enumerate(np.concatenate((breakpoints, [self.n]))):
+            if not bp == self.n:
+                ax.axhline(self.idx_values[bp], color='k', ls=':')
+            sslope = kendal_stats.loc[f"p{i}", "sen_slope"]
+            sintercept = kendal_stats.loc[f"p{i}", "sen_intercept"]
+            ax.text((prev_bp + bp) / 2, 0.9,
+                    f'expected: {self.expect_dict[self.expect_part[i]]}\n'
+                    f'got: slope: {sslope:.3e}, '
+                    f'pval:{round(kendal_stats.loc[f"p{i}", "p"], 3)}',
+                    transform=trans)
+
+            # plot the senslope fit and intercept
+            x = self.idx_values[prev_bp:bp]
+            y = x * sslope + sintercept
+            ax.plot(x, y, color='k', ls='--')
+            prev_bp = bp
+
+        colors = get_colors(data)
+        for i, ds, c in enumerate(zip(data, colors)):
+            if isinstance(self.data, pd.DataFrame):
+                ax.scatter(ds.index, ds[self.data_col], c=c, label=f'part {i}')
+            else:
+                ax.scatter(ds.index, ds, c=c, label=f'part {i}')
+
+        legend_handles = [Line2D([0], [0], color='k', ls=':'),
+                          Line2D([0], [0], color='k', ls='--')]
+
+        legend_labels = ['breakpoint', 'sen slope fit', ]
+
+        nhandls, nlabels = ax.get_legend_handles_labels()
+        legend_handles.extend(nhandls)
+        legend_labels.extend(nlabels)
+        ax.legend(legend_handles, legend_labels, loc='best')
+        return fig, ax
 
     def _set_from_file(self, data, nparts, expect_part, min_size, alpha, data_col, rm_na,
                        season_col=None, check_inputs=True):
@@ -527,14 +695,26 @@ class MultiPartKendall():  # todo test
         idx = np.ones(len(self.all_start_points), bool)
         for part, expect in enumerate(self.expect_part):
             if expect == 0:
-                use_alpha = 1 - self.alpha  # todo dbl check this makes sense, i'm not sure it does
+                use_alpha = 1 - self.alpha
+                idx = (idx
+                       & (self.datasets[f'p{part}'].trend == expect)
+                       & (self.datasets[f'p{part}'].p > use_alpha)
+                       )
             else:
                 use_alpha = self.alpha
-            idx = (idx
-                   & (self.datasets[f'p{part}'].trend == expect)
-                   & (self.datasets[f'p{part}'].p < use_alpha)
-                   )
+                idx = (idx
+                       & (self.datasets[f'p{part}'].trend == expect)
+                       & (self.datasets[f'p{part}'].p < use_alpha)
+                       )
         self.acceptable_matches = idx
+
+    def _calc_senslope(self, data):
+
+        if isinstance(self.data, pd.DataFrame):
+            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data[self.data_col], data.index)
+        else:
+            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(data, data.index)
+        return senslope, senintercept
 
     def _calc_mann_kendall(self):
         """
@@ -624,6 +804,31 @@ class MultiPartKendall():  # todo test
 
 
 class SeasonalMultiPartKendall(MultiPartKendall):  # todo test
+    """
+    multi part mann kendall test to indentify a change point(s) in a time series
+    after Frollini et al., 2020, DOI: 10.1007/s11356-020-11998-0
+    :ivar acceptable_matches: (boolean index) the acceptable matches for the trend, i.e. the trend is the expected trend
+    :ivar all_start_points: all the start points for the mann kendall tests
+    :ivar alpha: the alpha value used to calculate the trend
+    :ivar data: the data used to calculate the trend
+    :ivar data_col: the column of the data used to calculate the trend
+    :ivar datasets: a dictionary of the datasets {f'p{i}':pd.DataFrame for i in range(nparts)}
+                    each dataset contains the mann kendall results for each part of the time series
+                    (trend (1=increasing, -1=decreasing, 0=no trend), h, p, z, s, var_s)
+    :ivar expect_part: the expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)
+    :ivar idx_values: the index values of the data used to calculate the trend used in internal plotting
+    :ivar min_size: the minimum size for all parts of the timeseries
+    :ivar n: number of data points
+    :ivar nparts: number of parts to split the time series into
+    :ivar rm_na: boolean dropna
+    :ivar s_array: the s array used to calculate the trend
+    :ivar season_col: the column of the season data used to calculate the trend
+    :ivar season_data: the season data used to calculate the trend
+    :ivar serialise: boolean, True if the class is serialised
+    :ivar serialise_path: path to the serialised file
+    :ivar x: the data
+    """
+
     def __init__(self, data, data_col, season_col, nparts=2, expect_part=(1, -1), min_size=10, alpha=0.05, rm_na=True,
                  serialise_path=None, recalc=False, initalize=True):
         """
@@ -705,6 +910,34 @@ class SeasonalMultiPartKendall(MultiPartKendall):  # todo test
             self.datasets[f'p{part}'] = pd.DataFrame(self.datasets[f'p{part}'],
                                                      columns=[f'split_point_{i}' for i in range(1, self.nparts)]
                                                              + ['trend', 'h', 'p', 'z', 's', 'var_s'])
+
+    def _calc_senslope(self, data):
+        slopes = []
+        intercepts = []
+        for season in np.unique(self.season_data.unique()):
+            temp = data.loc[self.season_data == season]
+
+            senslope, senintercept, lo_slope, up_slope = mstats.theilslopes(temp[self.data_col], temp.index)
+            slopes.append(senslope)
+            intercepts.append(senintercept)
+        return np.mean(senslope), np.mean(senintercept)
+
+
+def get_colors(vals, cmap='tab10'):
+    n_scens = len(vals)
+    if n_scens < 20:
+        cmap = get_cmap(cmap)
+        colors = [cmap(e / (n_scens + 1)) for e in range(n_scens)]
+    else:
+        colors = []
+        i = 0
+        cmap = get_cmap(cmap)
+        for v in vals:
+            colors.append(cmap(i / 20))
+            i += 1
+            if i == 20:
+                i = 0
+    return colors
 
 
 if __name__ == '__main__':
