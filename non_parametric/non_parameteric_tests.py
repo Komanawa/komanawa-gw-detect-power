@@ -391,8 +391,8 @@ def make_seasonal_multipart_parabolic(slope, noise, unsort, na_data):
     return test_dataframe
 
 
-def make_seasonal_multipart_sharp_change(slope, noise, unsort, na_data):  # todo check
-    x, y = make_multipart_parabolic_data(slope=slope, noise=noise, unsort=False, na_data=False)
+def make_seasonal_multipart_sharp_change(slope, noise, unsort, na_data):
+    x, y = make_multipart_sharp_change_data(slope=slope, noise=noise, unsort=False, na_data=False)
     assert len(x) % 4 == 0
     # add/reduce data in each season (create bias + +- noise)
     seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
@@ -476,11 +476,23 @@ def plot_seasonal_multipart_para(show=False):
     plt.close('all')
 
 
-def plot_seasonal_multipart_sharp(show=False):  # todo start here
-    raise NotImplementedError
+def plot_seasonal_multipart_sharp(show=False):
+    f = make_seasonal_multipart_sharp_change
+    colors = get_colors(multipart_sharp_noises)
+    for slope in multipart_sharp_slopes:
+        for noise in multipart_sharp_noises:
+            fig, ax = plt.subplots()
+            data = f(slope, noise, unsort=False, na_data=False)
+            ax.scatter(data.index, data.y, label=f'noise:{noise}', c=data.seasons)
+            ax.legend()
+            ax.set_title(f'slope:{slope}, f:{f.__name__}')
+    if show:
+        plt.show()
+    plt.close('all')
 
 
-def test_multipart_kendall(show=False):  # todo
+
+def test_multipart_kendall(show=False):  # todo start here
     raise NotImplementedError
 
 
@@ -490,12 +502,12 @@ def test_seasonal_multipart_kendall(show=False):  # todo
 
 if __name__ == '__main__':
     # working test
-    plot_seasonal_multipart_sharp(True)
 
     # data plots
-    # plot_seasonal_multipart_para(False)
-    # plot_multipart_data_para(False)
-    # plot_multipart_data_sharp(False)
+    # plot_seasonal_multipart_sharp(True)
+    # plot_seasonal_multipart_para(True)
+    # plot_multipart_data_para(True)
+    # plot_multipart_data_sharp(True)
 
     # finished tests
     _quick_test_s()
