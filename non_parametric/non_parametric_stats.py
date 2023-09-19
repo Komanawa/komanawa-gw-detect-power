@@ -373,7 +373,6 @@ class SeasonalKendall(object):
         self.season_col = season_col
         self.alpha = alpha
 
-
         x = self.data[data_col]
         self.season_data = season_data = self.data[season_col]
 
@@ -429,6 +428,7 @@ class MultiPartKendall():
     :ivar acceptable_matches: (boolean index) the acceptable matches for the trend, i.e. the trend is the expected trend
     :ivar all_start_points: all the start points for the mann kendall tests
     :ivar alpha: the alpha value used to calculate the trend
+    :ivar no_trend_alpha: significance level for no trend e.g. will accept if p> no_trend_alpha
     :ivar data: the data used to calculate the trend
     :ivar data_col: the column of the data used to calculate the trend
     :ivar datasets: a dictionary of the datasets {f'p{i}':pd.DataFrame for i in range(nparts)}
@@ -448,7 +448,9 @@ class MultiPartKendall():
     :ivar x: the data
     """
 
-    def __init__(self, data, nparts=2, expect_part=(1, -1), min_size=10, alpha=0.05, data_col=None, rm_na=True,
+    def __init__(self, data, nparts=2, expect_part=(1, -1), min_size=10,
+                 alpha=0.05, no_trend_alpha=0.5,
+                 data_col=None, rm_na=True,
                  serialise_path=None, recalc=False, initalize=True):
         """
         multi part mann kendall test to indentify a change point(s) in a time series
@@ -460,6 +462,7 @@ class MultiPartKendall():
         :param expect_part: expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)
         :param min_size: minimum size for the first and last section of the time series
         :param alpha: significance level
+        :param no_trend_alpha: significance level for no trend e.g. will accept if p> no_trend_alpha
         :param data_col: if data is a DataFrame or Series, the column to use
         :param rm_na: remove na values from the data
         :param serialise_path: path to serialised file (as hdf), if None will not serialise
@@ -486,6 +489,7 @@ class MultiPartKendall():
                         expect_part=expect_part,
                         min_size=min_size,
                         alpha=alpha,
+                        no_trend_alpha=no_trend_alpha,
                         data_col=data_col,
                         rm_na=rm_na,
                         season_col=None)
@@ -499,6 +503,7 @@ class MultiPartKendall():
                                     expect_part=expect_part,
                                     min_size=min_size,
                                     alpha=alpha,
+                                    no_trend_alpha=no_trend_alpha,
                                     data_col=data_col,
                                     rm_na=rm_na,
                                     season_col=None)
@@ -619,7 +624,7 @@ class MultiPartKendall():
         ax.legend(legend_handles, legend_labels, loc='best')
         return fig, ax
 
-    def _set_from_file(self, data, nparts, expect_part, min_size, alpha, data_col, rm_na,
+    def _set_from_file(self, data, nparts, expect_part, min_size, alpha, no_trend_alpha, data_col, rm_na,
                        season_col=None, check_inputs=True):
         """
         setup the class data from a serialised file, values are passed to ensure they are consistent
@@ -638,6 +643,7 @@ class MultiPartKendall():
         assert isinstance(params, pd.Series)
         # other parameters
         self.alpha = params['alpha']
+        self.no_trend_alpha = params['no_trend_alpha']
         self.nparts = params['nparts']
         self.min_size = params['min_size']
         self.data_col = params['data_col']
@@ -691,6 +697,7 @@ class MultiPartKendall():
             assert self.nparts == nparts, 'nparts does not match'
             assert self.min_size == min_size, 'min_size does not match'
             assert self.alpha == alpha, 'alpha does not match'
+            assert self.no_trend_alpha == no_trend_alpha, 'no_trend_alpha does not match'
             assert all(np.atleast_1d(self.expect_part) == np.atleast_1d(expect_part)), 'expect_part does not match'
 
             # check datasets
@@ -701,7 +708,7 @@ class MultiPartKendall():
             elif datatype == 'np.array':
                 np.allclose(self.data, data)
 
-    def _set_from_data(self, data, nparts, expect_part, min_size, alpha, data_col, rm_na,
+    def _set_from_data(self, data, nparts, expect_part, min_size, alpha, no_trend_alpha, data_col, rm_na,
                        season_col=None):
         """
         set up the class data from the input data
@@ -717,6 +724,7 @@ class MultiPartKendall():
         """
         self.data = deepcopy(data)
         self.alpha = alpha
+        self.no_trend_alpha = no_trend_alpha
         self.nparts = nparts
         self.min_size = min_size
         self.expect_part = expect_part
@@ -771,16 +779,14 @@ class MultiPartKendall():
         idx = np.ones(len(self.all_start_points), bool)
         for part, expect in enumerate(self.expect_part):
             if expect == 0:
-                use_alpha = 1 - self.alpha
                 idx = (idx
                        & (self.datasets[f'p{part}'].trend == expect)
-                       & (self.datasets[f'p{part}'].p > use_alpha)
+                       & (self.datasets[f'p{part}'].p > self.no_trend_alpha)
                        )
             else:
-                use_alpha = self.alpha
                 idx = (idx
                        & (self.datasets[f'p{part}'].trend == expect)
-                       & (self.datasets[f'p{part}'].p < use_alpha)
+                       & (self.datasets[f'p{part}'].p < self.alpha)
                        )
         self.acceptable_matches = idx
 
@@ -852,6 +858,7 @@ class MultiPartKendall():
 
             # other parameters
             params['alpha'] = self.alpha
+            params['no_trend_alpha'] = self.no_trend_alpha
             params['nparts'] = self.nparts
             params['min_size'] = self.min_size
             params['data_col'] = self.data_col
@@ -887,6 +894,7 @@ class SeasonalMultiPartKendall(MultiPartKendall):
     :ivar acceptable_matches: (boolean index) the acceptable matches for the trend, i.e. the trend is the expected trend
     :ivar all_start_points: all the start points for the mann kendall tests
     :ivar alpha: the alpha value used to calculate the trend
+    :ivar no_trend_alpha: significance level for no trend e.g. will accept if p> no_trend_alpha
     :ivar data: the data used to calculate the trend
     :ivar data_col: the column of the data used to calculate the trend
     :ivar datasets: a dictionary of the datasets {f'p{i}':pd.DataFrame for i in range(nparts)}
@@ -906,7 +914,9 @@ class SeasonalMultiPartKendall(MultiPartKendall):
     :ivar x: the data
     """
 
-    def __init__(self, data, data_col, season_col, nparts=2, expect_part=(1, -1), min_size=10, alpha=0.05, rm_na=True,
+    def __init__(self, data, data_col, season_col, nparts=2, expect_part=(1, -1), min_size=10,
+                 alpha=0.05, no_trend_alpha=0.5,
+                 rm_na=True,
                  serialise_path=None, recalc=False, initalize=True):
         """
         multi part seasonal mann kendall test to indentify a change point(s) in a time series
@@ -919,12 +929,14 @@ class SeasonalMultiPartKendall(MultiPartKendall):
         :param expect_part: expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)
         :param min_size: minimum size for the first and last section of the time series
         :param alpha: significance level
+        :param no_trend_alpha: significance level for no trend e.g. will accept if p> no_trend_alpha
         :param rm_na: remove na values from the data
         :param serialise_path: path to serialised file (as hdf), if None will not serialise
         :param recalc: if True will recalculate the mann kendall even if the serialised file exists
         :param initalize: if True will initalize the class from the data, only set to False used in self.from_file
         :return:
         """
+
         if not initalize:
             assert all([e is None for e in
                         [data, nparts, expect_part, min_size, alpha, data_col, rm_na, serialise_path, recalc]])
@@ -942,6 +954,7 @@ class SeasonalMultiPartKendall(MultiPartKendall):
                         expect_part=expect_part,
                         min_size=min_size,
                         alpha=alpha,
+                        no_trend_alpha=no_trend_alpha,
                         data_col=data_col,
                         rm_na=rm_na,
                         season_col=season_col)
@@ -955,6 +968,7 @@ class SeasonalMultiPartKendall(MultiPartKendall):
                                     expect_part=expect_part,
                                     min_size=min_size,
                                     alpha=alpha,
+                                    no_trend_alpha=no_trend_alpha,
                                     data_col=data_col,
                                     rm_na=rm_na,
                                     season_col=season_col)
@@ -1106,7 +1120,6 @@ def _calc_seasonal_senslope(y, season, x=None, alpha=0.95, method='separate'):
         msg = "All `x` coordinates are identical."
         warnings.warn(msg, RuntimeWarning, stacklevel=2)
 
-
     slopes.sort()
     medslope = np.nanmedian(slopes)
     if method == 'joint':
@@ -1129,7 +1142,7 @@ def _calc_seasonal_senslope(y, season, x=None, alpha=0.95, method='separate'):
                        sum(k * (k - 1) * (2 * k + 5) for k in nxreps) -
                        sum(k * (k - 1) * (2 * k + 5) for k in nyreps))
     # Find the confidence interval indices in `slopes`
-    try:  # todo need to do
+    try:
         sigma = np.sqrt(sigsq)
         Ru = min(int(np.round((nt - z * sigma) / 2.)), len(slopes) - 1)
         Rl = max(int(np.round((nt + z * sigma) / 2.)) - 1, 0)
