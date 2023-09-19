@@ -11,7 +11,7 @@ from copy import deepcopy
 
 from non_parametric.non_parametric_stats import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old, \
     _seasonal_mann_kendall_from_sarray, _old_smk, MannKendall, SeasonalKendall, MultiPartKendall, \
-    SeasonalMultiPartKendall
+    SeasonalMultiPartKendall, _calc_seasonal_senslope, get_colors
 
 
 def _quick_test_s():
@@ -65,6 +65,62 @@ def make_increasing_decreasing_data(slope=1, noise=1):
     noise = np.random.normal(0, noise, len(x))
     y += noise
     return x, y
+
+
+def make_seasonal_data(slope, noise, unsort, na_data):
+    x, y = make_increasing_decreasing_data(slope=slope, noise=noise)
+    assert len(x) % 4 == 0
+    # add/reduce data in each season (create bias + +- noise)
+    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    y[seasons == 1] += 0 * noise / 2
+    y[seasons == 2] += 2 * noise / 2
+    y[seasons == 3] += 0 * noise / 2
+    y[seasons == 4] += -2 * noise / 2
+
+    if na_data:
+        np.random.seed(868)
+        na_idxs = np.random.randint(0, len(y), 10)
+        y[na_idxs] = np.nan
+
+    # test passing data col (with other noisy cols)
+    test_dataframe = pd.DataFrame(index=x, data=y, columns=['y'])
+    test_dataframe['seasons'] = seasons
+    for col in ['lkj', 'lskdfj', 'laskdfj']:
+        test_dataframe[col] = np.random.choice([1, 34.2, np.nan])
+    if unsort:
+        x_use = deepcopy(x)
+        np.random.shuffle(x_use)
+        test_dataframe = test_dataframe.loc[x_use]
+
+    return test_dataframe
+
+
+def test_seasonal_data():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_seasonal_data.hdf')
+    write_test_data = False
+    slope = 0.1
+    noise = 10
+    for sort, na_data in itertools.product([True, False], [True, False]):
+        test_dataframe = make_seasonal_data(slope, noise, sort, na_data)
+        test_name = f'slope_{slope}_noise_{noise}_unsort_{sort}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        if write_test_data:
+            test_dataframe.to_hdf(save_path, test_name)
+        else:
+            expect = pd.read_hdf(save_path, test_name)
+            assert isinstance(expect, pd.DataFrame)
+            pd.testing.assert_frame_equal(test_dataframe, expect, check_names=False, obj=test_name)
+    for na_data in [True, False]:
+        sort_name = f'slope_{slope}_noise_{noise}_unsort_{False}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        sort_data = pd.read_hdf(save_path, sort_name)
+        assert isinstance(sort_data, pd.DataFrame)
+        sort_data.name = sort_name
+        unsort_name = f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        unsort_data = pd.read_hdf(save_path, unsort_name)
+        assert isinstance(unsort_data, pd.DataFrame)
+        unsort_data.name = unsort_name
+        unsort_data = unsort_data.sort_index()
+        pd.testing.assert_frame_equal(sort_data, unsort_data, check_names=False, obj=sort_name)
+        assert np.allclose(sort_data.values, unsort_data.values, equal_nan=True)
 
 
 def test_mann_kendall(show=False):
@@ -130,7 +186,8 @@ def test_mann_kendall(show=False):
                                   sen_intercept=array_ss_data[1],
                                   lo_slope=array_ss_data[2],
                                   up_slope=array_ss_data[3], ))
-        test_name = f'slope_{slope}_noise_{noise}_unsort_{unsort}_na_data_{na_data}'
+        got_data = got_data.astype(float)
+        test_name = f'slope_{slope}_noise_{noise}_unsort_{unsort}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
         # test plot data
         fig, ax = mk_array.plot_data()
         ax.set_title(test_name)
@@ -146,14 +203,53 @@ def test_mann_kendall(show=False):
 
         # test that sort vs unsort doesn't change results
     for slope, noise, na_data in itertools.product(slopes, noises, na_datas):
-        sort_data = pd.read_hdf(test_data_path, f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}')
-        unsort_data = pd.read_hdf(test_data_path, f'slope_{slope}_noise_{noise}_unsort_{False}_na_data_{na_data}')
+        sort_name = f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        sort_data = pd.read_hdf(test_data_path, sort_name)
+        unsort_name = f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        unsort_data = pd.read_hdf(test_data_path, unsort_name)
         assert isinstance(sort_data, pd.Series)
         assert isinstance(unsort_data, pd.Series)
         pd.testing.assert_series_equal(sort_data, unsort_data, check_names=False)
 
 
-def test_seasonal_mann_kendall(show=False):  # todo this is looking good, but I'm getting weird issues with sorting and senslope, shouldnt change input data, but it seems to...
+def test_seasonal_senslope():
+    seasonal_data_base = make_seasonal_data(slope=0.1, noise=10, unsort=False, na_data=False)
+    seasonal_data1 = deepcopy(seasonal_data_base)
+    seasonal_data2 = deepcopy(seasonal_data_base)
+
+    t1 = _calc_seasonal_senslope(y=seasonal_data1['y'], season=seasonal_data1['seasons'], x=seasonal_data1.index,
+                                 alpha=0.05)
+    t2 = _calc_seasonal_senslope(y=seasonal_data2['y'], season=seasonal_data2['seasons'], x=seasonal_data2.index,
+                                 alpha=0.05)
+    assert np.allclose(t1, t2)
+
+    # test sort vs unsort
+    seasonal_data1 = deepcopy(seasonal_data_base)
+    seasonal_data2 = make_seasonal_data(slope=0.1, noise=10, unsort=True, na_data=False)
+    seasonal_data2 = seasonal_data2.sort_index()
+    assert np.allclose(seasonal_data1.values, seasonal_data2.values, equal_nan=True)
+    t1 = _calc_seasonal_senslope(y=seasonal_data1['y'], season=seasonal_data1['seasons'], x=seasonal_data1.index,
+                                 alpha=0.05)
+    t2 = _calc_seasonal_senslope(y=seasonal_data2['y'], season=seasonal_data2['seasons'], x=seasonal_data2.index,
+                                 alpha=0.05)
+    assert np.allclose(t1, t2)
+
+    # test sort vs unsort with nan
+    seasonal_data1 = make_seasonal_data(slope=0.1, noise=10, unsort=False, na_data=True)
+    seasonal_data2 = make_seasonal_data(slope=0.1, noise=10, unsort=True, na_data=True)
+    seasonal_data2 = seasonal_data2.sort_index()
+    assert np.allclose(seasonal_data1.values, seasonal_data2.values, equal_nan=True)
+    seasonal_data1 = seasonal_data1.dropna(subset=['y', 'seasons'])
+    seasonal_data2 = seasonal_data2.dropna(subset=['y', 'seasons'])
+    assert np.allclose(seasonal_data1.values, seasonal_data2.values, equal_nan=True)
+    t1 = _calc_seasonal_senslope(y=seasonal_data1['y'], season=seasonal_data1['seasons'], x=seasonal_data1.index,
+                                 alpha=0.05)
+    t2 = _calc_seasonal_senslope(y=seasonal_data2['y'], season=seasonal_data2['seasons'], x=seasonal_data2.index,
+                                 alpha=0.05)
+    assert np.allclose(t1, t2)
+
+
+def test_seasonal_mann_kendall(show=True):
     test_data_path = Path(__file__).parent.joinpath('test_data', 'test_smk.hdf')
     make_test_data = False
     slopes = [0.1, -0.1, 0]
@@ -161,30 +257,8 @@ def test_seasonal_mann_kendall(show=False):  # todo this is looking good, but I'
     unsorts = [True, False]
     na_datas = [True, False]
     for slope, noise, unsort, na_data in itertools.product(slopes, noises, unsorts, na_datas):
+        test_dataframe = make_seasonal_data(slope, noise, unsort, na_data)
 
-        x, y = make_increasing_decreasing_data(slope=slope, noise=noise)
-        assert len(x) % 4 == 0
-        # add/reduce data in each season (create bias + +- noise)
-        seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
-        y[seasons == 1] += 0 * noise/2
-        y[seasons == 2] += 2 * noise/2
-        y[seasons == 3] += 0 * noise/2
-        y[seasons == 4] += -2 * noise/2
-
-        if na_data:
-            np.random.seed(868)
-            na_idxs = np.random.randint(0, len(y), 10)
-            y[na_idxs] = np.nan
-
-        # test passing data col (with other noisy cols)
-        test_dataframe = pd.DataFrame(index=x, data=y, columns=['y'])
-        test_dataframe['seasons'] = seasons
-        for col in ['lkj', 'lskdfj', 'laskdfj']:
-            test_dataframe[col] = np.random.choice([1, 34.2, np.nan])
-        if unsort:
-            x_use = deepcopy(x)
-            np.random.shuffle(x_use)
-            test_dataframe = test_dataframe.loc[x_use]
         mk_df = SeasonalKendall(df=test_dataframe, data_col='y', season_col='seasons', alpha=0.05, rm_na=True,
                                 freq_limit=0.05)
 
@@ -196,7 +270,8 @@ def test_seasonal_mann_kendall(show=False):  # todo this is looking good, but I'
                                   sen_intercept=df_ss_data[1],
                                   lo_slope=df_ss_data[2],
                                   up_slope=df_ss_data[3], ))
-        test_name = f'slope_{slope}_noise_{noise}_unsort_{unsort}_na_data_{na_data}'
+        got_data = got_data.astype(float)
+        test_name = f'slope_{slope}_noise_{noise}_unsort_{unsort}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
         # test plot data
         fig, ax = mk_df.plot_data()
         ax.set_title(test_name)
@@ -206,26 +281,202 @@ def test_seasonal_mann_kendall(show=False):  # todo this is looking good, but I'
         if not make_test_data:
             test_data = pd.read_hdf(test_data_path, test_name)
             assert isinstance(test_data, pd.Series)
-            pd.testing.assert_series_equal(got_data, test_data, check_names=False)
+            pd.testing.assert_series_equal(got_data, test_data, check_names=False, obj=test_name)
         else:
-            got_data.to_hdf(test_data_path, test_name)
+            got_data.to_hdf(test_data_path, test_name, complevel=9, complib='blosc:lz4')
 
         # test that sort vs unsort doesn't change results
     for slope, noise, na_data in itertools.product(slopes, noises, na_datas):
-        sort_data = pd.read_hdf(test_data_path, f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}')
-        unsort_data = pd.read_hdf(test_data_path, f'slope_{slope}_noise_{noise}_unsort_{False}_na_data_{na_data}')
+        sort_name = f'slope_{slope}_noise_{noise}_unsort_{True}_na_data_{na_data}'.replace('.', '_').replace('-', '_')
+        sort_data = pd.read_hdf(test_data_path, sort_name)
+        sort_data.name = sort_name
+        unsort_name = f'slope_{slope}_noise_{noise}_unsort_{False}_na_data_{na_data}'.replace('.', '_').replace('-',
+                                                                                                                '_')
+        unsort_data = pd.read_hdf(test_data_path, unsort_name)
+        unsort_data.name = unsort_name
         assert isinstance(sort_data, pd.Series)
         assert isinstance(unsort_data, pd.Series)
-        pd.testing.assert_series_equal(sort_data, unsort_data, check_names=False)
+        pd.testing.assert_series_equal(sort_data, unsort_data, check_names=False, obj=f'{sort_name} & {unsort_name}')
 
 
-def make_multipart_sharp_change_data():  # todo
-    # todo v data (sharp change)
-    raise NotImplementedError
+def make_multipart_sharp_change_data(slope, noise, unsort, na_data):
+    """
+    sharp v change positive slope is increasing and then decreasing, negative is opposite
+    :param slope:
+    :param noise:
+    :param unsort:
+    :param na_data:
+    :return:
+    """
+    x = np.arange(100).astype(float)
+    y = np.zeros_like(x)
+    y[:50] = x[:50] * slope + 100
+    y[50:] = (x[50:] - x[49].max()) * slope * -1 + y[49]
+
+    np.random.seed(68)
+    noise = np.random.normal(0, noise, len(x))
+    y += noise
+
+    if na_data:
+        np.random.seed(868)
+        na_idxs = np.random.randint(0, len(y), 10)
+        y[na_idxs] = np.nan
+
+    if unsort:
+        x_use = deepcopy(x)
+        np.random.shuffle(x_use)
+        y = y[x_use]
+        x = x[x_use]
+
+    return x, y
 
 
-def make_multipart_parabolic_data():  # todo
-    # todo use a parabola
+def make_multipart_parabolic_data(slope, noise, unsort, na_data):
+    """
+    note the slope is multiplied by -1 to retain the same standards make_sharp_change_data
+    positive slope is increasing and then decreasing, negative is opposite
+    :param slope:
+    :param noise:
+    :param unsort:
+    :param na_data:
+    :return:
+    """
+
+    x = np.arange(100).astype(float)
+    y = slope * -1 * (x - 49) ** 2 + 100
+
+    np.random.seed(68)
+    noise = np.random.normal(0, noise, len(x))
+    y += noise
+
+    if na_data:
+        np.random.seed(868)
+        na_idxs = np.random.randint(0, len(y), 10)
+        y[na_idxs] = np.nan
+
+    if unsort:
+        x_use = deepcopy(x)
+        np.random.shuffle(x_use)
+        y = y[x_use]
+        x = x[x_use]
+
+    return x, y
+
+
+def make_seasonal_multipart_parabolic(slope, noise, unsort, na_data):
+    x, y = make_multipart_parabolic_data(slope=slope, noise=noise, unsort=False, na_data=False)
+    assert len(x) % 4 == 0
+    # add/reduce data in each season (create bias + +- noise)
+    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    y[seasons == 1] += 0 + noise / 4
+    y[seasons == 2] += 2 + noise / 4
+    y[seasons == 3] += 0 + noise / 4
+    y[seasons == 4] += -2 + noise / 4
+
+    if na_data:
+        np.random.seed(868)
+        na_idxs = np.random.randint(0, len(y), 10)
+        y[na_idxs] = np.nan
+
+    # test passing data col (with other noisy cols)
+    test_dataframe = pd.DataFrame(index=x, data=y, columns=['y'])
+    test_dataframe['seasons'] = seasons
+    for col in ['lkj', 'lskdfj', 'laskdfj']:
+        test_dataframe[col] = np.random.choice([1, 34.2, np.nan])
+    if unsort:
+        x_use = deepcopy(x)
+        np.random.shuffle(x_use)
+        test_dataframe = test_dataframe.loc[x_use]
+
+    return test_dataframe
+
+
+def make_seasonal_multipart_sharp_change(slope, noise, unsort, na_data):  # todo check
+    x, y = make_multipart_parabolic_data(slope=slope, noise=noise, unsort=False, na_data=False)
+    assert len(x) % 4 == 0
+    # add/reduce data in each season (create bias + +- noise)
+    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    y[seasons == 1] += 0 + noise / 4
+    y[seasons == 2] += 2 + noise / 4
+    y[seasons == 3] += 0 + noise / 4
+    y[seasons == 4] += -2 + noise / 4
+
+    if na_data:
+        np.random.seed(868)
+        na_idxs = np.random.randint(0, len(y), 10)
+        y[na_idxs] = np.nan
+
+    # test passing data col (with other noisy cols)
+    test_dataframe = pd.DataFrame(index=x, data=y, columns=['y'])
+    test_dataframe['seasons'] = seasons
+    for col in ['lkj', 'lskdfj', 'laskdfj']:
+        test_dataframe[col] = np.random.choice([1, 34.2, np.nan])
+    if unsort:
+        x_use = deepcopy(x)
+        np.random.shuffle(x_use)
+        test_dataframe = test_dataframe.loc[x_use]
+
+    return test_dataframe
+
+
+multipart_sharp_slopes = [0.1, -0.1, 0]
+multipart_sharp_noises = [0, 0.5, 1, 5]
+
+
+def plot_multipart_data_sharp(show=False):
+    # sharp change
+    f = make_multipart_sharp_change_data
+    colors = get_colors(multipart_sharp_noises)
+    for slope in multipart_sharp_slopes:
+        for noise, c in zip(multipart_sharp_noises, colors):
+            fig, ax = plt.subplots()
+            x, y = f(slope, noise, unsort=False, na_data=False)
+            ax.scatter(x, y, label=f'noise:{noise}', c=c)
+            ax.legend()
+            ax.set_title(f'slope:{slope}, f:{f.__name__}')
+    if show:
+        plt.show()
+    plt.close('all')
+
+
+slope_mod = 1e-2
+multipart_parabolic_slopes = [1 * slope_mod, -1 * slope_mod, 0]
+multipart_parabolic_noises = [0, 1, 5, 10, 20, 50]
+
+
+def plot_multipart_data_para(show=False):
+    # parabolic
+    f = make_multipart_parabolic_data
+    colors = get_colors(multipart_parabolic_noises)
+    for slope in multipart_parabolic_slopes:
+        for noise, c in zip(multipart_parabolic_noises, colors):
+            fig, ax = plt.subplots()
+            x, y = f(slope, noise, unsort=False, na_data=False)
+            x0, y0 = f(slope, 0, False, False)
+            ax.plot(x0, y0, c='k', label='no noise', ls=':', alpha=0.5)
+            ax.scatter(x, y, label=f'noise:{noise}', c=c)
+            ax.legend()
+            ax.set_title(f'slope:{slope}, f:{f.__name__}')
+    if show:
+        plt.show()
+    plt.close('all')
+
+
+def plot_seasonal_multipart_para(show=False):
+    f = make_seasonal_multipart_parabolic
+    for slope in multipart_parabolic_slopes:
+        for noise in multipart_parabolic_noises:
+            fig, ax = plt.subplots()
+            data = f(slope, noise, unsort=False, na_data=False)
+            ax.scatter(data.index, data.y, label=f'noise:{noise}', c=data.seasons)
+            ax.legend()
+            ax.set_title(f'slope:{slope}, f:{f.__name__}')
+    if show:
+        plt.show()
+    plt.close('all')
+
+
+def plot_seasonal_multipart_sharp(show=False):  # todo start here
     raise NotImplementedError
 
 
@@ -239,11 +490,19 @@ def test_seasonal_multipart_kendall(show=False):  # todo
 
 if __name__ == '__main__':
     # working test
-    test_seasonal_mann_kendall(show=False)
+    plot_seasonal_multipart_sharp(True)
+
+    # data plots
+    # plot_seasonal_multipart_para(False)
+    # plot_multipart_data_para(False)
+    # plot_multipart_data_sharp(False)
 
     # finished tests
     _quick_test_s()
     test_new_old_mann_kendall()
     test_part_mann_kendall()
     test_seasonal_kendall_sarray()
+    test_seasonal_senslope()
+    test_seasonal_data()
+    test_seasonal_mann_kendall(show=False)
     test_mann_kendall(show=False)
