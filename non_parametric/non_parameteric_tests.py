@@ -310,8 +310,8 @@ def make_multipart_sharp_change_data(slope, noise, unsort, na_data):
     :param na_data:
     :return:
     """
-    x = np.arange(100).astype(float)
-    y = np.zeros_like(x)
+    x = np.arange(100)
+    y = np.zeros_like(x).astype(float)
     y[:50] = x[:50] * slope + 100
     y[50:] = (x[50:] - x[49].max()) * slope * -1 + y[49]
 
@@ -344,8 +344,8 @@ def make_multipart_parabolic_data(slope, noise, unsort, na_data):
     :return:
     """
 
-    x = np.arange(100).astype(float)
-    y = slope * -1 * (x - 49) ** 2 + 100
+    x = np.arange(100)
+    y = slope * -1 * (x - 49) ** 2 + 100.
 
     np.random.seed(68)
     noise = np.random.normal(0, noise, len(x))
@@ -672,74 +672,122 @@ def test_seasonal_multipart_plotting(show=False):
     plt.close('all')
 
 
-def test_multipart_kendall(show=False):  # todo start here, todo how much data saved...
-    write_test_data = True
-    make_functions = [make_multipart_sharp_change_data, make_multipart_parabolic_data]
-    make_names = ['sharp', 'para']
+def test_multipart_kendall(show=False, print_total=False):
+    """
+
+    :param show: flag, show the plots of the data
+    :param print_total: flag, just count number of iterations
+    :return:
+    """
+    write_test_data = False
+    make_functions = [
+        make_multipart_parabolic_data,
+        make_multipart_sharp_change_data,
+    ]
+    make_names = [
+        'para',
+        'sharp',
+    ]
     iter_datas = [
         [
-            multipart_sharp_slopes,
-            multipart_sharp_noises,
-            [False, True],
-            [False, True],
+            multipart_parabolic_slopes,
+            [multipart_parabolic_noises[1], multipart_parabolic_noises[-1]],
+            [False],
+            [False],
         ],
         [
-            multipart_parabolic_slopes,
-            multipart_parabolic_noises,
+            multipart_sharp_slopes,
+            [multipart_sharp_noises[1], multipart_sharp_noises[-1]],
             [False, True],
             [False, True],
         ],
     ]
 
-    for npart, epart, bpoints in zip([2, 3], [(1, -1), (1, 0, -1)], [[50], [40, 60]]):
-        for mfunc, mname, iterdata in zip(make_functions, make_names, iter_datas):
-            for slope, noise, unsort, na_data in itertools.product(iterdata):
-                x, y = mfunc(slope=slope, noise=noise, unsort=unsort, na_data=na_data)
-                data = pd.Series(y, index=x)
-                mk = MultiPartKendall(data, nparts=npart, expect_part=epart, min_size=10,
-                                      alpha=0.05, no_trend_alpha=0.5,
-                                      data_col=None, rm_na=True,
-                                      serialise_path=None)
-                fname = f'mk_{mname}_' + '_'.join([str(i) for i in [
-                    slope, noise, unsort, na_data]]).replace('.', '_').replace('-', '_')
-                fname += f'_npart{npart}.hdf'
-                accept = mk.get_acceptable_matches().astype(float)
-                bpoint_data = mk.get_data_from_breakpoints(bpoints)
+    npart_data = [
+        (3, (1, 0, -1), [40, 60]),
+        (2, (1, -1), [50]),
+    ]
+    total = 0
+    for mfunc, mname, iterdata, (npart, epart, bpoints) in zip(make_functions, make_names, iter_datas, npart_data):
+        for slope, noise, unsort, na_data in itertools.product(*iterdata):
+            total += 1
+            if print_total:
+                continue
+            title = f'mk_{mname}, {npart=}\n'
+            title += f'{slope=}, {noise=}, {unsort=}, {na_data=}\n'
+            print(title)
+            x, y = mfunc(slope=slope, noise=noise, unsort=unsort, na_data=na_data)
+            data = pd.Series(y, index=x)
+            if slope != 0:
+                use_epart = [e * np.sign(slope) for e in epart]
+            else:
+                use_epart = epart
+            mk = MultiPartKendall(data, nparts=npart,
+                                  expect_part=use_epart,
+                                  min_size=10,
+                                  alpha=0.05, no_trend_alpha=0.5,
+                                  data_col=None, rm_na=True,
+                                  serialise_path=None)
+            title += f'breakpoint: {mk.idx_values[bpoints]}'
+            fname = f'mk_{mname}_' + '_'.join([str(i) for i in [
+                slope, noise, unsort, na_data]]).replace('.', '_').replace('-', '_')
+            fname += f'_npart{npart}.hdf'
+            accept = mk.get_acceptable_matches().astype(float)
+            bpoint_data, kstats = mk.get_data_from_breakpoints(bpoints)
+            hdf_path = Path(__file__).parent.joinpath('test_data', fname)
+            if write_test_data:
+                mk.to_file(hdf_path)
+                accept.to_hdf(hdf_path, 'accept_data', complevel=9, complib='blosc:lz4')
                 for i, df in enumerate(bpoint_data):
-                    df['part'] = i
-                bpoint_data = pd.concat(bpoint_data)
-                if write_test_data:
-                    mk.to_file(fname)
-                    accept.to_hdf(fname, 'accept_data')
-                    bpoint_data.to_hdf(fname, 'data_from_breakpoints')
-                    fig, ax = mk.plot_data_from_breakpoints(breakpoints=bpoints)
-                    ax.set_title(fname)
-                    if show:
-                        plt.show()
-                    plt.close('all')
-                else:
-                    mk1 = MultiPartKendall.from_file(fname)
-                    accept1 = pd.read_hdf(fname, 'accept_data')
-                    bpoint_data1 = pd.read_hdf(fname, 'data_from_breakpoints')
-                    assert isinstance(bpoint_data1, pd.DataFrame)
-                    assert isinstance(accept1, pd.DataFrame)
-                    assert mk == mk1
-                    pd.testing.assert_frame_equal(accept, accept1)
-                    pd.testing.assert_frame_equal(bpoint_data, bpoint_data1)
+                    df.to_hdf(hdf_path, f'bp_data_{i}', complevel=9, complib='blosc:lz4')
+                fig, ax = mk.plot_data_from_breakpoints(breakpoints=bpoints)
+                ax.set_title(title)
+                if show:
+                    plt.show()
+                plt.close('all')
+            else:
+                mk1 = MultiPartKendall.from_file(hdf_path)
+                accept1 = pd.read_hdf(hdf_path, 'accept_data')
+                bpoint_data1 = []
+                for i in range(npart):
+                    bpoint_data1.append(pd.read_hdf(hdf_path, f'bp_data_{i}'))
+                assert isinstance(accept1, pd.DataFrame)
+                assert mk == mk1
+                pd.testing.assert_frame_equal(accept, accept1)
+                for i in range(npart):
+                    pd.testing.assert_frame_equal(pd.DataFrame(bpoint_data[i]), pd.DataFrame(bpoint_data1[i]))
+
+    print(f'total tests: {total}')
+
+    # test sorting vs unsorting doesnt change anything
+    for slope, noise, unsort, na_data in itertools.product(*iter_datas[1]):
+        if not unsort:
+            continue
+        fname_unsort = f'mk_sharp_' + '_'.join([str(i) for i in [
+            slope, noise, unsort, na_data]]).replace('.', '_').replace('-', '_')
+        fname_unsort += f'_npart2.hdf'
+
+        fname_sort = f'mk_sharp_' + '_'.join([str(i) for i in [
+            slope, noise, False, na_data]]).replace('.', '_').replace('-', '_')
+        fname_sort += f'_npart2.hdf'
+
+        mk_sort = MultiPartKendall.from_file(Path(__file__).parent.joinpath('test_data', fname_sort))
+        mk_unsort = MultiPartKendall.from_file(Path(__file__).parent.joinpath('test_data', fname_unsort))
+        assert mk_sort == mk_unsort
 
 
+def test_seasonal_multipart_kendall(show=False):  # todo start here
 
-def test_seasonal_multipart_kendall(show=False):  # todo
-
-    # todo na data
-    # todo unsort data
-    # todo get_acceptable_matches
-    # todo get_data_from_breakpoints
+    # todo I can pull from the test data for the non seasonal tests
+    # todo I don't need to test na and sort for these as that code is from MultiPartKendall
+    # only the stats are different
 
     raise NotImplementedError
 
 
 def test_get_best_data():
+    # todo I may want to make a zero noise version
+    # todo I still need to make this function
     # todo get best data... or whatever for both seasonal and non seasonal, npart 2 and 3, sharp and para
     # todo just read the data in via .from_file
     raise NotImplementedError
@@ -747,18 +795,14 @@ def test_get_best_data():
 
 if __name__ == '__main__':
     # working test
-    test_multipart_kendall(True)
-    test_seasonal_multipart_plotting(False)
-    test_multipart_plotting(False)
-    test_generate_startpoints()
-    test_multipart_serialisation()
-    test_seasonal_multipart_serialisation()
+    test_seasonal_multipart_kendall(True)
+
 
     # data plots
-    # plot_seasonal_multipart_sharp(True)
-    # plot_seasonal_multipart_para(True)
-    # plot_multipart_data_para(True)
-    # plot_multipart_data_sharp(True)
+    plot_seasonal_multipart_sharp(show=False)
+    plot_seasonal_multipart_para(show=False)
+    plot_multipart_data_para(show=False)
+    plot_multipart_data_sharp(show=False)
 
     # finished tests
     _quick_test_s()
@@ -769,3 +813,9 @@ if __name__ == '__main__':
     test_seasonal_data()
     test_seasonal_mann_kendall(show=False)
     test_mann_kendall(show=False)
+    test_multipart_kendall(show=False, print_total=False)
+    test_seasonal_multipart_plotting(False)
+    test_multipart_plotting(False)
+    test_generate_startpoints()
+    test_multipart_serialisation()
+    test_seasonal_multipart_serialisation()

@@ -515,7 +515,7 @@ class MultiPartKendall():
                                     season_col=None)
 
             if self.serialise and not loaded:
-                self._to_file()
+                self.to_file()
 
     def __eq__(self, other):
         out = True
@@ -574,7 +574,18 @@ class MultiPartKendall():
 
         return outdata
 
-    def get_maxz_breakpoints(self):
+    def get_maxz_breakpoints(self, raise_on_none=False):
+        """
+        get the breakpoints for the maximum z value???
+        :param raise_on_none: bool, if True will raise an error if no acceptable matches, otherwise will return None
+        :return:
+        """
+        acceptable = self.get_acceptable_matches()
+        if acceptable.empty:
+            if raise_on_none:
+                raise ValueError('no acceptable matches')
+            else:
+                return None
         raise NotImplementedError  # todo think about this
 
     def get_data_from_breakpoints(self, breakpoints):
@@ -632,7 +643,6 @@ class MultiPartKendall():
         acceptable = acceptable[use_keys]
         acceptable.plot(ax=ax, ls='none', marker='o')
         return fig, ax
-
 
     def plot_data_from_breakpoints(self, breakpoints, ax=None, txt_vloc=-0.05, add_labels=True):
         """
@@ -719,15 +729,24 @@ class MultiPartKendall():
         # other parameters
         self.alpha = params['alpha']
         self.no_trend_alpha = params['no_trend_alpha']
-        self.nparts = params['nparts']
-        self.min_size = params['min_size']
-        self.data_col = params['data_col']
-        self.rm_na = params['rm_na']
-        self.season_col = params['season_col']
-        self.n = params['n']
-        self.expect_part = [params[f'expect_part{i}'] for i in range(self.nparts)]
-        datatype = params['datatype']
+        self.nparts = int(params['nparts'])
+        self.min_size = int(params['min_size'])
+        self.rm_na = bool(params['rm_na'])
+        self.n = int(params['n'])
+        self.expect_part = [int(params[f'expect_part{i}']) for i in range(self.nparts)]
 
+        params_str = pd.read_hdf(self.serialise_path, 'params_str')
+        assert isinstance(params_str, pd.Series)
+        datatype = params_str['datatype']
+        self.season_col = params_str['season_col']
+        if self.season_col == 'None':
+            self.season_col = None
+        self.data_col = params_str['data_col']
+        if self.data_col == 'None':
+            self.data_col = None
+
+        if self.season_col is None:
+            self.data = pd.read_hdf(self.serialise_path, 'data').values
         # d1 data
         d1_data = pd.read_hdf(self.serialise_path, 'd1_data')
         self.x = d1_data['x'].values
@@ -901,7 +920,7 @@ class MultiPartKendall():
                                                      columns=[f'split_point_{i}' for i in range(1, self.nparts)]
                                                              + ['trend', 'h', 'p', 'z', 's', 'var_s'])
 
-    def to_file(self, save_path=None):
+    def to_file(self, save_path=None, complevel=9, complib='blosc:lz4'):
         """
         save the data to a hdf file
 
@@ -914,6 +933,7 @@ class MultiPartKendall():
         with pd.HDFStore(save_path, 'w') as hdf:
             # setup single value parameters
             params = pd.Series()
+            params_str = pd.Series()
 
             # should be 1d+ of same length
             d1_data = pd.DataFrame(index=range(len(self.x)))
@@ -923,39 +943,40 @@ class MultiPartKendall():
                 d1_data['season_data'] = self.season_data
             d1_data.to_hdf(hdf, 'd1_data')
 
-            self.acceptable_matches.to_hdf(hdf, 'acceptable_matches')
+            self.acceptable_matches.to_hdf(hdf, 'acceptable_matches', complevel=complevel, complib=complib)
             # save as own datasets
             if isinstance(self.data, pd.DataFrame):
-                self.data.to_hdf(hdf, 'data')
-                params['datatype'] = 'pd.DataFrame'
+                self.data.to_hdf(hdf, 'data', complevel=complevel, complib=complib)
+                params_str['datatype'] = 'pd.DataFrame'
             elif isinstance(self.data, pd.Series):
-                self.data.to_hdf(hdf, 'data')
-                params['datatype'] = 'pd.Series'
+                self.data.to_hdf(hdf, 'data', complevel=complevel, complib=complib)
+                params_str['datatype'] = 'pd.Series'
             else:
-                params['datatype'] = 'np.array'
-                pd.Series(self.data).to_hdf(hdf, 'data')
+                params_str['datatype'] = 'np.array'
+                pd.Series(self.data).to_hdf(hdf, 'data', complevel=complevel, complib=complib)
 
             assert isinstance(self.s_array, np.ndarray)
-            pd.DataFrame(self.s_array).to_hdf(hdf, 's_array')
+            pd.DataFrame(self.s_array).to_hdf(hdf, 's_array', complevel=complevel, complib=complib)
             assert isinstance(self.all_start_points, np.ndarray)
-            pd.DataFrame(self.all_start_points).to_hdf(hdf, 'all_start_points')
+            pd.DataFrame(self.all_start_points).to_hdf(hdf, 'all_start_points', complevel=complevel, complib=complib)
 
             for part in range(self.nparts):
-                self.datasets[f'p{part}'].astype(float).to_hdf(hdf, f'part{part}')
+                self.datasets[f'p{part}'].astype(float).to_hdf(hdf, f'part{part}', complevel=complevel, complib=complib)
 
             # other parameters
             params['alpha'] = self.alpha
             params['no_trend_alpha'] = self.no_trend_alpha
-            params['nparts'] = self.nparts
-            params['min_size'] = self.min_size
-            params['data_col'] = self.data_col
-            params['rm_na'] = self.rm_na
-            params['season_col'] = self.season_col
-            params['n'] = self.n
+            params['nparts'] = float(self.nparts)
+            params['min_size'] = float(self.min_size)
+            params['rm_na'] = float(self.rm_na)
+            params['n'] = float(self.n)
             for i in range(self.nparts):
-                params[f'expect_part{i}'] = self.expect_part[i]
+                params[f'expect_part{i}'] = float(self.expect_part[i])
 
-        params.to_hdf(hdf, 'params')
+            params_str['season_col'] = str(self.season_col)
+            params_str['data_col'] = str(self.data_col)
+            params.to_hdf(hdf, 'params', complevel=complevel, complib=complib)
+            params_str.to_hdf(hdf, 'params_str', complevel=complevel, complib=complib)
 
     @classmethod
     @staticmethod
@@ -1064,7 +1085,7 @@ class SeasonalMultiPartKendall(MultiPartKendall):
                                     season_col=season_col)
 
             if self.serialise and not loaded:
-                self._to_file()
+                self.to_file()
 
     @classmethod
     @staticmethod
@@ -1085,38 +1106,37 @@ class SeasonalMultiPartKendall(MultiPartKendall):
                            rm_na=None, season_col=None, check_inputs=False)
         return mpk
 
+    def _calc_mann_kendall(self):
+        """
+        acutually calculate the mann kendall from the sarray, this should be the only thing that needs
+        to be updated for the seasonal kendall
+        :return:
+        """
 
-def _calc_mann_kendall(self):
-    """
-    acutually calculate the mann kendall from the sarray, this should be the only thing that needs
-    to be updated for the seasonal kendall
-    :return:
-    """
+        for sp in self.all_start_points:
+            start = 0
+            for i in range(self.nparts):
+                if i == self.nparts - 1:
+                    end = self.n
+                else:
+                    end = sp[i]
+                data = (*sp,
+                        *_seasonal_mann_kendall_from_sarray(self.x[start:end], alpha=self.alpha,
+                                                            season_data=self.season_data[start:end],
+                                                            sarray=self.s_array[start:end,
+                                                                   start:end]))  # and passing the s array
+                self.datasets[f'p{i}'].append(data)
+                start = end
+        for part in range(self.nparts):
+            self.datasets[f'p{part}'] = pd.DataFrame(self.datasets[f'p{part}'],
+                                                     columns=[f'split_point_{i}' for i in range(1, self.nparts)]
+                                                             + ['trend', 'h', 'p', 'z', 's', 'var_s'])
 
-    for sp in self.all_start_points:
-        start = 0
-        for i in range(self.nparts):
-            if i == self.nparts - 1:
-                end = self.n
-            else:
-                end = sp + sp * i
-            data = (*sp,
-                    *_seasonal_mann_kendall_from_sarray(self.x[start:end], alpha=self.alpha,
-                                                        season_data=self.season_data[start:end],
-                                                        sarray=self.s_array[start:end,
-                                                               start:end]))  # and passing the s array
-            self.datasets[f'p{i}'].append(data)
-            start = end
-    for part in range(self.nparts):
-        self.datasets[f'p{part}'] = pd.DataFrame(self.datasets[f'p{part}'],
-                                                 columns=[f'split_point_{i}' for i in range(1, self.nparts)]
-                                                         + ['trend', 'h', 'p', 'z', 's', 'var_s'])
-
-
-def _calc_senslope(self, data):
-    senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(data[self.data_col], self.season_data,
-                                                                             x=data.index, alpha=self.alpha)
-    return np.senslope, senintercept
+    def _calc_senslope(self, data):
+        senslope, senintercept, lo_slope, lo_intercept = _calc_seasonal_senslope(data[self.data_col],
+                                                                                 data[self.season_col],
+                                                                                 x=data.index, alpha=self.alpha)
+        return senslope, senintercept
 
 
 def _calc_seasonal_senslope(y, season, x=None, alpha=0.95, method='separate'):
