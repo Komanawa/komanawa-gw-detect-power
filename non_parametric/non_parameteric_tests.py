@@ -3,6 +3,8 @@ created matt_dumont
 on: 15/09/23
 """
 import itertools
+import shutil
+import tempfile
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -11,7 +13,7 @@ from copy import deepcopy
 
 from non_parametric.non_parametric_stats import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old, \
     _seasonal_mann_kendall_from_sarray, _old_smk, MannKendall, SeasonalKendall, MultiPartKendall, \
-    SeasonalMultiPartKendall, _calc_seasonal_senslope, get_colors
+    SeasonalMultiPartKendall, _calc_seasonal_senslope, get_colors, _generate_startpoints
 
 
 def _quick_test_s():
@@ -491,17 +493,140 @@ def plot_seasonal_multipart_sharp(show=False):
     plt.close('all')
 
 
-
-def test_multipart_kendall(show=False):  # todo start here
+def test_multipart_plotting(show=False):
+    x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                            unsort=False, na_data=False)
+    data = pd.Series(y, index=x)
+    mk = MultiPartKendall(data=data, data_col='y', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                          serialise_path=None, recalc=False, initalize=True)
+    # todo plot
     raise NotImplementedError
 
+def test_generate_startpoints():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_generate_startpoints.npz')
+    write_test_data = False
+
+    x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+    part4 = _generate_startpoints(n=len(x), min_size=10, nparts=4, test=True)
+    part3 = _generate_startpoints(n=len(x), min_size=10, nparts=3, test=True)
+    part2 = _generate_startpoints(n=len(x), min_size=10, nparts=2, test=True)
+
+    if write_test_data:
+        np.savez_compressed(save_path, part4=part4, part3=part3, part2=part2)
+    else:
+        expect = np.load(save_path)
+        assert np.allclose(part4, expect['part4'])
+        assert np.allclose(part3, expect['part3'])
+        assert np.allclose(part2, expect['part2'])
+
+
+
+
+def test_multipart_serialisation():
+    with tempfile.TemporaryDirectory() as tdir:
+        # 2 part
+        tdir = Path(tdir)
+        x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+        data = pd.Series(y, index=x)
+        mk = MultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
+                              data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                              serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+
+        mk1 = MultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
+                               data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                               serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+
+        mk2 = MultiPartKendall.from_file(tdir.joinpath('test2.hdf'))
+
+        assert mk == mk1
+        assert mk == mk2
+        shutil.copyfile(tdir.joinpath('test2.hdf'), Path.home().joinpath('Downloads', 'mk_test2.hdf'))
+
+        # 3part
+        x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+        data = pd.Series(y, index=x)
+        mk = MultiPartKendall(data=data, nparts=3, expect_part=(1,0, -1), min_size=10,
+                              data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                              serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+
+        mk1 = MultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
+                               data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                               serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+
+        mk2 = MultiPartKendall.from_file(tdir.joinpath('test3.hdf'))
+
+        assert mk == mk1
+        assert mk == mk2
+        shutil.copyfile(tdir.joinpath('test3.hdf'), Path.home().joinpath('Downloads', 'mk_test3.hdf'))
+
+
+def test_multipart_kendall(show=False):  # todo start here
+
+
+
+    # todo get_acceptable_matches
+    # todo get_data_from_breakpoints
+    # todo get best data... or whatever
+    raise NotImplementedError
+
+def test_seasonal_multipart_serialisation():
+    with tempfile.TemporaryDirectory() as tdir:
+        # 2 part
+        tdir = Path(tdir)
+        data = make_seasonal_multipart_sharp_change(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+        mk = SeasonalMultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
+                              data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                              serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+
+        mk1 = SeasonalMultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
+                               data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                               serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+
+        mk2 = SeasonalMultiPartKendall.from_file(tdir.joinpath('test2.hdf'))
+
+        assert mk == mk1
+        assert mk == mk2
+        shutil.copyfile(tdir.joinpath('test2.hdf'), Path.home().joinpath('Downloads', 'smk_test2.hdf'))
+
+        # 3part
+        data = make_seasonal_multipart_sharp_change(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+        mk = SeasonalMultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
+                              data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                              serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+
+        mk1 = SeasonalMultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
+                               data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                               serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+
+        mk2 = SeasonalMultiPartKendall.from_file(tdir.joinpath('test3.hdf'))
+
+        assert mk == mk1
+        assert mk == mk2
+        shutil.copyfile(tdir.joinpath('test3.hdf'), Path.home().joinpath('Downloads', 'smk_test3.hdf'))
+
+
+def test_seasonal_multipart_plotting(show=False): # todo
+    raise NotImplementedError
 
 def test_seasonal_multipart_kendall(show=False):  # todo
+
+    # todo get_acceptable_matches
+    # todo get_data_from_breakpoints
+    # todo get best data... or whatever
     raise NotImplementedError
 
 
 if __name__ == '__main__':
     # working test
+    test_generate_startpoints()
+    test_multipart_serialisation()
+    test_seasonal_multipart_serialisation()
+    raise NotImplementedError  # todo dadb
 
     # data plots
     # plot_seasonal_multipart_sharp(True)
