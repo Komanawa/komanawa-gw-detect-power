@@ -792,7 +792,8 @@ def test_get_best_data():
     # todo just read the data in via .from_file
     raise NotImplementedError
 
-
+# todo check issues...
+# todo consider making this a git submodule
 if __name__ == '__main__':
     # working test
     test_seasonal_multipart_kendall(True)
