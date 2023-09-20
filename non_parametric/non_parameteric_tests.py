@@ -480,7 +480,6 @@ def plot_seasonal_multipart_para(show=False):
 
 def plot_seasonal_multipart_sharp(show=False):
     f = make_seasonal_multipart_sharp_change
-    colors = get_colors(multipart_sharp_noises)
     for slope in multipart_sharp_slopes:
         for noise in multipart_sharp_noises:
             fig, ax = plt.subplots()
@@ -493,21 +492,12 @@ def plot_seasonal_multipart_sharp(show=False):
     plt.close('all')
 
 
-def test_multipart_plotting(show=False):
-    x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
-                                            unsort=False, na_data=False)
-    data = pd.Series(y, index=x)
-    mk = MultiPartKendall(data=data, data_col='y', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
-                          serialise_path=None, recalc=False, initalize=True)
-    # todo plot
-    raise NotImplementedError
-
 def test_generate_startpoints():
     save_path = Path(__file__).parent.joinpath('test_data', 'test_generate_startpoints.npz')
     write_test_data = False
 
     x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
-                                                unsort=False, na_data=False)
+                                            unsort=False, na_data=False)
     part4 = _generate_startpoints(n=len(x), min_size=10, nparts=4, test=True)
     part3 = _generate_startpoints(n=len(x), min_size=10, nparts=3, test=True)
     part2 = _generate_startpoints(n=len(x), min_size=10, nparts=2, test=True)
@@ -521,6 +511,46 @@ def test_generate_startpoints():
         assert np.allclose(part2, expect['part2'])
 
 
+def test_multipart_plotting(show=False):
+    # 2 part
+    x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                            unsort=False, na_data=False)
+    data = pd.Series(y, index=x)
+    mk = MultiPartKendall(data=data, data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                          nparts=2, expect_part=(1, -1), min_size=10,
+                          serialise_path=None, recalc=False, initalize=True)
+
+    acceptble = mk.get_acceptable_matches()
+    fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
+    data, kstats = mk.get_data_from_breakpoints(50)
+    fig, ax = mk.plot_data_from_breakpoints(50, ax=axs[0])
+    mk.plot_data_from_breakpoints(25, ax=axs[1], txt_vloc=0.01)
+    fig.tight_layout()
+
+    # 3 part
+    x, y = make_multipart_parabolic_data(slope=multipart_parabolic_slopes[0], noise=multipart_parabolic_noises[1],
+                                         unsort=False, na_data=False)
+    data = pd.Series(y, index=x)
+    mk_para = MultiPartKendall(data=data, data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                               nparts=3, expect_part=(1, 0, -1), min_size=10,
+                               serialise_path=None, recalc=False, initalize=True)
+    # plot
+    fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
+    data, kstats = mk_para.get_data_from_breakpoints([40, 60])
+    fig, ax = mk_para.plot_data_from_breakpoints([40, 60], ax=axs[0])
+    mk_para.plot_data_from_breakpoints([50, 60], ax=axs[1], txt_vloc=+0.1)
+    fig.tight_layout()
+
+    # plot acceptable matches
+    for k in ['p', 'z', 's', 'var_s']:
+        print(k)
+        fig, ax = mk_para.plot_acceptable_matches(key=k)
+        ax.set_title('para')
+        fig, ax = mk.plot_acceptable_matches(key=k)
+        ax.set_title('sharp')
+    if show:
+        plt.show()
+    plt.close('all')
 
 
 def test_multipart_serialisation():
@@ -548,7 +578,7 @@ def test_multipart_serialisation():
         x, y = make_multipart_sharp_change_data(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
                                                 unsort=False, na_data=False)
         data = pd.Series(y, index=x)
-        mk = MultiPartKendall(data=data, nparts=3, expect_part=(1,0, -1), min_size=10,
+        mk = MultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
                               data_col=None, alpha=0.05, rm_na=True, no_trend_alpha=0.5,
                               serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
 
@@ -563,28 +593,19 @@ def test_multipart_serialisation():
         shutil.copyfile(tdir.joinpath('test3.hdf'), Path.home().joinpath('Downloads', 'mk_test3.hdf'))
 
 
-def test_multipart_kendall(show=False):  # todo start here
-
-
-
-    # todo get_acceptable_matches
-    # todo get_data_from_breakpoints
-    # todo get best data... or whatever
-    raise NotImplementedError
-
 def test_seasonal_multipart_serialisation():
     with tempfile.TemporaryDirectory() as tdir:
         # 2 part
         tdir = Path(tdir)
         data = make_seasonal_multipart_sharp_change(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
-                                                unsort=False, na_data=False)
+                                                    unsort=False, na_data=False)
         mk = SeasonalMultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
-                              data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
-                              serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+                                      data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                                      serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
 
         mk1 = SeasonalMultiPartKendall(data=data, nparts=2, expect_part=(1, -1), min_size=10,
-                               data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
-                               serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
+                                       data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                                       serialise_path=tdir.joinpath('test2.hdf'), recalc=False, initalize=True)
 
         mk2 = SeasonalMultiPartKendall.from_file(tdir.joinpath('test2.hdf'))
 
@@ -594,14 +615,14 @@ def test_seasonal_multipart_serialisation():
 
         # 3part
         data = make_seasonal_multipart_sharp_change(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
-                                                unsort=False, na_data=False)
+                                                    unsort=False, na_data=False)
         mk = SeasonalMultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
-                              data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
-                              serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+                                      data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                                      serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
 
         mk1 = SeasonalMultiPartKendall(data=data, nparts=3, expect_part=(1, 0, -1), min_size=10,
-                               data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
-                               serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
+                                       data_col='y', season_col='seasons', alpha=0.05, rm_na=True, no_trend_alpha=0.5,
+                                       serialise_path=tdir.joinpath('test3.hdf'), recalc=False, initalize=True)
 
         mk2 = SeasonalMultiPartKendall.from_file(tdir.joinpath('test3.hdf'))
 
@@ -610,23 +631,128 @@ def test_seasonal_multipart_serialisation():
         shutil.copyfile(tdir.joinpath('test3.hdf'), Path.home().joinpath('Downloads', 'smk_test3.hdf'))
 
 
-def test_seasonal_multipart_plotting(show=False): # todo
-    raise NotImplementedError
+def test_seasonal_multipart_plotting(show=False):
+    data = make_seasonal_multipart_sharp_change(slope=multipart_sharp_slopes[0], noise=multipart_sharp_noises[1],
+                                                unsort=False, na_data=False)
+    mk = SeasonalMultiPartKendall(data=data, data_col='y', season_col='seasons', alpha=0.05, rm_na=True,
+                                  no_trend_alpha=0.5,
+                                  nparts=2, expect_part=(1, -1), min_size=10,
+                                  serialise_path=None, recalc=False, initalize=True)
+
+    acceptble = mk.get_acceptable_matches()
+    fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
+    data, kstats = mk.get_data_from_breakpoints(50)
+    fig, ax = mk.plot_data_from_breakpoints(50, ax=axs[0])
+    mk.plot_data_from_breakpoints(25, ax=axs[1], txt_vloc=0.01)
+    fig.tight_layout()
+
+    # 3 part
+    data = make_seasonal_multipart_parabolic(slope=multipart_parabolic_slopes[0], noise=multipart_parabolic_noises[1],
+                                             unsort=False, na_data=False)
+    mk_para = SeasonalMultiPartKendall(data=data, data_col='y', season_col='seasons', alpha=0.05, rm_na=True,
+                                       no_trend_alpha=0.5,
+                                       nparts=3, expect_part=(1, 0, -1), min_size=10,
+                                       serialise_path=None, recalc=False, initalize=True)
+    # plot
+    fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
+    data, kstats = mk_para.get_data_from_breakpoints([40, 60])
+    fig, ax = mk_para.plot_data_from_breakpoints([40, 60], ax=axs[0])
+    mk_para.plot_data_from_breakpoints([50, 60], ax=axs[1], txt_vloc=+0.1)
+    fig.tight_layout()
+
+    # plot acceptable matches
+    for k in ['p', 'z', 's', 'var_s']:
+        print(k)
+        fig, ax = mk_para.plot_acceptable_matches(key=k)
+        ax.set_title('para')
+        fig, ax = mk.plot_acceptable_matches(key=k)
+        ax.set_title('sharp')
+    if show:
+        plt.show()
+    plt.close('all')
+
+
+def test_multipart_kendall(show=False):  # todo start here, todo how much data saved...
+    write_test_data = True
+    make_functions = [make_multipart_sharp_change_data, make_multipart_parabolic_data]
+    make_names = ['sharp', 'para']
+    iter_datas = [
+        [
+            multipart_sharp_slopes,
+            multipart_sharp_noises,
+            [False, True],
+            [False, True],
+        ],
+        [
+            multipart_parabolic_slopes,
+            multipart_parabolic_noises,
+            [False, True],
+            [False, True],
+        ],
+    ]
+
+    for npart, epart, bpoints in zip([2, 3], [(1, -1), (1, 0, -1)], [[50], [40, 60]]):
+        for mfunc, mname, iterdata in zip(make_functions, make_names, iter_datas):
+            for slope, noise, unsort, na_data in itertools.product(iterdata):
+                x, y = mfunc(slope=slope, noise=noise, unsort=unsort, na_data=na_data)
+                data = pd.Series(y, index=x)
+                mk = MultiPartKendall(data, nparts=npart, expect_part=epart, min_size=10,
+                                      alpha=0.05, no_trend_alpha=0.5,
+                                      data_col=None, rm_na=True,
+                                      serialise_path=None)
+                fname = f'mk_{mname}_' + '_'.join([str(i) for i in [
+                    slope, noise, unsort, na_data]]).replace('.', '_').replace('-', '_')
+                fname += f'_npart{npart}.hdf'
+                accept = mk.get_acceptable_matches().astype(float)
+                bpoint_data = mk.get_data_from_breakpoints(bpoints)
+                for i, df in enumerate(bpoint_data):
+                    df['part'] = i
+                bpoint_data = pd.concat(bpoint_data)
+                if write_test_data:
+                    mk.to_file(fname)
+                    accept.to_hdf(fname, 'accept_data')
+                    bpoint_data.to_hdf(fname, 'data_from_breakpoints')
+                    fig, ax = mk.plot_data_from_breakpoints(breakpoints=bpoints)
+                    ax.set_title(fname)
+                    if show:
+                        plt.show()
+                    plt.close('all')
+                else:
+                    mk1 = MultiPartKendall.from_file(fname)
+                    accept1 = pd.read_hdf(fname, 'accept_data')
+                    bpoint_data1 = pd.read_hdf(fname, 'data_from_breakpoints')
+                    assert isinstance(bpoint_data1, pd.DataFrame)
+                    assert isinstance(accept1, pd.DataFrame)
+                    assert mk == mk1
+                    pd.testing.assert_frame_equal(accept, accept1)
+                    pd.testing.assert_frame_equal(bpoint_data, bpoint_data1)
+
+
 
 def test_seasonal_multipart_kendall(show=False):  # todo
 
+    # todo na data
+    # todo unsort data
     # todo get_acceptable_matches
     # todo get_data_from_breakpoints
-    # todo get best data... or whatever
+
+    raise NotImplementedError
+
+
+def test_get_best_data():
+    # todo get best data... or whatever for both seasonal and non seasonal, npart 2 and 3, sharp and para
+    # todo just read the data in via .from_file
     raise NotImplementedError
 
 
 if __name__ == '__main__':
     # working test
+    test_multipart_kendall(True)
+    test_seasonal_multipart_plotting(False)
+    test_multipart_plotting(False)
     test_generate_startpoints()
     test_multipart_serialisation()
     test_seasonal_multipart_serialisation()
-    raise NotImplementedError  # todo dadb
 
     # data plots
     # plot_seasonal_multipart_sharp(True)

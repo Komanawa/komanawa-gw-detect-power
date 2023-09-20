@@ -586,22 +586,24 @@ class MultiPartKendall():
                  senintercepts: list of senintercepts for each part of the time series
                  kendal_stats: dataframe of kendal stats for each part of the time series
         """
+        breakpoints = np.atleast_1d(breakpoints)
         assert len(breakpoints) == self.nparts - 1
         outdata = []
         kendal_stats = pd.DataFrame(index=[f'p{i}' for i in range(self.nparts)],
                                     columns=['trend', 'h', 'p', 'z', 's', 'var_s', 'senslope',
                                              'senintercept'])
-        for p, ds in enumerate(self.datasets):
+        for p, (pkey, ds) in enumerate(self.datasets.items()):
+            assert pkey == f'p{p}'
             temp = ds.set_index([f'split_point_{i}' for i in range(1, self.nparts)])
             outcols = ['trend', 'h', 'p', 'z', 's', 'var_s']
-            kendal_stats.loc[f'p{p}', outcols] = temp.loc[breakpoints, outcols].values
+            kendal_stats.loc[f'p{p}', outcols] = temp.loc[tuple(breakpoints), outcols].values
 
         start = 0
-        for i, bp in enumerate(breakpoints):
+        for i in range(self.nparts):
             if i == self.nparts - 1:
                 end = self.n
             else:
-                end = bp
+                end = breakpoints[i]
             if isinstance(self.data, pd.DataFrame):
                 outdata.append(self.data.loc[self.idx_values[start:end]])
             else:
@@ -613,22 +615,40 @@ class MultiPartKendall():
         for i, ds in enumerate(outdata):
             senslope, senintercept = self._calc_senslope(ds)
             kendal_stats.loc[f'p{i}', 'sen_slope'] = senslope
-            kendal_stats.locf[f'p{i}', 'sen_intercept'] = senintercept
+            kendal_stats.loc[f'p{i}', 'sen_intercept'] = senintercept
 
         return outdata, kendal_stats
 
-    def plot_data_from_breakpoints(self, breakpoints, ax=None):
+    def plot_acceptable_matches(self, key):
+        """
+        quickly plot the acceptable matches
+        :param key: key to plot (one of ['p', 'z', 's', 'var_s'])
+        :return:
+        """
+        assert key in ['p', 'z', 's', 'var_s']
+        fig, ax = plt.subplots(figsize=(10, 8))
+        acceptable = self.get_acceptable_matches()
+        use_keys = [f'{key}_p{i}' for i in range(self.nparts)]
+        acceptable = acceptable[use_keys]
+        acceptable.plot(ax=ax, ls='none', marker='o')
+        return fig, ax
+
+
+    def plot_data_from_breakpoints(self, breakpoints, ax=None, txt_vloc=-0.05, add_labels=True):
         """
         plot the data from the breakpoints including the senslope fits
         :param breakpoints:
         :param ax: ax to plot on if None then create the ax
+        :param txt_vloc: vertical location of the text (in ax.transAxes)
+        :param add_labels: boolean, if True add labels (slope, pval) to the plot
         :return:
         """
+        breakpoints = np.atleast_1d(breakpoints)
 
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 8))
         else:
-            fig = ax.figure()
+            fig = ax.figure
 
         data, kendal_stats = self.get_data_from_breakpoints(breakpoints)
         trans = blended_transform_factory(ax.transData, ax.transAxes)
@@ -637,14 +657,15 @@ class MultiPartKendall():
         prev_bp = 0
         for i, bp in enumerate(np.concatenate((breakpoints, [self.n]))):
             if not bp == self.n:
-                ax.axhline(self.idx_values[bp], color='k', ls=':')
+                ax.axvline(self.idx_values[bp], color='k', ls=':')
             sslope = kendal_stats.loc[f"p{i}", "sen_slope"]
             sintercept = kendal_stats.loc[f"p{i}", "sen_intercept"]
-            ax.text((prev_bp + bp) / 2, 0.9,
-                    f'expected: {self.trend_dict[self.expect_part[i]]}\n'
-                    f'got: slope: {sslope:.3e}, '
-                    f'pval:{round(kendal_stats.loc[f"p{i}", "p"], 3)}',
-                    transform=trans)
+            if add_labels:
+                ax.text((prev_bp + bp) / 2, txt_vloc,
+                        f'expected: {self.trend_dict[self.expect_part[i]]}\n'
+                        f'got: slope: {sslope:.3e}, '
+                        f'pval:{round(kendal_stats.loc[f"p{i}", "p"], 3)}',
+                        transform=trans, ha='center', va='top')
 
             # plot the senslope fit and intercept
             x = self.idx_values[prev_bp:bp]
@@ -658,13 +679,14 @@ class MultiPartKendall():
                 if isinstance(self.data, pd.DataFrame):
                     ax.scatter(ds.index, ds[self.data_col], c=c, label=f'part {i}')
                 else:
-                    ax.scatter(ds.index, ds, c=c, label=f'part {i}')
+                    ax.scatter(ds.index, ds, color=c, label=f'part {i}')
         else:
             seasons = np.unique(self.season_data)
             colors = get_colors(seasons)
             for i, ds in enumerate(data):
                 for s, c in zip(seasons, colors):
-                    ax.scatter(ds.index, ds[self.data_col], c=c, label=f'season: {s}')
+                    temp = ds[ds[self.season_col] == s]
+                    ax.scatter(temp.index, temp[self.data_col], color=c, label=f'season: {s}')
 
         legend_handles = [Line2D([0], [0], color='k', ls=':'),
                           Line2D([0], [0], color='k', ls='--')]
@@ -879,9 +901,17 @@ class MultiPartKendall():
                                                      columns=[f'split_point_{i}' for i in range(1, self.nparts)]
                                                              + ['trend', 'h', 'p', 'z', 's', 'var_s'])
 
-    def _to_file(self):
-        assert self.serialise_path is not None, 'serialise path not set, should not get here'
-        with pd.HDFStore(self.serialise_path, 'w') as hdf:
+    def to_file(self, save_path=None):
+        """
+        save the data to a hdf file
+
+        :param save_path: None (save to self.serialise_path) or path to save the file
+        :return:
+        """
+        if save_path is None:
+            assert self.serialise_path is not None, 'serialise path not set, should not get here'
+            save_path = self.serialise_path
+        with pd.HDFStore(save_path, 'w') as hdf:
             # setup single value parameters
             params = pd.Series()
 
@@ -994,6 +1024,7 @@ class SeasonalMultiPartKendall(MultiPartKendall):
         :param initalize: if True will initalize the class from the data, only set to False used in self.from_file
         :return:
         """
+        self.trend_dict = {1: 'increasing', -1: 'decreasing', 0: 'no trend'}
 
         if not initalize:
             assert all([e is None for e in
