@@ -10,11 +10,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from copy import deepcopy
-
-from non_parametric.non_parametric_stats import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old, \
-    _seasonal_mann_kendall_from_sarray, _old_smk, MannKendall, SeasonalKendall, MultiPartKendall, \
-    SeasonalMultiPartKendall, _calc_seasonal_senslope, get_colors, _generate_startpoints
-
+from non_parametric.multi_part_kendall import MultiPartKendall, SeasonalMultiPartKendall
+from non_parametric.mann_kendall import _mann_kendall_from_sarray, _make_s_array, _mann_kendall_old, \
+    _seasonal_mann_kendall_from_sarray, _old_smk, MannKendall, SeasonalKendall, \
+    _calc_seasonal_senslope, get_colors, _generate_startpoints
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 def _quick_test_s():
     np.random.seed(54)
@@ -73,7 +74,7 @@ def make_seasonal_data(slope, noise, unsort, na_data):
     x, y = make_increasing_decreasing_data(slope=slope, noise=noise)
     assert len(x) % 4 == 0
     # add/reduce data in each season (create bias + +- noise)
-    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    seasons = np.repeat(np.array([[1, 2, 3, 4]]), len(x) // 4, axis=0).flatten()
     y[seasons == 1] += 0 * noise / 2
     y[seasons == 2] += 2 * noise / 2
     y[seasons == 3] += 0 * noise / 2
@@ -369,7 +370,7 @@ def make_seasonal_multipart_parabolic(slope, noise, unsort, na_data):
     x, y = make_multipart_parabolic_data(slope=slope, noise=noise, unsort=False, na_data=False)
     assert len(x) % 4 == 0
     # add/reduce data in each season (create bias + +- noise)
-    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    seasons = np.repeat(np.array([[1, 2, 3, 4]]), len(x) // 4, axis=0).flatten()
     y[seasons == 1] += 0 + noise / 4
     y[seasons == 2] += 2 + noise / 4
     y[seasons == 3] += 0 + noise / 4
@@ -397,7 +398,7 @@ def make_seasonal_multipart_sharp_change(slope, noise, unsort, na_data):
     x, y = make_multipart_sharp_change_data(slope=slope, noise=noise, unsort=False, na_data=False)
     assert len(x) % 4 == 0
     # add/reduce data in each season (create bias + +- noise)
-    seasons = np.repeat([[1, 2, 3, 4]], len(x) // 4, axis=0).flatten()
+    seasons = np.repeat(np.array([[1, 2, 3, 4]]), len(x) // 4, axis=0).flatten()
     y[seasons == 1] += 0 + noise / 4
     y[seasons == 2] += 2 + noise / 4
     y[seasons == 3] += 0 + noise / 4
@@ -520,9 +521,7 @@ def test_multipart_plotting(show=False):
                           nparts=2, expect_part=(1, -1), min_size=10,
                           serialise_path=None, recalc=False, initalize=True)
 
-    acceptble = mk.get_acceptable_matches()
     fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
-    data, kstats = mk.get_data_from_breakpoints(50)
     fig, ax = mk.plot_data_from_breakpoints(50, ax=axs[0])
     mk.plot_data_from_breakpoints(25, ax=axs[1], txt_vloc=0.01)
     fig.tight_layout()
@@ -536,7 +535,6 @@ def test_multipart_plotting(show=False):
                                serialise_path=None, recalc=False, initalize=True)
     # plot
     fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
-    data, kstats = mk_para.get_data_from_breakpoints([40, 60])
     fig, ax = mk_para.plot_data_from_breakpoints([40, 60], ax=axs[0])
     mk_para.plot_data_from_breakpoints([50, 60], ax=axs[1], txt_vloc=+0.1)
     fig.tight_layout()
@@ -639,9 +637,7 @@ def test_seasonal_multipart_plotting(show=False):
                                   nparts=2, expect_part=(1, -1), min_size=10,
                                   serialise_path=None, recalc=False, initalize=True)
 
-    acceptble = mk.get_acceptable_matches()
     fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
-    data, kstats = mk.get_data_from_breakpoints(50)
     fig, ax = mk.plot_data_from_breakpoints(50, ax=axs[0])
     mk.plot_data_from_breakpoints(25, ax=axs[1], txt_vloc=0.01)
     fig.tight_layout()
@@ -655,7 +651,6 @@ def test_seasonal_multipart_plotting(show=False):
                                        serialise_path=None, recalc=False, initalize=True)
     # plot
     fig, axs = plt.subplots(nrows=2, figsize=(10, 10))
-    data, kstats = mk_para.get_data_from_breakpoints([40, 60])
     fig, ax = mk_para.plot_data_from_breakpoints([40, 60], ax=axs[0])
     mk_para.plot_data_from_breakpoints([50, 60], ax=axs[1], txt_vloc=+0.1)
     fig.tight_layout()
@@ -776,13 +771,85 @@ def test_multipart_kendall(show=False, print_total=False):
         assert mk_sort == mk_unsort
 
 
-def test_seasonal_multipart_kendall(show=False):  # todo start here
+def test_seasonal_multipart_kendall(show=False, print_total=False):
+    write_test_data = False
+    make_functions = [
+        make_seasonal_multipart_sharp_change,
+        make_seasonal_multipart_parabolic,
+    ]
+    make_names = [
+        'sharp',
+        'para',
+    ]
+    iter_datas = [
+        [
+            multipart_sharp_slopes,
+            [multipart_sharp_noises[1], multipart_sharp_noises[-1]],
+            [True],
+            [True],
+        ],
+        [
+            multipart_parabolic_slopes,
+            [multipart_parabolic_noises[1], multipart_parabolic_noises[-1]],
+            [False],
+            [False],
+        ],
+    ]
 
-    # todo I can pull from the test data for the non seasonal tests
-    # todo I don't need to test na and sort for these as that code is from MultiPartKendall
-    # only the stats are different
+    npart_data = [
+        (2, (1, -1), [50]),
+        (3, (1, 0, -1), [40, 60]),
+    ]
+    total = 0
+    for mfunc, mname, iterdata, (npart, epart, bpoints) in zip(make_functions, make_names, iter_datas, npart_data):
+        for slope, noise, unsort, na_data in itertools.product(*iterdata):
+            total += 1
+            if print_total:
+                continue
+            title = f'mk_{mname}, {npart=}\n'
+            title += f'{slope=}, {noise=}, {unsort=}, {na_data=}\n'
+            print(title)
+            data = mfunc(slope=slope, noise=noise, unsort=unsort, na_data=na_data)
+            if slope != 0:
+                use_epart = [e * np.sign(slope) for e in epart]
+            else:
+                use_epart = epart
+            mk = SeasonalMultiPartKendall(data, nparts=npart,
+                                          expect_part=use_epart,
+                                          min_size=10,
+                                          alpha=0.05, no_trend_alpha=0.5,
+                                          data_col='y', season_col='seasons', rm_na=True,
+                                          serialise_path=None)
+            title += f'breakpoint: {mk.idx_values[bpoints]}'
+            fname = f'smk_{mname}_' + '_'.join([str(i) for i in [
+                slope, noise, unsort, na_data]]).replace('.', '_').replace('-', '_')
+            fname += f'_npart{npart}.hdf'
+            accept = mk.get_acceptable_matches().astype(float)
+            bpoint_data, kstats = mk.get_data_from_breakpoints(bpoints)
+            hdf_path = Path(__file__).parent.joinpath('test_data', fname)
+            if write_test_data:
+                mk.to_file(hdf_path)
+                accept.to_hdf(hdf_path, 'accept_data', complevel=9, complib='blosc:lz4')
+                for i, df in enumerate(bpoint_data):
+                    df.to_hdf(hdf_path, f'bp_data_{i}', complevel=9, complib='blosc:lz4')
+                fig, ax = mk.plot_data_from_breakpoints(breakpoints=bpoints)
+                ax.set_title(title)
+                if show:
+                    plt.show()
+                plt.close('all')
+            else:
+                mk1 = SeasonalMultiPartKendall.from_file(hdf_path)
+                accept1 = pd.read_hdf(hdf_path, 'accept_data')
+                bpoint_data1 = []
+                for i in range(npart):
+                    bpoint_data1.append(pd.read_hdf(hdf_path, f'bp_data_{i}'))
+                assert isinstance(accept1, pd.DataFrame)
+                assert mk == mk1
+                pd.testing.assert_frame_equal(accept, accept1)
+                for i in range(npart):
+                    pd.testing.assert_frame_equal(pd.DataFrame(bpoint_data[i]), pd.DataFrame(bpoint_data1[i]))
 
-    raise NotImplementedError
+    print(f'total tests: {total}')
 
 
 def test_get_best_data():
@@ -792,12 +859,11 @@ def test_get_best_data():
     # todo just read the data in via .from_file
     raise NotImplementedError
 
+
 # todo check issues...
-# todo consider making this a git submodule
+# todo consider making this a git submodule, nope host as it's own pip package and install it that way
 if __name__ == '__main__':
     # working test
-    test_seasonal_multipart_kendall(True)
-
 
     # data plots
     plot_seasonal_multipart_sharp(show=False)
@@ -820,3 +886,4 @@ if __name__ == '__main__':
     test_generate_startpoints()
     test_multipart_serialisation()
     test_seasonal_multipart_serialisation()
+    test_seasonal_multipart_kendall(show=False, print_total=False)
