@@ -4,12 +4,10 @@ on: 17/07/23
 """
 import itertools
 import time
-
-import numpy as np
 import pandas as pd
-
-from change_detection_v2 import *
-
+import numpy as np
+from pathlib import Path
+from gw_detect_power import DetectionPowerCalculator
 
 def test_unitary_epfm(plot=False):
     example = DetectionPowerCalculator()

@@ -15,10 +15,8 @@ per_reductions = (np.array([5, 10, 15, 20, 25, 30, 40, 50, 75]) / 100).round(2)
 
 # lag options
 pf_mrts = [1, 3, 5, 7, 10, 12, 15]
-epfm_mrts = [1, 2, 5, 7, 10, 15, 20, 30, 40, 50, 75, 100]
-epfm_fracs = [0.1, 0.25, 0.5, 0.75, 0.9]
 
-lookup_dir = Path(__file__).parent.joinpath('lookup_tables')
+lookup_dir = Path(__file__).parents[2].joinpath('lookup_tables')
 lookup_dir.mkdir(exist_ok=True)
 
 base_vars = [implementation_times, per_reductions, sampling_times, nsamps_per_year, n_noises, start_concs, ]

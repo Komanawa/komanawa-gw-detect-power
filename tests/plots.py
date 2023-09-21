@@ -3,7 +3,7 @@ created matt_dumont
 on: 14/08/23
 """
 
-from detection_code.exponential_piston_flow import *
+from gw_detect_power.exponential_piston_flow import *
 from pathlib import Path
 
 

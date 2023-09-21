@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import logging
-from exponential_piston_flow import binary_exp_piston_flow_cdf, get_source_initial_conc_bepm
+from gw_detect_power.exponential_piston_flow import binary_exp_piston_flow_cdf, get_source_initial_conc_bepm
 import multiprocessing
 import os
 import psutil
