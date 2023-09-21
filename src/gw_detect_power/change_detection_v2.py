@@ -24,24 +24,13 @@ class DetectionPowerCalculator:
         'pass_true_conc',
     )
     implemented_significance_modes = (
-        'linear-regression',  # todo from zero, from true max
-        # todo mann kendall # todo from zero, from true max
-        # todo 2+ section mann kendall # todo implement how, iterativly scale mann kendall.
-        # todo pettit test 1+ change points
-        # todo second derivative test 1+ change points
-        # todo 'auto' (choose based the true input data)... might be tricky
-        # todo worth also creating a change detector class that can run these tests on real data
-        # for more info see: Groundwater quality trend and trend reversal assessment in the European Water Framework Directive context: an example with nitrates in Italy
-    )   # https://www.tandfonline.com/doi/full/10.1080/02626667.2015.1008482#:~:text=The%20Pettitt%20test%20is%20a,of%20the%20variable%20of%20interest.
-
-    # https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-022-01714-6
-    # change detector system would be:
-    #   1 identify change points (with signifance), pettit, 2 section mann kendall, iterative linear regression
-    #   2 if change points are detected,  calc slope for each section (sen slope, linear regression) and signifigance of slope (mann kendall/LR)
-    #   3 detection power for acceptable slope change.  option 1 increasing, option2 decreasing, option 3 flattening.
-    #     for instance accept change detection of slope goes from postive to negative, or postive to flat, or flat to negative, or postive to flat to negative.
-    # for trend detection it woudl need to pass change point determination significance, slope significance, and/or correct or acceptable direction.
-    # also specify minium period.
+        'linear-regression',
+        'linear-regression-from-max',  # todo implement
+        'mann-kendall',  # todo implement
+        'mann-kendall-from-max',  # todo implement
+        '2-section-mann-kendall',  # todo implement
+        'pettit-test',  # todo implement
+    )
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, ncores=None,
                  log_level=logging.INFO):
