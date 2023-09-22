@@ -16,6 +16,17 @@ import psutil
 import sys
 import warnings
 
+
+# todo dadb the following
+def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
+    log = file if hasattr(file, 'write') else sys.stderr
+    traceback.print_stack(file=log)
+    log.write(warnings.formatwarning(message, category, filename, lineno, line))
+
+
+warnings.showwarning = warn_with_traceback
+# todo DADB above here
+
 # handle import of optional dependencies
 age_tools_imported = True
 pyhomogeneity_imported = True
@@ -113,6 +124,7 @@ class DetectionPowerCalculator:
                                  'mann-kendall-from-max']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
 
+        self._power_from_max = False
         if significance_mode == 'linear-regression':
             self.power_test = self._power_test_lr
         elif significance_mode == 'linear-regression-from-max':
@@ -454,7 +466,8 @@ class DetectionPowerCalculator:
             max_conc_time = None
             mrt_p2 = None
             if self.expect_slope == 'auto':
-                power, expect_slope = self.power_test(true_conc_ts, expected_slope=None, imax=np.argmax(true_conc_ts),
+                power, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
+                                                      expected_slope=None, imax=np.argmax(true_conc_ts),
                                                       return_slope=True)
             else:
                 expect_slope = self.expect_slope
@@ -508,7 +521,7 @@ class DetectionPowerCalculator:
 
         return out
 
-    def _power_test_lr(self, y, expected_slope, imax, return_slope=False):  # todo test (both from max)
+    def _power_test_lr(self, y, expected_slope, imax, return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
@@ -539,14 +552,14 @@ class DetectionPowerCalculator:
             sign_corr = np.sign(slopes) == np.sign(expected_slope)
             p_list = p_list & sign_corr
         power = p_list.sum() / n_sims * 100
-        slope_out = np.sign(slopes[p_list].median())
 
         if return_slope:
+            slope_out = np.sign(np.nanmedian(slopes[p_list]))
             return power, slope_out
         return power
 
     def _power_test_mann_kendall(self, y, expected_slope, imax,
-                                 return_slope=False):  # todo test (both from start and from max)
+                                 return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
@@ -577,7 +590,7 @@ class DetectionPowerCalculator:
             sign_corr = np.sign(slopes) == np.sign(expected_slope)
             p_list = p_list & sign_corr
         power = p_list.sum() / n_sims * 100
-        slope_out = np.sign(slopes[p_list].median())
+        slope_out = np.sign(np.nanmedian(slopes[p_list]))
 
         if return_slope:
             return power, slope_out

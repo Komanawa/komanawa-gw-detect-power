@@ -372,6 +372,20 @@ def test_bpefm(plot=False):
     assert np.allclose(total_source_conc, true_total_source_conc)
     assert np.allclose(out_conc, out_conc2)
 
+def test_linear_from_max_vs_from_start(): # todo
+    raise NotImplementedError
+
+def test_mann_kendall_power(): # todo
+    raise NotImplementedError
+
+def test_mann_kendall_power_max_v_start(): # todo
+    raise NotImplementedError
+
+def test_multpart_mann_kendall_power(): # todo
+    raise NotImplementedError
+
+def test_pettitt_power(): # todo
+    raise NotImplementedError
 
 def make_test_power_calc_runs(plot=False):
     runs = []
