@@ -72,8 +72,10 @@ class DetectionPowerCalculator:
     implemented_significance_modes = (
         'linear-regression',
         'linear-regression-from-max',
+        'linear-regression-from-min',
         'mann-kendall',
         'mann-kendall-from-max',
+        'mann-kendall-from-min',
         'n-section-mann-kendall',
         'pettitt-test',
     )
@@ -86,17 +88,18 @@ class DetectionPowerCalculator:
         :param significance_mode: significance mode to use, options:
                  * linear-regression: linear regression of the concentration data from time 0 to the end
                                       change detected if p < min_p_value
-                 * linear-regression-from-max: linear regression of the concentration data from the
+                 * linear-regression-from-[max|min]: linear regression of the concentration data from the
                                                maximum concentration of the noise free concentration data to the end
                                                change detected if p < min_p_value
                  * mann-kendall: mann-kendall test of the concentration data from time 0 to the end,
                                  change detected if p < min_p_value
-                 * mann-kendall-from-max: mann-kendall test of the concentration data from the maximum of the noise
-                                          free concentration data to the end, change detected if p < min_p_value
+                 * mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum
+                                              of the noisefree concentration data to the end,
+                                              change detected if p < min_p_value
                  * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are 
                                            detected then a change is detected
                  * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
-                                detected # todo I don't yet understand this test                                                                    
+                                detected # todo write after playing with the test
         :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, 
                       power= number of detected changes/1000 noise simulations) 
         :param min_p_value: minimum p value to consider a change detected 
@@ -107,7 +110,7 @@ class DetectionPowerCalculator:
                                  concentration data before noise is added
                               * n-section-mann-kendall: expected trend in each part of the time series
                                  (1 increasing, -1 decreasing, 0 no trend)
-                              * pettitt-test: # todo
+                              * pettitt-test: not used.
         :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
         :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
                                 other tests)
@@ -120,15 +123,19 @@ class DetectionPowerCalculator:
                                                                           f'implemented, must be one of '
                                                                           f'{self.implemented_significance_modes}')
 
-        if significance_mode in ['linear-regression', 'linear-regression-from-max', 'mann-kendall',
-                                 'mann-kendall-from-max']:
+        if significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min',
+                                 'mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
 
         self._power_from_max = False
+        self._power_from_min = False
         if significance_mode == 'linear-regression':
             self.power_test = self._power_test_lr
         elif significance_mode == 'linear-regression-from-max':
             self._power_from_max = True
+            self.power_test = self._power_test_lr
+        elif significance_mode == 'linear-regression-from-min':
+            self._power_from_min = True
             self.power_test = self._power_test_lr
         elif significance_mode == 'mann-kendall':
             assert kendal_imported, (
@@ -138,6 +145,13 @@ class DetectionPowerCalculator:
             self.power_test = self._power_test_mann_kendall
         elif significance_mode == 'mann-kendall-from-max':
             self._power_from_max = True
+            assert kendal_imported, (
+                'cannot run mann-kendall test, kendall_stats not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
+            self.power_test = self._power_test_mann_kendall
+        elif significance_mode == 'mann-kendall-from-min':
+            self._power_from_min = True
             assert kendal_imported, (
                 'cannot run mann-kendall test, kendall_stats not installed'
                 'to install run:\n'
@@ -161,7 +175,7 @@ class DetectionPowerCalculator:
             assert set(np.atleast_1d(expect_slope)).issubset([1, 0, -1]), (
                 f'expect_slope must be 1 -1, or 0, got:{set(np.atleast_1d(expect_slope))}')
             self.power_test = self._power_test_mp_kendall
-        elif significance_mode == 'pettitt-test':  # todo
+        elif significance_mode == 'pettitt-test':
             assert pyhomogeneity_imported, (
                 'cannot run pettitt test, pyhomogeneity not installed'
                 'to install run:\n'
@@ -468,6 +482,7 @@ class DetectionPowerCalculator:
             if self.expect_slope == 'auto':
                 power, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
                                                       expected_slope=None, imax=np.argmax(true_conc_ts),
+                                                      imin=np.argmin(true_conc_ts),
                                                       return_slope=True)
             else:
                 expect_slope = self.expect_slope
@@ -493,7 +508,8 @@ class DetectionPowerCalculator:
         # run slope test
         power = self.power_test(conc_with_noise,
                                 expected_slope=expect_slope,  # just used for sign
-                                imax=np.argmax(true_conc_ts), return_slope=False)
+                                imax=np.argmax(true_conc_ts), imin=np.argmin(true_conc_ts),
+                                return_slope=False)
 
         out = pd.Series({'idv': idv,
                          'power': power,
@@ -521,19 +537,22 @@ class DetectionPowerCalculator:
 
         return out
 
-    def _power_test_lr(self, y, expected_slope, imax, return_slope=False):
+    def _power_test_lr(self, y, expected_slope, imax, imin, return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
         :param y: np.array of shape (nsims, n_samples)
         :param expected_slope: used to determine sign of slope predicted is same as expected
         :param imax: index of the maximum concentration
+        :param imin: index of the minimum concentration
         :param return_slope: return the slope of the concentration data used to calculate expect slope
         :return:
         """
         n_samples0 = y.shape[1]
         if self._power_from_max:
             y = y[:, imax:]
+        if self._power_from_min:
+            y = y[:, imin:]
         n_sims, n_samples = y.shape
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
                                                'raised here that means that the max concentration is too far along'
@@ -558,7 +577,7 @@ class DetectionPowerCalculator:
             return power, slope_out
         return power
 
-    def _power_test_mann_kendall(self, y, expected_slope, imax,
+    def _power_test_mann_kendall(self, y, expected_slope, imax, imin,
                                  return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
@@ -566,12 +585,15 @@ class DetectionPowerCalculator:
         :param y: np.array of shape (nsims, n_samples)
         :param expected_slope: used to determine sign of slope predicted is same as expected
         :param imax: index of the maximum concentration
+        :param imin: index of the minimum concentration
         :param return_slope: return the slope of the concentration data used to calculate expect slope
         :return:
         """
         n_samples0 = y.shape[1]
         if self._power_from_max:
             y = y[:, imax:]
+        if self._power_from_min:
+            y = y[:, imin:]
         n_sims, n_samples = y.shape
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
                                                'raised here that means that the max concentration is too far along'
@@ -596,12 +618,51 @@ class DetectionPowerCalculator:
             return power, slope_out
         return power
 
-    def _power_test_pettitt(self, y, expected_slope, imax, return_slope=False):  # todo implmeent
-        raise NotImplementedError
+    def _power_test_pettitt(self, y, expected_slope, imax, imin, return_slope=False):
+        """
 
-    def _power_test_mp_kendall(self, y, expected_slope, imax, return_slope=False):  # todo implement
-        raise NotImplementedError
+        :param y:data
+        :param expected_slope: not used
+        :param imax: not used
+        :param imin: not used
+        :param return_slope: not really used, dummy
+        :return:
+        """
+        n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples')
+        num_pass = 0
+        for y0 in y:
+            h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value, sim=20000) # todo play with/check speed of sim tradeoff
+            num_pass += h
+        power = num_pass / n_sims * 100
+        if return_slope:
+            return power, None
+        return power
 
+    def _power_test_mp_kendall(self, y, expected_slope, imax, imin, return_slope=False):
+        """
+        :param y: data
+        :param expected_slope: expected slope values
+        :param imax: not used
+        :param imin: not used
+        :param return_slope: dummy
+        :return:
+        """
+        n_sims, n_samples = y.shape
+        assert (
+                (n_samples >= self.min_samples)
+                and (n_samples >= self.kendall_mp_min_part_size * self.kendall_mp_nparts)
+        ), (f'{n_samples=} must be greater than min_samples={self.min_samples},'
+            f' or nparts={self.kendall_mp_nparts} * min_part_size={self.kendall_mp_min_part_size}')
+        power = []
+        for y0 in y:
+            mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
+                                    expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha)
+            power.append(not mpmk.acceptable_matches.any())
+
+        power = np.array(power)
+        power = power.sum() / n_sims * 100
         if return_slope:
             return power, None
         return power
