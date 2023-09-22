@@ -10,11 +10,46 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import logging
-from gw_detect_power.exponential_piston_flow import binary_exp_piston_flow_cdf, get_source_initial_conc_bepm
 import multiprocessing
 import os
 import psutil
 import sys
+import warnings
+
+# handle import of optional dependencies
+age_tools_imported = True
+pyhomogeneity_imported = True
+kendal_imported = True
+
+try:
+    from gw_detect_power.exponential_piston_flow import binary_exp_piston_flow_cdf, get_source_initial_conc_bepm
+except ImportError:
+    binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
+    age_tools_imported = False
+    warnings.warn(
+        'age_tools not installed, age distribution related functions will be unavailable, to install run '
+        'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools'
+    )
+
+try:
+    from pyhomogeneity import pettitt_test
+except ImportError:
+    pettitt_test = None
+    pyhomogeneity_imported = False
+    warnings.warn(
+        'pyhomogeneity not installed, pettitt_test will be unavailable, to install run '
+        'pip install pyhomogeneity'
+    )
+
+try:
+    from kendall_stats import MannKendall, MultiPartKendall
+except ImportError:
+    MannKendall, MultiPartKendall = None, None
+    kendal_imported = False
+    warnings.warn(
+        'kendall_stats not installed, mann_kendall will be unavailable, to install run '
+        'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git'
+    )
 
 
 class DetectionPowerCalculator:
@@ -25,31 +60,106 @@ class DetectionPowerCalculator:
     )
     implemented_significance_modes = (
         'linear-regression',
-        'linear-regression-from-max',  # todo implement
-        'mann-kendall',  # todo implement
-        'mann-kendall-from-max',  # todo implement
-        '2-section-mann-kendall',  # todo implement
-        'pettit-test',  # todo implement
+        'linear-regression-from-max',
+        'mann-kendall',
+        'mann-kendall-from-max',
+        'n-section-mann-kendall',
+        'pettitt-test',
     )
 
-    def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, ncores=None,
-                 log_level=logging.INFO):
+    def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
+                 expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50,
+                 ncores=None, log_level=logging.INFO):
         """
         
+        :param significance_mode: significance mode to use, options:
+                 * linear-regression: linear regression of the concentration data from time 0 to the end
+                                      change detected if p < min_p_value
+                 * linear-regression-from-max: linear regression of the concentration data from the
+                                               maximum concentration of the noise free concentration data to the end
+                                               change detected if p < min_p_value
+                 * mann-kendall: mann-kendall test of the concentration data from time 0 to the end,
+                                 change detected if p < min_p_value
+                 * mann-kendall-from-max: mann-kendall test of the concentration data from the maximum of the noise
+                                          free concentration data to the end, change detected if p < min_p_value
+                 * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are 
+                                           detected then a change is detected
+                 * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
+                                detected # todo I don't yet understand this test                                                                    
         :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, 
                       power= number of detected changes/1000 noise simulations) 
         :param min_p_value: minimum p value to consider a change detected 
         :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
+        :param expect_slope: expected slope of the concentration data, use depends on significance mode:
+                              * linear-regression, linear-regression-from-max, mann-kendall, mann-kendall-from-max:
+                                 one of 1 (increasing), -1 (decreasing), or 'auto' will match the slope of the
+                                 concentration data before noise is added
+                              * n-section-mann-kendall: expected trend in each part of the time series
+                                 (1 increasing, -1 decreasing, 0 no trend)
+                              * pettitt-test: # todo
+        :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
+        :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
+                                other tests)
+        :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test 
+                                trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
         :param ncores: number of cores to use for multiprocessing, None will use all available cores
         :param log_level: logging level for multiprocessing subprocesses
         """
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
                                                                           f'{self.implemented_significance_modes}')
+
+        if significance_mode in ['linear-regression', 'linear-regression-from-max', 'mann-kendall',
+                                 'mann-kendall-from-max']:
+            assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
+
         if significance_mode == 'linear-regression':
             self.power_test = self._power_test_lr
+        elif significance_mode == 'linear-regression-from-max':
+            self._power_from_max = True
+            self.power_test = self._power_test_lr
+        elif significance_mode == 'mann-kendall':
+            assert kendal_imported, (
+                'cannot run mann-kendall test, kendall_stats not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
+            self.power_test = self._power_test_mann_kendall
+        elif significance_mode == 'mann-kendall-from-max':
+            self._power_from_max = True
+            assert kendal_imported, (
+                'cannot run mann-kendall test, kendall_stats not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
+            self.power_test = self._power_test_mann_kendall
+        elif significance_mode == 'n-section-mann-kendall':
+            assert kendal_imported, (
+                'cannot run mann-kendall test, kendall_stats not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
+            assert isinstance(nparts, int), 'nparts must be an integer'
+            assert nparts > 1, 'nparts must be greater than 1'
+            self.kendall_mp_nparts = nparts
+            assert isinstance(min_part_size, int), 'min_part_size must be an integer'
+            assert min_part_size > 1, 'min_part_size must be greater than 1'
+            self.kendall_mp_min_part_size = min_part_size
+            assert isinstance(no_trend_alpha, float), 'no_trend_alpha must be a float'
+            assert no_trend_alpha > 0 and no_trend_alpha < 1, 'no_trend_alpha must be between 0 and 1'
+            self.kendall_mp_no_trend_alpha = no_trend_alpha
+            assert len(np.atleast_1d(expect_slope)) == self.kendall_mp_nparts, 'expect_slope must be of length nparts'
+            assert set(np.atleast_1d(expect_slope)).issubset([1, 0, -1]), (
+                f'expect_slope must be 1 -1, or 0, got:{set(np.atleast_1d(expect_slope))}')
+            self.power_test = self._power_test_mp_kendall
+        elif significance_mode == 'pettitt-test':  # todo
+            assert pyhomogeneity_imported, (
+                'cannot run pettitt test, pyhomogeneity not installed'
+                'to install run:\n'
+                'pip install pyhomogeneity')
+            self.power_test = self._power_test_pettitt
         else:
             raise NotImplementedError(f'significance_mode {significance_mode} not implemented, shouldnt get here')
+
+        self.expect_slope = expect_slope
+
         assert isinstance(nsims, int), 'nsims must be an integer'
         self.nsims = nsims
         assert isinstance(min_samples, int), 'min_samples must be an integer'
@@ -69,9 +179,11 @@ class DetectionPowerCalculator:
                                            initial_conc, target_conc, prev_slope, max_conc, min_conc,
                                            samp_per_year, samp_years, implementation_time, past_source_data=None,
                                            return_extras=False, low_mem=False,
-                                           precision=2):  # todo this seems really slow optimise
+                                           precision=2):
         """
         create a true concentration time series using binary piston flow model for the mean residence time
+        note that this can be really slow for large runs and it may be better to create the source data first
+        and then pass it to the power calcs via pass_true_conc
         :param mrt: mean residence time years
         :param mrt_p1: mean residence time of the first pathway years
         :param frac_p1: fraction of the first pathway
@@ -308,8 +420,15 @@ class DetectionPowerCalculator:
                                                                                              prev_slope, max_conc,
                                                                                              samp_per_year, samp_years,
                                                                                              implementation_time)
-            expect_slope = (target_conc - initial_conc) / implementation_time
+            if self.expect_slope == 'auto':
+                expect_slope = (target_conc - initial_conc) / implementation_time
+            else:
+                expect_slope = self.expect_slope
         elif mrt_model == 'binary_exponential_piston_flow':
+            assert age_tools_imported, (
+                'cannot run binary_exponential_piston_flow model, age_tools not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
             assert true_conc_ts is None, 'true_conc_ts must be None for binary_exponential_piston_flow model'
             tvs = ['mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'min_conc']
             bad = []
@@ -325,7 +444,10 @@ class DetectionPowerCalculator:
                 initial_conc, target_conc, prev_slope, max_conc, min_conc,
                 samp_per_year, samp_years, implementation_time,
                 return_extras=False)
-            expect_slope = (target_conc - initial_conc) / implementation_time
+            if self.expect_slope == 'auto':
+                expect_slope = (target_conc - initial_conc) / implementation_time
+            else:
+                expect_slope = self.expect_slope
         elif mrt_model == 'pass_true_conc':
             assert true_conc_ts is not None, 'true_conc_ts must be specified for pass_true_conc model'
             none_params = [
@@ -337,7 +459,11 @@ class DetectionPowerCalculator:
             max_conc_val = np.max(true_conc_ts)
             max_conc_time = None
             mrt_p2 = None
-            expect_slope = stats.linregress(true_conc_ts.index, true_conc_ts.values).slope
+            if self.expect_slope == 'auto':
+                power, expect_slope = self.power_test(true_conc_ts, expected_slope=None, imax=np.argmax(true_conc_ts),
+                                                      return_slope=True)
+            else:
+                expect_slope = self.expect_slope
 
         else:
             raise NotImplementedError(f'mrt_model {mrt_model} not currently implemented')
@@ -360,7 +486,7 @@ class DetectionPowerCalculator:
         # run slope test
         power = self.power_test(conc_with_noise,
                                 expected_slope=expect_slope,  # just used for sign
-                                )
+                                imax=np.argmax(true_conc_ts), return_slope=False)
 
         out = pd.Series({'idv': idv,
                          'power': power,
@@ -388,23 +514,89 @@ class DetectionPowerCalculator:
 
         return out
 
-    def _power_test_lr(self, y, expected_slope):  # todo add a mann kendal test option, and a ttest option?
+    def _power_test_lr(self, y, expected_slope, imax, return_slope=False):  # todo test (both from max)
         """
-        power calculations, probability of detecting a change (slope is significant and in the correct direction)
+        power calculations, probability of detecting a change via linear regression
+        (slope is significant and in the correct direction)
         :param y: np.array of shape (nsims, n_samples)
         :param expected_slope: used to determine sign of slope predicted is same as expected
+        :param imax: index of the maximum concentration
+        :param return_slope: return the slope of the concentration data used to calculate expect slope
         :return:
         """
+        n_samples0 = y.shape[1]
+        if self._power_from_max:
+            y = y[:, imax:]
         n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
+                                               'raised here that means that the max concentration is too far along'
+                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
         x = np.arange(n_samples)
-        p_list = []
-        for y in y:
-            o2 = stats.linregress(x, y)
-            sign_corr = np.sign(o2.slope) == np.sign(expected_slope)
-            p_corr = (o2.pvalue < self.min_p_value)
-            p_list.append(p_corr & sign_corr)
-        power = sum(p_list) / n_sims * 100
+        p_val = []
+        slopes = []
+        for y0 in y:
+            o2 = stats.linregress(x, y0)
+            slopes.append(o2.slope)
+            p_val.append(o2.pvalue)
+        p_val = np.array(p_val)
+        slopes = np.array(slopes)
+        p_list = p_val < self.min_p_value
+        if expected_slope is not None:
+            sign_corr = np.sign(slopes) == np.sign(expected_slope)
+            p_list = p_list & sign_corr
+        power = p_list.sum() / n_sims * 100
+        slope_out = np.sign(slopes[p_list].median())
 
+        if return_slope:
+            return power, slope_out
+        return power
+
+    def _power_test_mann_kendall(self, y, expected_slope, imax,
+                                 return_slope=False):  # todo test (both from start and from max)
+        """
+        power calculations, probability of detecting a change via linear regression
+        (slope is significant and in the correct direction)
+        :param y: np.array of shape (nsims, n_samples)
+        :param expected_slope: used to determine sign of slope predicted is same as expected
+        :param imax: index of the maximum concentration
+        :param return_slope: return the slope of the concentration data used to calculate expect slope
+        :return:
+        """
+        n_samples0 = y.shape[1]
+        if self._power_from_max:
+            y = y[:, imax:]
+        n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
+                                               'raised here that means that the max concentration is too far along'
+                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
+
+        p_val = []
+        slopes = []
+        for y0 in y:
+            mk = MannKendall(data=y0, alpha=self.min_p_value)
+            slopes.append(mk.trend)
+            p_val.append(mk.p)
+        p_val = np.array(p_val)
+        slopes = np.array(slopes)
+        p_list = p_val < self.min_p_value
+        if expected_slope is not None:
+            sign_corr = np.sign(slopes) == np.sign(expected_slope)
+            p_list = p_list & sign_corr
+        power = p_list.sum() / n_sims * 100
+        slope_out = np.sign(slopes[p_list].median())
+
+        if return_slope:
+            return power, slope_out
+        return power
+
+    def _power_test_pettitt(self, y, expected_slope, imax, return_slope=False):  # todo implmeent
+        raise NotImplementedError
+
+    def _power_test_mp_kendall(self, y, expected_slope, imax, return_slope=False):  # todo implement
+        raise NotImplementedError
+
+        if return_slope:
+            return power, None
         return power
 
     def _power_calc_mp(self, kwargs):
@@ -551,6 +743,7 @@ class DetectionPowerCalculator:
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
         :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
         """
+
         if isinstance(outpath, str):
             outpath = Path(outpath)
         id_vals = np.atleast_1d(id_vals)
@@ -563,6 +756,11 @@ class DetectionPowerCalculator:
         assert np.in1d(mrt_model_vals, self.implemented_mrt_models).all(), (
             f'mrt_model_vals must be one of {self.implemented_mrt_models} '
             f'got {np.unique(mrt_model_vals)}')
+        if any(mrt_model_vals == 'binary_exponential_piston_flow'):
+            assert age_tools_imported, (
+                'cannot run binary_exponential_piston_flow model, age_tools not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
 
         # manage multiple size options
         error_vals = self._adjust_shape(error_vals, expect_shape, none_allowed=False, is_int=False,

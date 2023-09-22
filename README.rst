@@ -15,8 +15,8 @@ Optional Dependencies
 
 * pyhomogeneity (for the Pettitt test)
 * kendall_stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
+* gw_age_tools (for the piston flow lag)
 
-# todo make gw lag calcs it's own repo???
 
 Installation
 ==================
@@ -36,6 +36,7 @@ Install from Github
 
     pip install pyhomogeneity
     pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools
     pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_detect_power
 
 
