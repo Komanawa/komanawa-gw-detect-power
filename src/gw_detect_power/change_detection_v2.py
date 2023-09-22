@@ -22,7 +22,7 @@ pyhomogeneity_imported = True
 kendal_imported = True
 
 try:
-    from gw_detect_power.exponential_piston_flow import binary_exp_piston_flow_cdf, get_source_initial_conc_bepm
+    from gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
 except ImportError:
     binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
     age_tools_imported = False
@@ -207,19 +207,10 @@ class DetectionPowerCalculator:
         :param return_extras: return extra variables for debugging
         :return: true timeseries, max_conc, max_conc_time, frac_p2
         """
-        assert isinstance(precision, int), 'precision must be an integer'
-        age_step = 10 ** -precision
-        if frac_p1 < 1:
-            mrt_p2 = (mrt - (mrt_p1 * frac_p1)) / (1 - frac_p1)
-        elif frac_p1 == 1:
-            assert mrt_p1 == mrt, 'if frac_p1 == 1, mrt_p1 must equal mrt'
-            mrt_p2 = np.nan
-        else:
-            raise ValueError(f'frac_1 must be between 0 and 1, not {frac_p1}')
-        if mrt_p2 < 0:
-            raise ValueError(f'mrt_p2 must be greater than 0, when calculated from {mrt=}, {mrt_p1=}, and {frac_p1=}'
-                             f'got {mrt_p2=}')
+        mrt, mrt_p2 = check_age_inputs(mrt=mrt, mrt_p1=mrt_p1, mrt_p2=None, frac_p1=frac_p1,
+                                       precision=precision, f_p1=f_p1, f_p2=f_p2)
         # make cdf of age
+        age_step, ages, age_fractions = make_age_dist(mrt, mrt_p1, mrt_p2, frac_p1, precision, f_p1, f_p2, start=np.nan)
 
         ages = np.arange(0, np.nanmax([mrt_p1, mrt_p2]) * 5, age_step).round(precision)  # approximately monthly steps
         age_cdf = binary_exp_piston_flow_cdf(ages, mrt_p1, mrt_p2, frac_p1, f_p1, f_p2)
@@ -236,10 +227,13 @@ class DetectionPowerCalculator:
                 use_max_conc = initial_conc
             else:
                 # make a historical source timeseries from preivous slope, inital conc age pdf and max conc
-                source_conc_past = get_source_initial_conc_bepm(initial_conc, mrt_p1, mrt_p2, age_step, ages,
-                                                                age_fractions,
-                                                                prev_slope, max_conc, min_conc,
-                                                                make_past_conc=return_extras, precision=precision)
+                source_conc_past = predict_historical_source_conc(init_conc=initial_conc,
+                                                                  mrt=mrt, mrt_p1=mrt_p1, mrt_p2=mrt_p2,
+                                                                  frac_p1=frac_p1, f_p1=f_p1, f_p2=f_p2,
+                                                                  prev_slope=prev_slope, max_conc=max_conc,
+                                                                  min_conc=min_conc, start_age=np.nan,
+                                                                  precision=precision)
+
                 source_conc_past = source_conc_past.sort_index()
                 use_max_conc = source_conc_past.iloc[-1]
 
