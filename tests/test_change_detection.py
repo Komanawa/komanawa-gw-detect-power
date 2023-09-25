@@ -638,11 +638,97 @@ def test_mann_kendall_power(show=False):
                 raise ValueError(f'Unknown type: {type(v2)}')
 
 
-def test_multpart_mann_kendall_power():  # todo
-    raise NotImplementedError
+def test_multpart_mann_kendall_power(show=False):
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_mp_kendall_from_max_vs_from_start.hdf')
+    write_test_data = False
+    from kendall_stats import MultiPartKendall
+
+    dp_3part = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall',
+        expect_slope=[1, 0, -1], nparts=3, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=True, return_noisy_conc_itters=3)
+    dp_2part = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall',
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=True, return_noisy_conc_itters=3)
+
+    # test with piston flow and binary exponential piston flow lags...
+    all_outdata = {}
+    for error in [0, 2, 5]:
+        fig, axs = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True, figsize=(10, 10))
+        for i, dp_name in enumerate(['dp_3part', 'dp_2part']):
+            use_dp = eval(dp_name)
+            temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
+            all_outdata[f'{dp_name}_{error}'] = temp_out
+            axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o',
+                           label='true_conc')
+            for n, c in enumerate(['r', 'b', 'orange']):
+                t = temp_out['noisy_conc']
+                mpmk = MultiPartKendall(data=t.iloc[:, n], nparts=use_dp.kendall_mp_nparts,
+                                    expect_part=use_dp.expect_slope, min_size=use_dp.kendall_mp_min_part_size,
+                                    alpha=use_dp.min_p_value, no_trend_alpha=use_dp.kendall_mp_no_trend_alpha)
+                bp = mpmk.get_maxz_breakpoints()
+                if bp is not None:
+                    fig, ax0 = mpmk.plot_data_from_breakpoints(bp[0])
+                ax0.set_title(f'Noisy Conc {dp_name} {n}, power:{temp_out["power"]["power"]}, error:{error}')
+                axs[i, 1].scatter(t.index, t.iloc[:, n], marker='o', label=f'noisy_conc_{n}', color=c)
+
+            axs[i, 0].set_title(f'True Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 0].legend()
+            axs[i, 1].set_title(f'Noisy Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 1].legend()
+        fig.suptitle(f'Error: {error}')
+        fig.tight_layout()
+    if show:
+        plt.show()
+
+    if write_test_data:
+        save_path.unlink(missing_ok=True)
+        for k, v in all_outdata.items():
+            for k2, v2 in v.items():
+                use_k = f'{k}_{k2}'
+                v2.to_hdf(save_path, use_k)
+
+    # test data
+    for k, v in all_outdata.items():
+        for k2, v2 in v.items():
+            use_k = f'{k}_{k2}'
+            true_data = pd.read_hdf(save_path, use_k)
+            if isinstance(v2, pd.DataFrame):
+                assert isinstance(true_data, pd.DataFrame)
+                pd.testing.assert_frame_equal(v2, true_data)
+            elif isinstance(v2, pd.Series):
+                assert isinstance(true_data, pd.Series)
+                pd.testing.assert_series_equal(v2, true_data)
+            else:
+                raise ValueError(f'Unknown type: {type(v2)}')
 
 
-def test_pettitt_power():  # todo
+
+def test_pettitt_power(show=False):  # todo
+    from pyhomogeneity import pettitt_test
+    from kendall_stats import make_example_data
+    for noise in [0,2,5]:
+        # increasing
+        x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=noise,
+                                                                      na_data=False, unsort=False)
+
+        x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=noise,
+                                                                      na_data=False, unsort=False)
+        idx = np.arange(0, len(x_inc), 5)
+        x_inc = x_inc[idx]
+        y_inc = y_inc[idx]
+        x_dec = x_dec[idx]
+        y_dec = y_dec[idx]
+
+
+
+        # todo test pettitt test
+        h, cp, p, U, mu = pettitt_test(y0, alpha=0.05,
+                                       sim=20000)
+
     raise NotImplementedError
 
 
@@ -810,6 +896,7 @@ def test_power_calc_and_mp():
 
 if __name__ == '__main__':
     plot_flag = True  # todo flip when done
+    test_pettitt_power(show=plot_flag)
     raise NotImplementedError
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
@@ -819,6 +906,7 @@ if __name__ == '__main__':
     test_return_true_noisy_conc(show=plot_flag)
     test_linear_from_max_vs_from_start(show=plot_flag)
     test_mann_kendall_power(show=plot_flag)
+    test_multpart_mann_kendall_power(show=plot_flag)
     print('passed all unique tests, now for longer tests')
     make_test_power_calc_runs(plot_flag)
     test_power_calc_and_mp()

@@ -4,6 +4,7 @@ power calcs
 created matt_dumont
 on: 18/05/23
 """
+import time
 import traceback
 from pathlib import Path
 import numpy as np
@@ -371,6 +372,29 @@ class DetectionPowerCalculator:
         frac_p2 = None  # dummy value
         return true_conc_ts, max_conc, max_conc_time, frac_p2
 
+    def time_test_power_calc_itter(self, testnitter=10, **kwargs):
+        """
+        run a test power calc iteration to check for errors
+        :param n_iter_test: number of iterations to run
+        :param kwargs: kwargs for power_calc
+        :return: None
+        """
+        t = time.time()
+        use_action = 'default'
+        for wv in warnings.filters:
+            if str(wv[2]) == str(UserWarning):
+                use_action = wv[0]
+                break
+
+        warnings.filterwarnings("ignore", category=UserWarning)
+        for i in range(testnitter):
+            self.power_calc(testnitter=testnitter, **kwargs)
+
+        warnings.filterwarnings(use_action, category=UserWarning)
+        temp = (time.time() - t) / testnitter
+        print(f'time per iteration: {temp} s. based on {testnitter} iterations\n'
+              f'with set number of iterations: {self.nsims} it will take {temp * self.nsims / 60} s to run the power calc')
+
     def power_calc(self,
                    idv,
                    error: float,
@@ -391,7 +415,8 @@ class DetectionPowerCalculator:
                    f_p2: {float, None} = None,
                    # options for the pass_true_conc_ts model
                    true_conc_ts: {np.ndarray, None} = None,
-                   seed: {int, None} = 5585
+                   seed: {int, None} = 5585,
+                   testnitter=None,
                    ):
         """
 
@@ -425,6 +450,7 @@ class DetectionPowerCalculator:
         :param true_conc_ts: the true concentration timeseries (only used for
                         pass_true_conc model)
         :param seed: int or None for random seed
+        :param testnitter: None (usually) or a different nitter then self.niter for testing run times
         :return: pd.DataFrame with the power calc results (len=1) note power is percent 0-100
                 Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
                 in which case a dictionary will be returned:
@@ -434,7 +460,8 @@ class DetectionPowerCalculator:
                     'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
                     ]
         """
-
+        if testnitter is not None:
+            warnings.warn('testnitter is expected to be None unless you are testing run times')
         assert mrt_model in self.implemented_mrt_models, f'mrt_model must be one of: {self.implemented_mrt_models}'
         if mrt_model != 'pass_true_conc':
             assert pd.api.types.is_integer(
@@ -514,8 +541,12 @@ class DetectionPowerCalculator:
             raise ValueError(f'nsamples must be greater than {self.min_samples}, you can change the '
                              f'minimum number of samples in the DetectionPowerCalculator class init')
         # tile to nsims
-        rand_shape = (self.nsims, nsamples)
-        conc_with_noise = np.tile(true_conc_ts, self.nsims).reshape(rand_shape)
+        if testnitter is not None:
+            rand_shape = (testnitter, nsamples)
+            conc_with_noise = np.tile(true_conc_ts, testnitter).reshape(rand_shape)
+        else:
+            rand_shape = (self.nsims, nsamples)
+            conc_with_noise = np.tile(true_conc_ts, self.nsims).reshape(rand_shape)
 
         # generate noise
         np.random.seed(seed)
@@ -688,7 +719,7 @@ class DetectionPowerCalculator:
             mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
                                     expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
                                     alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha)
-            power.append(not mpmk.acceptable_matches.any())
+            power.append(mpmk.acceptable_matches.any())
 
         power = np.array(power)
         power = power.sum() / n_sims * 100

@@ -169,6 +169,11 @@ truets_from_binary_exp_piston_flow
 
 # todo + plot of example
 
+time_test_power_calc_itter function
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# todo explain usage and output
+
 power_calc function
 ^^^^^^^^^^^^^^^^^^^^^^
 
