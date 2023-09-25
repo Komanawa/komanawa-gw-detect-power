@@ -3,7 +3,7 @@ Groundwater Detection Power Calculator
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
 depending on sampling duration, sampling frequency, 'true' receptor concentration and the noise in the receptor.
-there is also support for understanding statisitical power in the context of groundwater travel times (e.g. lag)
+there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).
 
 In this repo we have a couple key definitions:
@@ -30,8 +30,6 @@ These tables have been run for a no lag scenario with:
 The piston flow lag includes mean residence times of 1, 3, 5, 7, 10, 12, 15 years.
 
 To use these tables:
-
-`README.rst <README.rst>`_
 
 1. Locate and download the right table (decision tree):
     1. `if you are not interested in the effect of lag <lookup_tables/no_lag_table.xlsx>`_
@@ -103,10 +101,8 @@ The statistical power calculation is fairly straight forward.  the steps are:
 2. Generate noise based on the user passed standard deviation ('error' kwarg).  A normal distribution is used.
 3. Add the noise to the true receptor time series
 4. Assess the significance of the noisy receptor time series.
-5. If the change is statistically significant (p< minimum p value) and in the expected direction,
-then the detection power is 1.0, otherwise it is 0.0
-6. Repeat steps 2-5 for the number of iterations specified by the user ('n_iterations' kwarg) the statistical power
-is then reported as the mean of the detection power over the number of iterations (as a percentage).
+5. If the change is statistically significant (p< minimum p value) and in the expected direction, then the detection power is 1.0, otherwise it is 0.0
+6. Repeat steps 2-5 for the number of iterations specified by the user ('n_iterations' kwarg) the statistical power is then reported as the mean of the detection power over the number of iterations (as a percentage).
 
 
 Options to create the 'True' receptor time series
@@ -174,7 +170,7 @@ Detailed documentation is available in the docstrings of the functions and class
 The following is a brief overview of the package.
 
 Detection power class initialisation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 .. code-block::python
 
@@ -195,7 +191,7 @@ Detection power class initialisation
 
 
 truets_from_piston_flow function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 This function provides a simple way to generate a true receptor time series with a piston flow lag.  An example follows, for more details see the docstring. Note that there is no mixing of different aged water in this model.
 
@@ -228,7 +224,7 @@ This function provides a simple way to generate a true receptor time series with
    :align: center
 
 truets_from_binary_exp_piston_flow function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 This function provides an easy method to generate true receptor time series from a binary exponential piston flow lag model.  An example follows, for more details see the docstring and see the `gw_age_tools repo <https://github.com/Komanawa-Solutions-Ltd/gw_age_tools>`_ for more details on the binary exponential piston flow lag model.
 
@@ -273,7 +269,7 @@ This function provides an easy method to generate true receptor time series from
    :align: center
 
 power_calc function
-^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 The power calc function is the base function for the DetectionPowerCalculator class. An example follows, for more details see the docstring.
 
@@ -306,33 +302,34 @@ The power calc function is the base function for the DetectionPowerCalculator cl
 
 
 Output (pd.Series)
-idv                                              true
-power                                           100.0
-max_conc                                    11.644864
-max_conc_time                                     2.3
-error                                             0.5
-mrt_model              binary_exponential_piston_flow
-samp_years                                         10
-samp_per_year                                      10
-implementation_time                                 5
-initial_conc                                       10
-target_conc                                         5
-previous_slope                                      1
-max_conc_lim                                       25
-min_conc_lim                                        1
-mrt                                                 5
-mrt_p1                                              3
-frac_p1                                           0.7
-f_p1                                              0.7
-f_p2                                              0.7
-seed                                              558
-mrt_p2                                       9.666667
-python_error                                     None
-dtype: object
+
+>>> idv                                              true
+>>> power                                           100.0
+>>> max_conc                                    11.644864
+>>> max_conc_time                                     2.3
+>>> error                                             0.5
+>>> mrt_model              binary_exponential_piston_flow
+>>> samp_years                                         10
+>>> samp_per_year                                      10
+>>> implementation_time                                 5
+>>> initial_conc                                       10
+>>> target_conc                                         5
+>>> previous_slope                                      1
+>>> max_conc_lim                                       25
+>>> min_conc_lim                                        1
+>>> mrt                                                 5
+>>> mrt_p1                                              3
+>>> frac_p1                                           0.7
+>>> f_p1                                              0.7
+>>> f_p2                                              0.7
+>>> seed                                              558
+>>> mrt_p2                                       9.666667
+>>> python_error                                     None
+>>> dtype: object
 
 
 plot_iteration function
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 We have provided a simple function to plot a single iteration of the power calculation.  This function is called DetectionPowerCalculator.plot_iteration it is based on the power_calc function, but only runs a single iteration. The run is for a single threaded process only.  An example follows.  Example plots are available in the example plots section below.
 
@@ -349,14 +346,14 @@ We have provided a simple function to plot a single iteration of the power calcu
 
 
 time_test_power_calc_itter function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 Depending on the methodology used power calculations can take a significant amount of time. Therefore we have provided
 a function to quickly estimate the time a given power calculation will take.  This function is called DetectionPowerCalculator,time_test_power_calc_itter it is based on the power_calc function, but only runs a user specified number of iterations (instead of DetectionPowerCalculator.nsims, default=10). The run is for a single threaded process only.
 
 usage is as follows:
 
-.. code-block::python
+.. code-block:: python
 
     from gw_detect_power import DetectionPowerCalculator
 
@@ -389,11 +386,14 @@ usage is as follows:
                true_conc_ts=None,
                seed=558
     )
-    # output looks like:  >>> time per iteration: 0.15203397274017333 s. based on 10 iterations
-    #                     >>> with set number of iterations: 1000 it will take 2.5338995456695557 s to run the power calc
+
+output:
+
+>>> "time per iteration: 0.15203397274017333 s. based on 10 iterations"
+>>> "with set number of iterations: 1000 it will take 2.5338995456695557 s to run the power calc"
 
 mulitprocess_power_calcs
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------------------------
 
 As specified before detection power calculations can take a significant amount of time, particularly if the user is using a more computationally intensive methodology (e.g. the Pettitt test or multipoint mann kendall tests).  Therefore we have provided a function to run multiple power calculations in parallel.  This function is called DetectionPowerCalculator.mulitprocess_power_calcs it is based on the power_calc function, but runs multiple power calculations in parallel. An example of its use is shown below:
 
@@ -452,10 +452,15 @@ Note that the outputs include a 'python_error' column which contains the traceba
 Example plots for each significance mode
 ===========================================
 
+Linear Regression from first point to last point
+-----------------------------------------------------
+
 .. figure:: figures/linear-regression_iteration.png
    :height: 500 px
    :align: center
 
+Linear Regression from [max|min] point to last point
+-----------------------------------------------------
 
 .. figure:: figures/linear-regression-from-min_iteration.png
    :height: 500 px
@@ -467,10 +472,16 @@ Example plots for each significance mode
    :align: center
 
 
+Mann-Kendall test from first point to last point
+-----------------------------------------------------
+
 .. figure:: figures/mann-kendall_iteration.png
    :height: 500 px
    :align: center
 
+
+Mann-Kendall test from [max|min] point to last point
+-----------------------------------------------------
 
 .. figure:: figures/mann-kendall-from-min_iteration.png
    :height: 500 px
@@ -481,11 +492,15 @@ Example plots for each significance mode
    :height: 500 px
    :align: center
 
+MultiPart Mann Kendall test
+-----------------------------------------------------
 
 .. figure:: figures/n-section-mann-kendall_iteration.png
    :height: 500 px
    :align: center
 
+Pettitt test
+-----------------------------------------------------
 
 .. figure:: figures/pettitt-test_iteration.png
    :height: 500 px
