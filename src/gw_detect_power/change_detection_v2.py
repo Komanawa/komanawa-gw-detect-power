@@ -82,7 +82,7 @@ class DetectionPowerCalculator:
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
                  expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50,
-                 ncores=None, log_level=logging.INFO):
+                 ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0):
         """
         
         :param significance_mode: significance mode to use, options:
@@ -118,6 +118,12 @@ class DetectionPowerCalculator:
                                 trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
         :param ncores: number of cores to use for multiprocessing, None will use all available cores
         :param log_level: logging level for multiprocessing subprocesses
+        :param return_true_conc: return the true concentration time series for each simulation with power calcs
+                                 (not supported with multiprocessing power calcs)
+        :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
+                                         if 0 then no noisy simulations are returned, not supported with multiprocessing
+                                            power calcs
+
         """
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
@@ -126,6 +132,12 @@ class DetectionPowerCalculator:
         if significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min',
                                  'mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
+
+        assert isinstance(return_true_conc, bool), 'return_true_conc must be a boolean'
+        self.return_true_conc = return_true_conc
+        assert isinstance(return_noisy_conc_itters, int), 'return_noisy_conc_itters must be an integer'
+        assert return_noisy_conc_itters <= nsims, 'return_noisy_conc_itters must be <= nsims'
+        self.return_noisy_conc_itters = return_noisy_conc_itters
 
         self._power_from_max = False
         self._power_from_min = False
@@ -414,6 +426,13 @@ class DetectionPowerCalculator:
                         pass_true_conc model)
         :param seed: int or None for random seed
         :return: pd.DataFrame with the power calc results (len=1) note power is percent 0-100
+                Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
+                in which case a dictionary will be returned:
+                    [
+                    'power': power_df, # always
+                    'true_conc': true_conc_ts, if self.return_true_conc is True
+                    'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
+                    ]
         """
 
         assert mrt_model in self.implemented_mrt_models, f'mrt_model must be one of: {self.implemented_mrt_models}'
@@ -534,8 +553,17 @@ class DetectionPowerCalculator:
                          'mrt_p2': mrt_p2,
                          'python_error': None
                          })
+        out_data = {}
+        out_data['power'] = out
+        if self.return_true_conc:
+            out_data['true_conc'] = pd.DataFrame(data=true_conc_ts, columns=['true_conc'])
 
-        return out
+        if self.return_noisy_conc_itters > 0:
+            out_data['noisy_conc'] = pd.DataFrame(data=conc_with_noise[:self.return_noisy_conc_itters].T,
+                                                  columns=np.arange(self.return_noisy_conc_itters))
+        if len(out_data) == 1:
+            out_data = out_data['power']
+        return out_data
 
     def _power_test_lr(self, y, expected_slope, imax, imin, return_slope=False):
         """
@@ -632,7 +660,8 @@ class DetectionPowerCalculator:
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples')
         num_pass = 0
         for y0 in y:
-            h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value, sim=20000) # todo play with/check speed of sim tradeoff
+            h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
+                                           sim=20000)  # todo play with/check speed of sim tradeoff
             num_pass += h
         power = num_pass / n_sims * 100
         if return_slope:
@@ -675,6 +704,8 @@ class DetectionPowerCalculator:
         """
         try:
             out = self.power_calc(**kwargs)
+            if self.return_true_conc or self.return_noisy_conc_itters > 0:
+                out = out['power']
         except Exception:
             # capture kwargs to make debugging easier
             out = {
@@ -811,6 +842,9 @@ class DetectionPowerCalculator:
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
         :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
         """
+        if self.return_true_conc or self.return_noisy_conc_itters > 0:
+            warnings.warn('return_true_conc and return_noisy_conc_itters are not supported for mulitprocess_power_calcs'
+                          'only power results will be returned')
 
         if isinstance(outpath, str):
             outpath = Path(outpath)

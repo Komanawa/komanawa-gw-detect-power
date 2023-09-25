@@ -4,10 +4,13 @@ on: 17/07/23
 """
 import itertools
 import time
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from gw_detect_power import DetectionPowerCalculator
+
 
 def test_unitary_epfm(plot=False):
     example = DetectionPowerCalculator()
@@ -372,22 +375,190 @@ def test_bpefm(plot=False):
     assert np.allclose(total_source_conc, true_total_source_conc)
     assert np.allclose(out_conc, out_conc2)
 
-def test_linear_from_max_vs_from_start(): # todo
+
+def make_power_calc_kwargs(error_val, samp_years=20):
+    out = dict(idv='true',
+               error=error_val,
+               mrt_model='binary_exponential_piston_flow',
+               samp_years=samp_years,
+               samp_per_year=10,
+               implementation_time=5,
+               initial_conc=10,
+               target_conc=5,
+               prev_slope=1,
+               max_conc=25,
+               min_conc=1,
+               mrt=5,
+               #
+               mrt_p1=3,
+               frac_p1=0.7,
+               f_p1=0.7,
+               f_p2=0.7,
+               #
+               true_conc_ts=None,
+               seed=558)
+    return out
+
+
+def test_return_true_noisy_conc(show=False):
+    write_test_data = False
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_return_true_noisy_conc.hdf')
+    both_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
+                                       return_noisy_conc_itters=3)
+    true_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
+                                       return_noisy_conc_itters=0)
+    noise_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=False,
+                                        return_noisy_conc_itters=3)
+    all_out = {}
+    fig_true, axs_true = plt.subplots(nrows=3, sharex=True, sharey=True, figsize=(10, 10))
+    fig_noise, axs_noise = plt.subplots(nrows=3, sharex=True, sharey=True, figsize=(10, 10))
+    for i, dp_name in enumerate(['both_dp', 'true_dp', 'noise_dp']):
+        dp = eval(dp_name)
+        error_val = 1.5
+        output = dp.power_calc(**make_power_calc_kwargs(error_val))
+        all_out[dp_name] = output
+        if 'noisy_conc' in output:
+            temp = output['noisy_conc']
+            for n, c in enumerate(['r', 'b', 'orange']):
+                axs_noise[i].scatter(temp.index, temp.iloc[:, i], marker='o', label=f'noisy_conc_{n}', color=c)
+                axs_noise[i].set_title(f'Noisy Conc {dp_name}')
+                axs_noise[i].legend()
+        if 'true_conc' in output:
+            temp = output['true_conc']
+            axs_true[i].plot(temp.index, temp, marker='o', label='true_conc')
+            axs_true[i].set_title(f'True Conc {dp_name}')
+            axs_true[i].legend()
+    fig_true.tight_layout()
+    fig_noise.tight_layout()
+    if show:
+        plt.show()
+
+    # save and check_data
+    for k in ['true_dp', 'noise_dp']:
+        temp = all_out[k]
+        pd.testing.assert_series_equal(temp['power'], all_out['both_dp']['power'])
+        if 'noisy_conc' in temp:
+            pd.testing.assert_frame_equal(temp['noisy_conc'], all_out['both_dp']['noisy_conc'])
+        if 'true_conc' in temp:
+            pd.testing.assert_frame_equal(temp['true_conc'], all_out['both_dp']['true_conc'])
+    if write_test_data:
+        save_path.unlink(missing_ok=True)
+        for k, v in all_out['both_dp'].items():
+            v.to_hdf(save_path, k)
+    else:
+        for k, v in all_out['both_dp'].items():
+            if isinstance(v, pd.DataFrame):
+                true = pd.read_hdf(save_path, k)
+                assert isinstance(true, pd.DataFrame)
+                pd.testing.assert_frame_equal(v, true)
+            elif isinstance(v, pd.Series):
+                true = pd.read_hdf(save_path, k)
+                assert isinstance(true, pd.Series)
+                pd.testing.assert_series_equal(v, true)
+
+
+def test_linear_from_max_vs_from_start(show=False):
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_linear_from_max_vs_from_start.hdf')
+    write_test_data = False
+    from kendall_stats import make_example_data
+    # increasing
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+
+    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    idx = np.arange(0, len(x_inc), 5)
+    x_inc = x_inc[idx]
+    y_inc = y_inc[idx]
+    x_dec = x_dec[idx]
+    y_dec = y_dec[idx]
+
+    fig, ax = plt.subplots()
+    ax.plot(x_inc, y_inc, marker='o', label='increasing')
+    ax.plot(x_dec, y_dec, marker='o', label='decreasing')
+    ax.set_title('True Conc for increasing and decreasing slopes test')
+    ax.legend()
+
+    norm_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
+                                       return_noisy_conc_itters=3)
+    max_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-max', return_true_conc=True,
+                                      return_noisy_conc_itters=3)
+    min_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-min', return_true_conc=True,
+                                      return_noisy_conc_itters=3)
+    error_val = 0.5
+    norm_inc_power = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+    norm_dec_power = norm_dp.power_calc(idv='norm_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+    max_inc_power = max_dp.power_calc(idv='max_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+    min_dec_power = min_dp.power_calc(idv='min_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+
+    assert norm_inc_power['power']['power'] == 0
+    assert norm_dec_power['power']['power'] == 0
+    assert max_inc_power['power']['power'] == 100
+    assert min_dec_power['power']['power'] == 100
+    pass
+
+    # test with piston flow and binary exponential piston flow lags...
+    all_outdata = {}
+    for error in [0, 2, 5]:
+        fig, axs = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True, figsize=(10, 10))
+        for i, dp_name in enumerate(['norm_dp', 'max_dp']):
+            use_dp = eval(dp_name)
+            temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
+            all_outdata[f'{dp_name}_{error}'] = temp_out
+            axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o', label='true_conc')
+            for n, c in enumerate(['r','b','orange']):
+                t = temp_out['noisy_conc']
+                axs[i, 1].scatter(t.index, t.iloc[:, n], marker='o', label=f'noisy_conc_{n}', color=c)
+
+            axs[i, 0].set_title(f'True Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 0].legend()
+            axs[i, 1].set_title(f'Noisy Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 1].legend()
+        fig.suptitle(f'Error: {error}')
+        fig.tight_layout()
+    if show:
+        plt.show()
+
+    if write_test_data:
+        save_path.unlink(missing_ok=True)
+        for k, v in all_outdata.items():
+            for k2, v2 in v.items():
+                use_k = f'{k}_{k2}'
+                v2.to_hdf(save_path, use_k)
+
+    # test data
+    for k,v in all_outdata.items():
+            for k2, v2 in v.items():
+                use_k = f'{k}_{k2}'
+                true_data = pd.read_hdf(save_path, use_k)
+                if isinstance(v2, pd.DataFrame):
+                    assert isinstance(true_data, pd.DataFrame)
+                    pd.testing.assert_frame_equal(v2, true_data)
+                elif isinstance(v2, pd.Series):
+                    assert isinstance(true_data, pd.Series)
+                    pd.testing.assert_series_equal(v2, true_data)
+                else:
+                    raise ValueError(f'Unknown type: {type(v2)}')
+
+
+def test_mann_kendall_power():  # todo
+    raise NotImplementedError
+
+
+def test_mann_kendall_power_max_v_start():  # todo
     # todo max/min
     raise NotImplementedError
 
-def test_mann_kendall_power(): # todo
+
+def test_multpart_mann_kendall_power():  # todo
     raise NotImplementedError
 
-def test_mann_kendall_power_max_v_start(): # todo
-    # todo max/min
+
+def test_pettitt_power():  # todo
     raise NotImplementedError
 
-def test_multpart_mann_kendall_power(): # todo
-    raise NotImplementedError
-
-def test_pettitt_power(): # todo
-    raise NotImplementedError
 
 def make_test_power_calc_runs(plot=False):
     runs = []
@@ -551,15 +722,17 @@ def test_power_calc_and_mp():
         assert False, f'columns {bad_cols} do not match, data saved to {save_path}'
 
 
-
 if __name__ == '__main__':
-    plot_flag = False
+    plot_flag = True # todo flip when done
+    raise NotImplementedError
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
     test_unitary_epfm(plot=plot_flag)
     test_bepfm_slope(plot=plot_flag)
     test_bpefm(plot=plot_flag)
     print('passed all unique tests, now for longer tests')
+    test_return_true_noisy_conc(show=plot_flag)
     make_test_power_calc_runs(plot_flag)
+    test_linear_from_max_vs_from_start(show=plot_flag)
     test_power_calc_and_mp()
     print('passed all tests')
