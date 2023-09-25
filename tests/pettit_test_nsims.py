@@ -37,4 +37,4 @@ if __name__ == '__main__':
         ax.boxplot([outdata[c] for c in outdata.columns], labels=outdata.columns)
         ax.set_title(f'noise: {noise}')
     fig.tight_layout()
-    fig.savefig(Path(__file__).parents[1].joinpath('figures', 'pettitt_test.png'))
+    fig.savefig(Path(__file__).parents[1].joinpath('figures', 'pettitt_test_nitter.png'))

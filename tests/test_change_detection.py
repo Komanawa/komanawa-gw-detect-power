@@ -4,7 +4,7 @@ on: 17/07/23
 """
 import itertools
 import time
-
+from copy import deepcopy
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -12,7 +12,13 @@ from pathlib import Path
 from gw_detect_power import DetectionPowerCalculator
 
 
+def print_myself():
+    import traceback
+    print( traceback.extract_stack(None, 2)[0][2])
+
 def test_unitary_epfm(plot=False):
+    print_myself()
+
     example = DetectionPowerCalculator()
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
@@ -67,6 +73,7 @@ def test_unitary_epfm(plot=False):
         ax2.legend()
         fig.tight_layout()
         plt.show()
+        plt.close('all')
     out_conc = pd.Series(index=out_years, data=out_conc)
     age_fractions = pd.Series(index=ages, data=age_fractions)
     test_data_path = Path(__file__).parent.joinpath('test_data', 'test_unitary_epfm.hdf')
@@ -89,6 +96,7 @@ def test_unitary_epfm(plot=False):
 
 
 def test_unitary_epfm_slope(plot=False):
+    print_myself()
     example = DetectionPowerCalculator()
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
@@ -144,6 +152,7 @@ def test_unitary_epfm_slope(plot=False):
         ax2.legend()
         fig.tight_layout()
         plt.show()
+        plt.close('all')
     out_conc = pd.Series(index=out_years, data=out_conc)
     age_fractions = pd.Series(index=ages, data=age_fractions)
     test_data_path = Path(__file__).parent.joinpath('test_data', 'test_unitary_epfm_slope.hdf')
@@ -166,6 +175,7 @@ def test_unitary_epfm_slope(plot=False):
 
 
 def test_piston_flow(plot=False):
+    print_myself()
     example = DetectionPowerCalculator()
     true_conc_ts, max_conc, max_conc_time, frac_p2 = example.truets_from_piston_flow(mrt=10, initial_conc=5,
                                                                                      target_conc=2.5,
@@ -223,6 +233,7 @@ def test_piston_flow(plot=False):
 
 
 def test_bepfm_slope(plot=False):
+    print_myself()
     example = DetectionPowerCalculator()
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
@@ -278,6 +289,7 @@ def test_bepfm_slope(plot=False):
         ax2.legend()
         fig.tight_layout()
         plt.show()
+        plt.close('all')
     out_conc = pd.Series(index=out_years, data=out_conc)
     age_fractions = pd.Series(index=ages, data=age_fractions)
     test_data_path = Path(__file__).parent.joinpath('test_data', 'test_bepfm_slope.hdf')
@@ -300,6 +312,7 @@ def test_bepfm_slope(plot=False):
 
 
 def test_bpefm(plot=False):
+    print_myself()
     example = DetectionPowerCalculator()
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
@@ -355,6 +368,7 @@ def test_bpefm(plot=False):
         ax2.legend()
         fig.tight_layout()
         plt.show()
+        plt.close('all')
     out_conc = pd.Series(index=out_years, data=out_conc)
     age_fractions = pd.Series(index=ages, data=age_fractions)
     test_data_path = Path(__file__).parent.joinpath('test_data', 'test_bpefm.hdf')
@@ -377,6 +391,7 @@ def test_bpefm(plot=False):
 
 
 def make_power_calc_kwargs(error_val, samp_years=20):
+    print_myself()
     out = dict(idv='true',
                error=error_val,
                mrt_model='binary_exponential_piston_flow',
@@ -401,6 +416,7 @@ def make_power_calc_kwargs(error_val, samp_years=20):
 
 
 def test_return_true_noisy_conc(show=False):
+    print_myself()
     write_test_data = False
     save_path = Path(__file__).parent.joinpath('test_data', 'test_return_true_noisy_conc.hdf')
     both_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
@@ -432,6 +448,7 @@ def test_return_true_noisy_conc(show=False):
     fig_noise.tight_layout()
     if show:
         plt.show()
+    plt.close('all')
 
     # save and check_data
     for k in ['true_dp', 'noise_dp']:
@@ -458,6 +475,7 @@ def test_return_true_noisy_conc(show=False):
 
 
 def test_linear_from_max_vs_from_start(show=False):
+    print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_linear_from_max_vs_from_start.hdf')
     write_test_data = False
     from kendall_stats import make_example_data
@@ -521,6 +539,7 @@ def test_linear_from_max_vs_from_start(show=False):
         fig.tight_layout()
     if show:
         plt.show()
+    plt.close('all')
 
     if write_test_data:
         save_path.unlink(missing_ok=True)
@@ -545,6 +564,7 @@ def test_linear_from_max_vs_from_start(show=False):
 
 
 def test_mann_kendall_power(show=False):
+    print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_kendall_from_max_vs_from_start.hdf')
     write_test_data = False
     from kendall_stats import make_example_data, MannKendall
@@ -615,6 +635,7 @@ def test_mann_kendall_power(show=False):
         fig.tight_layout()
     if show:
         plt.show()
+    plt.close('all')
 
     if write_test_data:
         save_path.unlink(missing_ok=True)
@@ -639,6 +660,7 @@ def test_mann_kendall_power(show=False):
 
 
 def test_multpart_mann_kendall_power(show=False):
+    print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_mp_kendall_from_max_vs_from_start.hdf')
     write_test_data = False
     from kendall_stats import MultiPartKendall
@@ -665,8 +687,8 @@ def test_multpart_mann_kendall_power(show=False):
             for n, c in enumerate(['r', 'b', 'orange']):
                 t = temp_out['noisy_conc']
                 mpmk = MultiPartKendall(data=t.iloc[:, n], nparts=use_dp.kendall_mp_nparts,
-                                    expect_part=use_dp.expect_slope, min_size=use_dp.kendall_mp_min_part_size,
-                                    alpha=use_dp.min_p_value, no_trend_alpha=use_dp.kendall_mp_no_trend_alpha)
+                                        expect_part=use_dp.expect_slope, min_size=use_dp.kendall_mp_min_part_size,
+                                        alpha=use_dp.min_p_value, no_trend_alpha=use_dp.kendall_mp_no_trend_alpha)
                 bp = mpmk.get_maxz_breakpoints()
                 if bp is not None:
                     fig, ax0 = mpmk.plot_data_from_breakpoints(bp[0])
@@ -681,6 +703,7 @@ def test_multpart_mann_kendall_power(show=False):
         fig.tight_layout()
     if show:
         plt.show()
+    plt.close('all')
 
     if write_test_data:
         save_path.unlink(missing_ok=True)
@@ -704,35 +727,112 @@ def test_multpart_mann_kendall_power(show=False):
                 raise ValueError(f'Unknown type: {type(v2)}')
 
 
-
-def test_pettitt_power(show=False):  # todo
+def test_pettitt_power(show=False):
+    print_myself()
     from pyhomogeneity import pettitt_test
     from kendall_stats import make_example_data
-    for noise in [0,2,5]:
+    power_data = []
+    pd = DetectionPowerCalculator(significance_mode='pettitt-test', nsims_pettit=2000, nsims=500)
+    noises = [0, 0.25, 1, 2]
+    fig, axs = plt.subplots(nrows=4, ncols=2, figsize=(10, 10))
+    for noise, ax in zip(noises, axs[:, 0]):
+        print(f'pettitt Noise: {noise}, v change')
         # increasing
         x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
-                                                                      noise=noise,
-                                                                      na_data=False, unsort=False)
+                                                                          noise=noise,
+                                                                          na_data=False, unsort=False)
 
-        x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
-                                                                      noise=noise,
-                                                                      na_data=False, unsort=False)
-        idx = np.arange(0, len(x_inc), 5)
+        idx = np.arange(0, len(x_inc), 3)
         x_inc = x_inc[idx]
         y_inc = y_inc[idx]
-        x_dec = x_dec[idx]
-        y_dec = y_dec[idx]
 
+        y0_org = deepcopy(y_inc)
+        h, cp, p, U, mu = pettitt_test(y_inc, alpha=0.05,
+                                       sim=20000)
+        output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        power = output['power']
+        power_data.append(power)
+        assert np.allclose(y_inc, y0_org)
+        ax.scatter(x_inc, y_inc, marker='o', label='raw_data')
+        if len(np.atleast_1d(cp)) > 1:
+            raise ValueError('More than one change point found')
+        ax.axvline(x=x_inc[cp], color='r', label='change_point')
+        ax.set_title(f'Pettitt Test, noise: {noise}, pval: {round(p, 2)}\n{power=}')
+        ax.legend()
 
-
-        # todo test pettitt test
+    true_conc = np.zeros((25)) + 10
+    true_conc[12:] = 8
+    for noise, ax in zip(noises, axs[:, 1]):
+        print(f'pettitt Noise: {noise}, instaneous change')
+        y0 = true_conc + np.random.normal(0, noise, size=true_conc.shape)
         h, cp, p, U, mu = pettitt_test(y0, alpha=0.05,
                                        sim=20000)
+        output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=true_conc, mrt_model='pass_true_conc')
+        power = output['power']
+        power_data.append(power)
+        ax.scatter(np.arange(len(y0)), y0, marker='o', label='raw_data')
+        if len(np.atleast_1d(cp)) > 1:
+            raise ValueError('More than one change point found')
+        ax.axvline(x=cp, color='r', label='change_point')
+        ax.set_title(f'Pettitt Test, noise: {noise}, pval: {round(p, 2)}\n{power=}')
+        ax.legend()
+    fig.tight_layout()
+    fig.savefig(Path.home().joinpath('Downloads', 'pettitt_test_nitter.png'))
 
-    raise NotImplementedError
+    assert np.allclose(np.array(power_data), np.array([100.0, 93.8, 39.8, 17.4, 100.0, 100.0, 98.8, 58.0]))
+    if show:
+        plt.show()
+    plt.close('all')
+
+
+def test_iteration_plotting(show=False):
+    print_myself()
+    from kendall_stats import make_example_data
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+
+    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    idx = np.arange(0, len(x_inc), 2)
+    y_inc = y_inc[idx]
+    y_dec = y_dec[idx]
+    linear = y_dec[len(y_dec) // 2:]
+    pettitt = np.zeros((25)) + 10
+    pettitt[12:] = 8
+
+    implemented_significance_modes_data = {
+        'linear-regression': linear,
+        'linear-regression-from-max': y_inc,
+        'linear-regression-from-min': y_dec,
+        'mann-kendall': linear,
+        'mann-kendall-from-max': y_inc,
+        'mann-kendall-from-min': y_dec,
+        'n-section-mann-kendall': y_inc,
+        'pettitt-test': pettitt,
+    }
+
+    for mode, data in implemented_significance_modes_data.items():
+
+        if mode == 'n-section-mann-kendall':
+            expect_slope = [1, -1]
+        else:
+            expect_slope = 'auto'
+        dp = DetectionPowerCalculator(significance_mode=mode, expect_slope=expect_slope, nsims=100,
+                                      nparts=2, return_true_conc=True,
+                                      return_noisy_conc_itters=1)
+        output = dp.power_calc(idv=mode, error=0.5, true_conc_ts=data, mrt_model='pass_true_conc')
+        fig, ax = dp.plot_iteration(output['noisy_conc'].iloc[:, 0], output['true_conc'])
+        ax.set_title(f'{mode} power: {output["power"]["power"]}')
+        fig.tight_layout()
+    if show:
+        plt.show()
+    plt.close('all')
 
 
 def make_test_power_calc_runs(plot=False):
+    print_myself()
     runs = []
     errors = [0.5, 1.5, 2, 4]
     samp_per_yr = [4, 12, 52]
@@ -803,6 +903,7 @@ def make_test_power_calc_runs(plot=False):
         ax.set_ylabel('Concentration')
         ax.set_xlabel('Years')
         plt.show()
+        plt.close('all')
     true_tss = [data, data2]
 
     for i, (e, tts) in enumerate(itertools.product(errors, true_tss)):
@@ -821,6 +922,7 @@ def make_test_power_calc_runs(plot=False):
 
 
 def test_power_calc_and_mp():
+    print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_power_calc_and_mp.hdf')
     write_test_data = False
     ex = DetectionPowerCalculator()
@@ -895,9 +997,7 @@ def test_power_calc_and_mp():
 
 
 if __name__ == '__main__':
-    plot_flag = True  # todo flip when done
-    test_pettitt_power(show=plot_flag)
-    raise NotImplementedError
+    plot_flag = False
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
     test_unitary_epfm(plot=plot_flag)
@@ -907,6 +1007,8 @@ if __name__ == '__main__':
     test_linear_from_max_vs_from_start(show=plot_flag)
     test_mann_kendall_power(show=plot_flag)
     test_multpart_mann_kendall_power(show=plot_flag)
+    test_pettitt_power(show=plot_flag)
+    test_iteration_plotting(show=plot_flag)
     print('passed all unique tests, now for longer tests')
     make_test_power_calc_runs(plot_flag)
     test_power_calc_and_mp()

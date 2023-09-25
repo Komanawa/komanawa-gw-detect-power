@@ -17,17 +17,6 @@ import psutil
 import sys
 import warnings
 
-
-# todo dadb the following
-def warn_with_traceback(message, category, filename, lineno, file=None, line=None):
-    log = file if hasattr(file, 'write') else sys.stderr
-    traceback.print_stack(file=log)
-    log.write(warnings.formatwarning(message, category, filename, lineno, line))
-
-
-warnings.showwarning = warn_with_traceback
-# todo DADB above here
-
 # handle import of optional dependencies
 age_tools_imported = True
 pyhomogeneity_imported = True
@@ -100,7 +89,7 @@ class DetectionPowerCalculator:
                  * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are 
                                            detected then a change is detected
                  * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
-                                detected # todo write after playing with the test
+                                detected
         :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, 
                       power= number of detected changes/1000 noise simulations) 
         :param min_p_value: minimum p value to consider a change detected 
@@ -215,6 +204,60 @@ class DetectionPowerCalculator:
         assert log_level in [logging.CRITICAL, logging.FATAL, logging.ERROR, logging.WARNING, logging.WARN,
                              logging.INFO, logging.DEBUG], f'unknown log_level {log_level}'
         self.log_level = log_level
+        self.significance_mode = significance_mode
+
+    def plot_iteration(self, y0, true_conc):
+        """
+        plot the concentration data itteration and the true concentration data
+        if provided as well as the power test results
+        and any predictions from the power test (e.g. the slope of the line used)
+        :param y0: noisy concentration data
+        :param true_conc: true concentration data
+        :return:
+        """
+        istart = 0
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots(figsize=(10, 10))
+        ax.scatter(np.arange(len(y0)), y0, c='k', label=f'noisy data')
+        ax.plot(np.arange(len(true_conc)), true_conc, c='r', label=f'True data', marker='.')
+        if self.significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min']:
+            if self._power_from_max:
+                istart = np.argmax(true_conc)
+            elif self._power_from_min:
+                istart = np.argmin(true_conc)
+            o2 = stats.linregress(np.arange(len(y0))[istart:], y0[istart:])
+            ax.plot(np.arange(len(y0))[istart:], o2.intercept + o2.slope * np.arange(len(y0))[istart:], c='b',
+                    ls='--', label='regression, p={:.3f}'.format(o2.pvalue))
+
+        elif self.significance_mode in ['mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
+            if self._power_from_max:
+                istart = np.argmax(true_conc)
+            elif self._power_from_min:
+                istart = np.argmin(true_conc)
+            mk = MannKendall(data=y0[istart:], alpha=self.min_p_value)
+            mk.plot_data(ax=ax)
+
+        elif self.significance_mode == 'n-section-mann-kendall':
+            mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
+                                    expect_part=self.expect_slope, min_size=self.kendall_mp_min_part_size,
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha)
+            bp = mpmk.get_maxz_breakpoints(raise_on_none=False)
+            if bp is None:
+                warnings.warn('no breakpoints found, not plotting multipart mann kendall')
+            else:
+                mpmk.plot_data_from_breakpoints(bp, ax=ax)
+        elif self.significance_mode == 'pettitt-test':
+            h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
+                                           sim=self.nsims_pettitt)
+            p = round(p, 3)
+            ax.axvline(x=cp, color='r', label=f'change_point, {p=}')
+        else:
+            raise ValueError(f'unknown significance_mode {self.significance_mode}, should not get here')
+
+        if istart > 0:
+            ax.axvline(istart, c='k', ls=':', label='start of power test')
+        ax.legend()
+        return fig, ax
 
     @staticmethod
     def truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2,
@@ -378,7 +421,7 @@ class DetectionPowerCalculator:
     def time_test_power_calc_itter(self, testnitter=10, **kwargs):
         """
         run a test power calc iteration to check for errors
-        :param n_iter_test: number of iterations to run
+        :param testnitter: number of iterations to run
         :param kwargs: kwargs for power_calc
         :return: None
         """
@@ -482,6 +525,9 @@ class DetectionPowerCalculator:
 
         # mange lag
         if mrt_model == 'piston_flow':
+            if self.significance_mode == 'pettitt-test':
+                warnings.warn('using the Pettitt test with lagged data can cause some weird results, we do'
+                              'not recommend using this combination')
 
             assert true_conc_ts is None, 'true_conc_ts must be None for piston_flow model'
             true_conc_ts, max_conc_val, max_conc_time, mrt_p2 = self.truets_from_piston_flow(mrt,
@@ -494,6 +540,9 @@ class DetectionPowerCalculator:
             else:
                 expect_slope = self.expect_slope
         elif mrt_model == 'binary_exponential_piston_flow':
+            if self.significance_mode == 'pettitt-test':
+                warnings.warn('using the Pettitt test with lagged data can cause some weird results, we do'
+                              'not recommend using this combination')
             assert age_tools_imported, (
                 'cannot run binary_exponential_piston_flow model, age_tools not installed'
                 'to install run:\n'
@@ -695,7 +744,7 @@ class DetectionPowerCalculator:
         num_pass = 0
         for y0 in y:
             h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
-                                           sim=20000)  # todo play with/check speed of sim tradeoff
+                                           sim=self.nsims_pettitt)
             num_pass += h
         power = num_pass / n_sims * 100
         if return_slope:
