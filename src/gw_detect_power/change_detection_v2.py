@@ -82,7 +82,7 @@ class DetectionPowerCalculator:
     )
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
-                 expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50,
+                 expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50, nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0):
         """
         
@@ -117,6 +117,8 @@ class DetectionPowerCalculator:
                                 other tests)
         :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test 
                                 trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
+        :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
+                             (not used for other tests)
         :param ncores: number of cores to use for multiprocessing, None will use all available cores
         :param log_level: logging level for multiprocessing subprocesses
         :param return_true_conc: return the true concentration time series for each simulation with power calcs
@@ -129,7 +131,7 @@ class DetectionPowerCalculator:
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
                                                                           f'{self.implemented_significance_modes}')
-
+        self.nsims_pettitt = nsims_pettit
         if significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min',
                                  'mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
@@ -193,6 +195,7 @@ class DetectionPowerCalculator:
                 'cannot run pettitt test, pyhomogeneity not installed'
                 'to install run:\n'
                 'pip install pyhomogeneity')
+            assert isinstance(nsims_pettit, int), 'nsims_pettit must be an integer'
             self.power_test = self._power_test_pettitt
         else:
             raise NotImplementedError(f'significance_mode {significance_mode} not implemented, shouldnt get here')

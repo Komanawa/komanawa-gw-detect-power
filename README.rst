@@ -139,6 +139,8 @@ the user is able to pass a bespoke receptor time series to the function. This is
 Options to assess the significance of the noisy receptor time series
 --------------------------------------------------------------------------
 
+These are listed in the order of increasing computational cost.
+
 * Linear regression from the first point to the last point (detection is a significant slope in the expected direction)
 * Linear regression from the [max|min] point to the last point (detection is a significant slope in the expected direction)
 * Mann-Kendall test from the first point to the last point (requires kendall_stats optional dependency) (detection is a significant slope in the expected direction)
@@ -146,14 +148,26 @@ Options to assess the significance of the noisy receptor time series
 * MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires kendall_stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See `kendall_stats <https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall#multipartkendall>`_ for more details
 * Pettitt test (requires pyhomogeneity optional dependency)  # todo more details
 
+Note that the pettit test requires an additional parameter nsims_pettit.  This is the number of simulations to run to estimate the p value.  The default is 2000, but this can be increased to improve the accuracy of the p value or decreased to reduce the computational burden. in support the run times of a single pettit test (recall it will be run self.nsims times) is shown below:
+
+* 2 pettitt simulations: 8.0e-4 seconds
+* 20 pettitt simulations: 3.0e-3 seconds
+* 200 pettitt simulations: 2.5e-2 seconds
+* 2000 pettitt simulations: 2.4e-1 seconds
+* 20000 pettitt simulations: 2.5 seconds
+
+the effect on the pvalue is shown in the figure below:
+
+.. figure:: figures/pettitt_test.png
+   :height: 500 px
+   :align: center
+
 
 Python Package Usage
 ======================
 
 Detailed documentation is available in the docstrings of the functions and classes.
 The following is a brief overview of the package.
-
-# todo
 
 Detection power class initialisation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
