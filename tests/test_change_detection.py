@@ -507,8 +507,9 @@ def test_linear_from_max_vs_from_start(show=False):
             use_dp = eval(dp_name)
             temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
             all_outdata[f'{dp_name}_{error}'] = temp_out
-            axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o', label='true_conc')
-            for n, c in enumerate(['r','b','orange']):
+            axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o',
+                           label='true_conc')
+            for n, c in enumerate(['r', 'b', 'orange']):
                 t = temp_out['noisy_conc']
                 axs[i, 1].scatter(t.index, t.iloc[:, n], marker='o', label=f'noisy_conc_{n}', color=c)
 
@@ -529,27 +530,112 @@ def test_linear_from_max_vs_from_start(show=False):
                 v2.to_hdf(save_path, use_k)
 
     # test data
-    for k,v in all_outdata.items():
+    for k, v in all_outdata.items():
+        for k2, v2 in v.items():
+            use_k = f'{k}_{k2}'
+            true_data = pd.read_hdf(save_path, use_k)
+            if isinstance(v2, pd.DataFrame):
+                assert isinstance(true_data, pd.DataFrame)
+                pd.testing.assert_frame_equal(v2, true_data)
+            elif isinstance(v2, pd.Series):
+                assert isinstance(true_data, pd.Series)
+                pd.testing.assert_series_equal(v2, true_data)
+            else:
+                raise ValueError(f'Unknown type: {type(v2)}')
+
+
+def test_mann_kendall_power(show=False):
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_kendall_from_max_vs_from_start.hdf')
+    write_test_data = False
+    from kendall_stats import make_example_data, MannKendall
+    # increasing
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+
+    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    idx = np.arange(0, len(x_inc), 5)
+    x_inc = x_inc[idx]
+    y_inc = y_inc[idx]
+    x_dec = x_dec[idx]
+    y_dec = y_dec[idx]
+
+    fig, ax = plt.subplots()
+    ax.plot(x_inc, y_inc, marker='o', label='increasing')
+    ax.plot(x_dec, y_dec, marker='o', label='decreasing')
+    ax.set_title('True Conc for increasing and decreasing slopes test')
+    ax.legend()
+
+    norm_dp = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=True,
+                                       return_noisy_conc_itters=3)
+    max_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-max', return_true_conc=True,
+                                      return_noisy_conc_itters=3)
+    min_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-min', return_true_conc=True,
+                                      return_noisy_conc_itters=3)
+    error_val = 0.5
+    norm_inc_power = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+    norm_dec_power = norm_dp.power_calc(idv='norm_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+    max_inc_power = max_dp.power_calc(idv='max_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+    min_dec_power = min_dp.power_calc(idv='min_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+
+    assert norm_inc_power['power']['power'] == 0
+    assert norm_dec_power['power']['power'] == 0
+    assert max_inc_power['power']['power'] == 100
+    assert min_dec_power['power']['power'] == 100
+    pass
+
+    # test with piston flow and binary exponential piston flow lags...
+    all_outdata = {}
+    for error in [0, 2, 5]:
+        fig, axs = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True, figsize=(10, 10))
+        for i, dp_name in enumerate(['norm_dp', 'max_dp']):
+            use_dp = eval(dp_name)
+            temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
+            all_outdata[f'{dp_name}_{error}'] = temp_out
+            axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o',
+                           label='true_conc')
+            for n, c in enumerate(['r', 'b', 'orange']):
+                t = temp_out['noisy_conc']
+                true_conc = temp_out['true_conc']['true_conc']
+                if 'max' in dp_name:
+                    mk = MannKendall(data=t.iloc[np.argmax(true_conc):, n], alpha=use_dp.min_p_value)
+                else:
+                    mk = MannKendall(data=t.iloc[:, n], alpha=use_dp.min_p_value)
+                fig, ax0 = mk.plot_data()
+                ax0.set_title(f'Noisy Conc {dp_name} {n}, power:{temp_out["power"]["power"]}')
+                axs[i, 1].scatter(t.index, t.iloc[:, n], marker='o', label=f'noisy_conc_{n}', color=c)
+
+            axs[i, 0].set_title(f'True Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 0].legend()
+            axs[i, 1].set_title(f'Noisy Conc {dp_name}, power:{temp_out["power"]["power"]}')
+            axs[i, 1].legend()
+        fig.suptitle(f'Error: {error}')
+        fig.tight_layout()
+    if show:
+        plt.show()
+
+    if write_test_data:
+        save_path.unlink(missing_ok=True)
+        for k, v in all_outdata.items():
             for k2, v2 in v.items():
                 use_k = f'{k}_{k2}'
-                true_data = pd.read_hdf(save_path, use_k)
-                if isinstance(v2, pd.DataFrame):
-                    assert isinstance(true_data, pd.DataFrame)
-                    pd.testing.assert_frame_equal(v2, true_data)
-                elif isinstance(v2, pd.Series):
-                    assert isinstance(true_data, pd.Series)
-                    pd.testing.assert_series_equal(v2, true_data)
-                else:
-                    raise ValueError(f'Unknown type: {type(v2)}')
+                v2.to_hdf(save_path, use_k)
 
-
-def test_mann_kendall_power():  # todo
-    raise NotImplementedError
-
-
-def test_mann_kendall_power_max_v_start():  # todo
-    # todo max/min
-    raise NotImplementedError
+    # test data
+    for k, v in all_outdata.items():
+        for k2, v2 in v.items():
+            use_k = f'{k}_{k2}'
+            true_data = pd.read_hdf(save_path, use_k)
+            if isinstance(v2, pd.DataFrame):
+                assert isinstance(true_data, pd.DataFrame)
+                pd.testing.assert_frame_equal(v2, true_data)
+            elif isinstance(v2, pd.Series):
+                assert isinstance(true_data, pd.Series)
+                pd.testing.assert_series_equal(v2, true_data)
+            else:
+                raise ValueError(f'Unknown type: {type(v2)}')
 
 
 def test_multpart_mann_kendall_power():  # todo
@@ -723,16 +809,17 @@ def test_power_calc_and_mp():
 
 
 if __name__ == '__main__':
-    plot_flag = True # todo flip when done
+    plot_flag = True  # todo flip when done
     raise NotImplementedError
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
     test_unitary_epfm(plot=plot_flag)
     test_bepfm_slope(plot=plot_flag)
     test_bpefm(plot=plot_flag)
-    print('passed all unique tests, now for longer tests')
     test_return_true_noisy_conc(show=plot_flag)
-    make_test_power_calc_runs(plot_flag)
     test_linear_from_max_vs_from_start(show=plot_flag)
+    test_mann_kendall_power(show=plot_flag)
+    print('passed all unique tests, now for longer tests')
+    make_test_power_calc_runs(plot_flag)
     test_power_calc_and_mp()
     print('passed all tests')
