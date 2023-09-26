@@ -72,7 +72,8 @@ class DetectionPowerCalculator:
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
                  expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50, nsims_pettit=2000,
-                 ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0):
+                 ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
+                 only_significant_noisy=False):
         """
         
         :param significance_mode: significance mode to use, options:
@@ -115,7 +116,10 @@ class DetectionPowerCalculator:
         :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
                                          if 0 then no noisy simulations are returned, not supported with multiprocessing
                                             power calcs
-
+        :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
+                                       there are fewer noisy simulations with changes detected than return_noisy_conc_itters
+                                       all significant simulations will be returned. if there are no noisy simulations
+                                       with changes detected then and empty dataframe is returned
         """
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
@@ -125,6 +129,8 @@ class DetectionPowerCalculator:
                                  'mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
 
+        assert isinstance(only_significant_noisy, bool), 'only_significant_noisy must be a boolean'
+        self.only_significant_noisy = only_significant_noisy
         assert isinstance(return_true_conc, bool), 'return_true_conc must be a boolean'
         self.return_true_conc = return_true_conc
         assert isinstance(return_noisy_conc_itters, int), 'return_noisy_conc_itters must be an integer'
@@ -578,7 +584,7 @@ class DetectionPowerCalculator:
             max_conc_time = None
             mrt_p2 = None
             if self.expect_slope == 'auto':
-                power, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
+                power, significant, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
                                                       expected_slope=None, imax=np.argmax(true_conc_ts),
                                                       imin=np.argmin(true_conc_ts),
                                                       return_slope=True)
@@ -608,7 +614,7 @@ class DetectionPowerCalculator:
         conc_with_noise += noise
 
         # run slope test
-        power = self.power_test(conc_with_noise,
+        power, significant = self.power_test(conc_with_noise,
                                 expected_slope=expect_slope,  # just used for sign
                                 imax=np.argmax(true_conc_ts), imin=np.argmin(true_conc_ts),
                                 return_slope=False)
@@ -642,8 +648,11 @@ class DetectionPowerCalculator:
             out_data['true_conc'] = pd.DataFrame(data=true_conc_ts, columns=['true_conc'])
 
         if self.return_noisy_conc_itters > 0:
-            out_data['noisy_conc'] = pd.DataFrame(data=conc_with_noise[:self.return_noisy_conc_itters].T,
-                                                  columns=np.arange(self.return_noisy_conc_itters))
+            if self.only_significant_noisy:
+                conc_with_noise = conc_with_noise[significant]
+            outn = min(self.return_noisy_conc_itters, conc_with_noise.shape[0])
+            out_data['noisy_conc'] = pd.DataFrame(data=conc_with_noise[:outn].T,
+                                                  columns=np.arange(outn))
         if len(out_data) == 1:
             out_data = out_data['power']
         return out_data
@@ -685,8 +694,8 @@ class DetectionPowerCalculator:
 
         if return_slope:
             slope_out = np.sign(np.nanmedian(slopes[p_list]))
-            return power, slope_out
-        return power
+            return power, p_list, slope_out
+        return power, p_list
 
     def _power_test_mann_kendall(self, y, expected_slope, imax, imin,
                                  return_slope=False):
@@ -726,8 +735,8 @@ class DetectionPowerCalculator:
         slope_out = np.sign(np.nanmedian(slopes[p_list]))
 
         if return_slope:
-            return power, slope_out
-        return power
+            return power, p_list, slope_out
+        return power, p_list
 
     def _power_test_pettitt(self, y, expected_slope, imax, imin, return_slope=False):
         """
@@ -742,14 +751,17 @@ class DetectionPowerCalculator:
         n_sims, n_samples = y.shape
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples')
         num_pass = 0
+        passed = []
         for y0 in y:
             h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
                                            sim=self.nsims_pettitt)
             num_pass += h
+            passed.append(h)
+        passed = np.atleast_1d(passed)
         power = num_pass / n_sims * 100
         if return_slope:
-            return power, None
-        return power
+            return power,passed,  None
+        return power, passed
 
     def _power_test_mp_kendall(self, y, expected_slope, imax, imin, return_slope=False):
         """
@@ -773,11 +785,11 @@ class DetectionPowerCalculator:
                                     alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha)
             power.append(mpmk.acceptable_matches.any())
 
-        power = np.array(power)
-        power = power.sum() / n_sims * 100
+        power_array = np.array(power)
+        power_out = power_array.sum() / n_sims * 100
         if return_slope:
-            return power, None
-        return power
+            return power_out, power_array, None
+        return power, power_array
 
     def _power_calc_mp(self, kwargs):
         """
