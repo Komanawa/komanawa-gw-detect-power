@@ -996,7 +996,7 @@ def test_power_calc_and_mp():
         assert False, f'columns {bad_cols} do not match, data saved to {save_path}'
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # todo getting errors, likley due to changes in the kendall stats package... debug.
     plot_flag = False
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
