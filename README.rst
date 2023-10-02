@@ -449,6 +449,59 @@ Note that the outputs include a 'python_error' column which contains the traceba
         # set run=False when testing the kwargs before a large run.
     )
 
+Resource Requirements
+=======================
+
+The Detection power calculator can use substantial resources depending on the number of iterations and the significance mode used. In general the significance mode efficiency is as follows:
+
+1. Linear regression based techniques
+2. Mann-Kendall based techniques
+3. MultiPart Mann-Kendal
+4. Pettitt test
+
+We have implemented an efficiency mode to decrease the computational resource requirements. The effect of the mode depends on the significance test
+
+For linear regression and Mann-Kendall techniques the efficiency mode first calculates the pvalue and sign for the true (noise free) concentration time series. If the pvalue is greater than the minimum pvalue then the power is set to 0.0 and the power calculations are not run on the noisy concentration time series.  This can significantly decrease the computational resource requirements.
+
+For the MultiPart Mann-Kendall efficiency mode both calculates the trend detection on the true time series (and then returns a power of 0 if the trend is not detected) and reduces the number of possible breakpoints that are assessed by creating a possible window to test each breakpoint. This window is defined by the maxium of either the minimum number of samples (mpmk_efficent_min) or as a fraction of the length of the full time series (mpmk_window). Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `kendall_stats repo <https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall>`_.
+
+For the Pettitt test the efficiency mode is not yet implemented.
+
+Memory Requirements
+----------------------
+For linear regression techniques the memory requirement is relatively minor
+
+For mann-kendall techniques the memory requirement is proportional to the number of samples in the time series. For all Mann-Kendall techniques the program must calculate the "s_array" which is the difference between all pairs of samples.  The s_array is a square matrix with the number of rows and columns equal to the number of samples in the time series.  Therefore the memory requirement is:
+
+* N: 4 * s_array memory
+* 50: 8e-05 gb
+* 100: 0.00032 gb
+* 500: 0.008 gb
+* 1,000: 0.032 gb
+* 5,000: 0.8 gb
+* 10,000: 3.2 gb
+* 25,000: 20.0 gb
+* 50,000: 80.0 gb
+
+We have not assessed the Pettitt test memory requirements.
+
+Example Runtimes
+----------------------
+
+The following table shows the run time for a single iteration of the power calculation for each significance mode.  Note that the resource requirements are for a single threaded process. The table of processing times was run on a single thread (11th Gen Intel(R) Core(TM) i5-11500H @ 2.90GHz with 32 GB of DDR4 RAM). the results are in seconds If you want a processing time table for a different machine run:
+
+.. code-block:: python
+
+    # todo add code to generate processing time table
+
+
+Note that this may take some time
+
+#todo list test constraints
+
+# todo add table
+
+
 Example plots for each significance mode
 ===========================================
 
