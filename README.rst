@@ -511,7 +511,7 @@ If you want a processing time table for a different machine run:
     from pathlib import Path
     from gw_detect_power.timetest import timeit_test
     data = timeit_test()
-    data.to_csv(Path.home().joinpath('Downloads', 'timeit_test_results.txt'))# todo add code to generate processing time table
+    data.to_csv(Path.home().joinpath('Downloads', 'timeit_test_results.txt'))
 
 Note that this may take some time
 
@@ -578,10 +578,6 @@ MultiPart Mann-Kendall / Pettitt test
 | 5000   | False          | 5.47E+02               | 5.88E+00     |
 +--------+----------------+------------------------+--------------+
 
-
-#todo list test constraints
-
-# todo add table
 
 
 Example plots for each significance mode
