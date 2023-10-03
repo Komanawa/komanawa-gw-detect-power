@@ -697,7 +697,6 @@ class DetectionPowerCalculator:
         return out_data
 
     def _power_test_lr(self, y, expected_slope, imax, imin, true_data, return_slope=False):
-        # todo test efficent mode vs non efficent mode
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
@@ -750,7 +749,7 @@ class DetectionPowerCalculator:
         return power, p_list
 
     def _power_test_mann_kendall(self, y, expected_slope, imax, imin, true_data,
-                                 return_slope=False):  # todo test efficent mode vs non efficent mode
+                                 return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
@@ -827,7 +826,7 @@ class DetectionPowerCalculator:
         return power, passed
 
     def _power_test_mp_kendall(self, y, expected_slope, imax, imin, true_data,
-                               return_slope=False):  # todo test efficent mode vs non efficent mode
+                               return_slope=False):
         """
         :param y: data
         :param expected_slope: expected slope values
@@ -855,13 +854,13 @@ class DetectionPowerCalculator:
 
             if len(best) > 1:
                 raise ValueError(f'multiple best breakpoints returned, cannot use efficent mode: {best}')
-            best = best[0]
+            best = np.atleast_1d(best[0])
             assert len(best) == self.kendall_mp_nparts - 1, (f'shouldnt get here '
                                                              f'best breakpoints must have'
                                                              f' length {self.kendall_mp_nparts - 1}')
             window = []
-            for part, bp in zip(range(1, self.kendall_mp_nparts), best[0]):
-                delta = max(self.mpmpk_efficent_min, int(np.ceil(self.mpmk_window * len(true_data))))
+            for part, bp in zip(range(1, self.kendall_mp_nparts), best):
+                delta = max(self.mpmpk_efficent_min//2, int(np.ceil(self.mpmk_window * len(true_data))))
                 wmin = max(0, bp - delta)
                 wmax = min(len(true_data), bp + delta)
                 window.append((wmin, wmax))
@@ -877,7 +876,7 @@ class DetectionPowerCalculator:
         power_out = power_array.sum() / n_sims * 100
         if return_slope:
             return power_out, power_array, None
-        return power, power_array
+        return power_out, power_array
 
     def _power_calc_mp(self, kwargs):
         """
