@@ -71,7 +71,9 @@ class DetectionPowerCalculator:
     )
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
-                 expect_slope='auto', nparts=None, min_part_size=10, no_trend_alpha=0.50, nsims_pettit=2000,
+                 expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.50,
+                 mpmk_check_step=1, mpmk_efficent_min=100, mpmk_window=0.05,
+                 nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
                  only_significant_noisy=False):
         """
@@ -102,11 +104,30 @@ class DetectionPowerCalculator:
                               * n-section-mann-kendall: expected trend in each part of the time series
                                  (1 increasing, -1 decreasing, 0 no trend)
                               * pettitt-test: not used.
+        :param efficent_mode: bool, default = True, if True then
+                             For linear regression and MannKendall based tests:  run the test on the noise free data
+                               to see if any change can be detected, if no change is detected then the test will not be
+                               on the noisy data
+
+                             For MultiPartMannKendall test: the test will be run on the noise free data
+                               to detect best change points and then the test will be run on the
+                               noisy data for a smaller window around the True change point
+
+                            For Pettitt Test:  Not implemented, will be ignored and a waring passed
         :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
         :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
                                 other tests)
-        :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test 
+        :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
                                 trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
+        :param mpmk_check_step: int, default = 1, number of samples to check for a change point in the
+                                MultiPartMannKendall test
+        :param mpmk_efficent_min: int, default = 100, minimum number of possible change points to assess
+                                  only used if efficent_mode = True
+        :param mpmk_window: float, default = 0.05, define the window around the true detected change point to run the
+                                   MultiPartMannKendall.  The detction window is defined as:
+                                   (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n
+                                      is the number of samples in the time series
+
         :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
                              (not used for other tests)
         :param ncores: number of cores to use for multiprocessing, None will use all available cores
@@ -128,6 +149,8 @@ class DetectionPowerCalculator:
         if significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min',
                                  'mann-kendall', 'mann-kendall-from-max', 'mann-kendall-from-min']:
             assert expect_slope in ['auto', 1, -1], 'expect_slope must be "auto", 1, or -1'
+            assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
+            self.efficent_mode = efficent_mode
 
         assert isinstance(only_significant_noisy, bool), 'only_significant_noisy must be a boolean'
         self.only_significant_noisy = only_significant_noisy
@@ -184,6 +207,17 @@ class DetectionPowerCalculator:
             assert len(np.atleast_1d(expect_slope)) == self.kendall_mp_nparts, 'expect_slope must be of length nparts'
             assert set(np.atleast_1d(expect_slope)).issubset([1, 0, -1]), (
                 f'expect_slope must be 1 -1, or 0, got:{set(np.atleast_1d(expect_slope))}')
+            assert isinstance(mpmk_check_step, int), 'mpmk_check_step must be an integer'
+            assert mpmk_check_step > 0, 'mpmk_check_step must be greater than 0'
+            self.mpmk_check_step = mpmk_check_step
+            assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
+            self.efficent_mode = efficent_mode
+            assert isinstance(mpmk_efficent_min, int), 'mpmk_efficent_min must be an integer'
+            assert mpmk_efficent_min > 0, 'mpmk_efficent_min must be greater than 0'
+            self.mpmpk_efficent_min = mpmk_efficent_min
+            assert isinstance(mpmk_window, float), 'mpmk_window must be a float'
+            assert mpmk_window > 0 and mpmk_window < 1 / nparts, f'mpmk_window must be between 0 and {1 / nparts}'
+            self.mpmk_window = mpmk_window
             self.power_test = self._power_test_mp_kendall
         elif significance_mode == 'pettitt-test':
             assert pyhomogeneity_imported, (
@@ -191,6 +225,10 @@ class DetectionPowerCalculator:
                 'to install run:\n'
                 'pip install pyhomogeneity')
             assert isinstance(nsims_pettit, int), 'nsims_pettit must be an integer'
+            assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
+            if efficent_mode:
+                warnings.warn('efficent_mode not implemented for pettitt test, setting efficent_mode=False')
+            self.efficent_mode = False  # TODO long term fix this if needed
             self.power_test = self._power_test_pettitt
         else:
             raise NotImplementedError(f'significance_mode {significance_mode} not implemented, shouldnt get here')
@@ -585,9 +623,9 @@ class DetectionPowerCalculator:
             mrt_p2 = None
             if self.expect_slope == 'auto':
                 power, significant, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
-                                                      expected_slope=None, imax=np.argmax(true_conc_ts),
-                                                      imin=np.argmin(true_conc_ts),
-                                                      return_slope=True)
+                                                                   expected_slope=None, imax=np.argmax(true_conc_ts),
+                                                                   imin=np.argmin(true_conc_ts), true_data=true_conc_ts,
+                                                                   return_slope=True)
             else:
                 expect_slope = self.expect_slope
 
@@ -615,9 +653,10 @@ class DetectionPowerCalculator:
 
         # run slope test
         power, significant = self.power_test(conc_with_noise,
-                                expected_slope=expect_slope,  # just used for sign
-                                imax=np.argmax(true_conc_ts), imin=np.argmin(true_conc_ts),
-                                return_slope=False)
+                                             expected_slope=expect_slope,  # just used for sign
+                                             imax=np.argmax(true_conc_ts), imin=np.argmin(true_conc_ts),
+                                             true_data=true_conc_ts,
+                                             return_slope=False)
 
         out = pd.Series({'idv': idv,
                          'power': power,
@@ -657,7 +696,7 @@ class DetectionPowerCalculator:
             out_data = out_data['power']
         return out_data
 
-    def _power_test_lr(self, y, expected_slope, imax, imin, return_slope=False):
+    def _power_test_lr(self, y, expected_slope, imax, imin, true_data, return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
@@ -671,8 +710,10 @@ class DetectionPowerCalculator:
         n_samples0 = y.shape[1]
         if self._power_from_max:
             y = y[:, imax:]
+            true_data = true_data[imax:]
         if self._power_from_min:
             y = y[:, imin:]
+            true_data = true_data[imin:]
         n_sims, n_samples = y.shape
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
                                                'raised here that means that the max concentration is too far along'
@@ -680,6 +721,16 @@ class DetectionPowerCalculator:
         x = np.arange(n_samples)
         p_val = []
         slopes = []
+        if self.efficent_mode and not return_slope:
+            o2 = stats.linregress(x, true_data)
+            pval_bad = o2.pvalue > self.min_p_value
+            sign_bad = False
+            if expected_slope is not None:
+                sign_bad = np.sign(o2.slope) != np.sign(expected_slope)
+
+            if pval_bad or sign_bad:  # cannot reject null hypothesis on noise free data
+                return 0., np.zeros(n_sims, dtype=bool)
+
         for y0 in y:
             o2 = stats.linregress(x, y0)
             slopes.append(o2.slope)
@@ -697,7 +748,7 @@ class DetectionPowerCalculator:
             return power, p_list, slope_out
         return power, p_list
 
-    def _power_test_mann_kendall(self, y, expected_slope, imax, imin,
+    def _power_test_mann_kendall(self, y, expected_slope, imax, imin, true_data,
                                  return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
@@ -712,12 +763,23 @@ class DetectionPowerCalculator:
         n_samples0 = y.shape[1]
         if self._power_from_max:
             y = y[:, imax:]
+            true_data = true_data[imax:]
         if self._power_from_min:
             y = y[:, imin:]
+            true_data = true_data[imin:]
         n_sims, n_samples = y.shape
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
                                                'raised here that means that the max concentration is too far along'
                                                f'the timeseries to be detected: {imax=}, {n_samples0}')
+
+        if self.efficent_mode and not return_slope:
+            mk = MannKendall(data=true_data, alpha=self.min_p_value)
+            pval_bad = mk.p > self.min_p_value
+            sign_bad = False
+            if expected_slope is not None:
+                sign_bad = np.sign(mk.trend) != np.sign(expected_slope)
+            if pval_bad or sign_bad:  # cannot reject null hypothesis on noise free data
+                return 0., np.zeros(n_sims, dtype=bool)
 
         p_val = []
         slopes = []
@@ -738,7 +800,7 @@ class DetectionPowerCalculator:
             return power, p_list, slope_out
         return power, p_list
 
-    def _power_test_pettitt(self, y, expected_slope, imax, imin, return_slope=False):
+    def _power_test_pettitt(self, y, expected_slope, imax, imin, true_data, return_slope=False):
         """
 
         :param y:data
@@ -760,10 +822,11 @@ class DetectionPowerCalculator:
         passed = np.atleast_1d(passed)
         power = num_pass / n_sims * 100
         if return_slope:
-            return power,passed,  None
+            return power, passed, None
         return power, passed
 
-    def _power_test_mp_kendall(self, y, expected_slope, imax, imin, return_slope=False):
+    def _power_test_mp_kendall(self, y, expected_slope, imax, imin, true_data,
+                               return_slope=False):
         """
         :param y: data
         :param expected_slope: expected slope values
@@ -779,17 +842,41 @@ class DetectionPowerCalculator:
         ), (f'{n_samples=} must be greater than min_samples={self.min_samples},'
             f' or nparts={self.kendall_mp_nparts} * min_part_size={self.kendall_mp_min_part_size}')
         power = []
+        window = None
+        if self.efficent_mode:
+            mpmk = MultiPartKendall(data=true_data, nparts=self.kendall_mp_nparts,
+                                    expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
+                                    check_step=self.mpmk_check_step, check_window=None)
+            best = mpmk.get_maxz_breakpoints(raise_on_none=False)
+            if best is None:  # no matches on the True data not worth running the power calc
+                return 0., np.zeros(n_sims, dtype=bool)
+
+            if len(best) > 1:
+                raise ValueError(f'multiple best breakpoints returned, cannot use efficent mode: {best}')
+            best = np.atleast_1d(best[0])
+            assert len(best) == self.kendall_mp_nparts - 1, (f'shouldnt get here '
+                                                             f'best breakpoints must have'
+                                                             f' length {self.kendall_mp_nparts - 1}')
+            window = []
+            for part, bp in zip(range(1, self.kendall_mp_nparts), best):
+                delta = max(self.mpmpk_efficent_min//2, int(np.ceil(self.mpmk_window * len(true_data))))
+                wmin = max(0, bp - delta)
+                wmax = min(len(true_data), bp + delta)
+                window.append((wmin, wmax))
+
         for y0 in y:
             mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
                                     expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
-                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha)
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
+                                    check_step=self.mpmk_check_step, check_window=window)
             power.append(mpmk.acceptable_matches.any())
 
         power_array = np.array(power)
         power_out = power_array.sum() / n_sims * 100
         if return_slope:
             return power_out, power_array, None
-        return power, power_array
+        return power_out, power_array
 
     def _power_calc_mp(self, kwargs):
         """

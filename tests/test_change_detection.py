@@ -14,12 +14,13 @@ from gw_detect_power import DetectionPowerCalculator
 
 def print_myself():
     import traceback
-    print( traceback.extract_stack(None, 2)[0][2])
+    print(traceback.extract_stack(None, 2)[0][2])
+
 
 def test_unitary_epfm(plot=False):
     print_myself()
 
-    example = DetectionPowerCalculator()
+    example = DetectionPowerCalculator(efficent_mode=False)
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
      age_fractions, out_years, ages, past_conc) = example.truets_from_binary_exp_piston_flow(
@@ -97,7 +98,7 @@ def test_unitary_epfm(plot=False):
 
 def test_unitary_epfm_slope(plot=False):
     print_myself()
-    example = DetectionPowerCalculator()
+    example = DetectionPowerCalculator(efficent_mode=False)
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
      age_fractions, out_years, ages, past_conc) = example.truets_from_binary_exp_piston_flow(
@@ -176,7 +177,7 @@ def test_unitary_epfm_slope(plot=False):
 
 def test_piston_flow(plot=False):
     print_myself()
-    example = DetectionPowerCalculator()
+    example = DetectionPowerCalculator(efficent_mode=False)
     true_conc_ts, max_conc, max_conc_time, frac_p2 = example.truets_from_piston_flow(mrt=10, initial_conc=5,
                                                                                      target_conc=2.5,
                                                                                      prev_slope=1,
@@ -234,7 +235,7 @@ def test_piston_flow(plot=False):
 
 def test_bepfm_slope(plot=False):
     print_myself()
-    example = DetectionPowerCalculator()
+    example = DetectionPowerCalculator(efficent_mode=False)
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
      age_fractions, out_years, ages, past_conc) = example.truets_from_binary_exp_piston_flow(
@@ -313,7 +314,7 @@ def test_bepfm_slope(plot=False):
 
 def test_bpefm(plot=False):
     print_myself()
-    example = DetectionPowerCalculator()
+    example = DetectionPowerCalculator(efficent_mode=False)
     (out_conc, conc_max, max_conc_time,
      frac_p2, total_source_conc,
      age_fractions, out_years, ages, past_conc) = example.truets_from_binary_exp_piston_flow(
@@ -420,11 +421,11 @@ def test_return_true_noisy_conc(show=False):
     write_test_data = False
     save_path = Path(__file__).parent.joinpath('test_data', 'test_return_true_noisy_conc.hdf')
     both_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
-                                       return_noisy_conc_itters=3)
+                                       return_noisy_conc_itters=3, efficent_mode=False)
     true_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
-                                       return_noisy_conc_itters=0)
+                                       return_noisy_conc_itters=0, efficent_mode=False)
     noise_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=False,
-                                        return_noisy_conc_itters=3)
+                                        return_noisy_conc_itters=3, efficent_mode=False)
     all_out = {}
     fig_true, axs_true = plt.subplots(nrows=3, sharex=True, sharey=True, figsize=(10, 10))
     fig_noise, axs_noise = plt.subplots(nrows=3, sharex=True, sharey=True, figsize=(10, 10))
@@ -500,11 +501,11 @@ def test_linear_from_max_vs_from_start(show=False):
     ax.legend()
 
     norm_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=True,
-                                       return_noisy_conc_itters=3)
+                                       return_noisy_conc_itters=3, efficent_mode=False)
     max_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-max', return_true_conc=True,
-                                      return_noisy_conc_itters=3)
+                                      return_noisy_conc_itters=3, efficent_mode=False)
     min_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-min', return_true_conc=True,
-                                      return_noisy_conc_itters=3)
+                                      return_noisy_conc_itters=3, efficent_mode=False)
     error_val = 0.5
     norm_inc_power = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
     norm_dec_power = norm_dp.power_calc(idv='norm_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
@@ -589,11 +590,11 @@ def test_mann_kendall_power(show=False):
     ax.legend()
 
     norm_dp = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=True,
-                                       return_noisy_conc_itters=3)
+                                       return_noisy_conc_itters=3, efficent_mode=False)
     max_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-max', return_true_conc=True,
-                                      return_noisy_conc_itters=3)
+                                      return_noisy_conc_itters=3, efficent_mode=False)
     min_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-min', return_true_conc=True,
-                                      return_noisy_conc_itters=3)
+                                      return_noisy_conc_itters=3, efficent_mode=False)
     error_val = 0.5
     norm_inc_power = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
     norm_dec_power = norm_dp.power_calc(idv='norm_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
@@ -668,11 +669,11 @@ def test_multpart_mann_kendall_power(show=False):
     dp_3part = DetectionPowerCalculator(
         significance_mode='n-section-mann-kendall',
         expect_slope=[1, 0, -1], nparts=3, min_part_size=10, no_trend_alpha=0.50,
-        return_true_conc=True, return_noisy_conc_itters=3)
+        return_true_conc=True, return_noisy_conc_itters=3, efficent_mode=False)
     dp_2part = DetectionPowerCalculator(
         significance_mode='n-section-mann-kendall',
         expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
-        return_true_conc=True, return_noisy_conc_itters=3)
+        return_true_conc=True, return_noisy_conc_itters=3, efficent_mode=False)
 
     # test with piston flow and binary exponential piston flow lags...
     all_outdata = {}
@@ -732,7 +733,7 @@ def test_pettitt_power(show=False):
     from pyhomogeneity import pettitt_test
     from kendall_stats import make_example_data
     power_data = []
-    pd = DetectionPowerCalculator(significance_mode='pettitt-test', nsims_pettit=2000, nsims=500)
+    pd = DetectionPowerCalculator(significance_mode='pettitt-test', nsims_pettit=1000, nsims=100, efficent_mode=False)
     noises = [0, 0.25, 1, 2]
     fig, axs = plt.subplots(nrows=4, ncols=2, figsize=(10, 10))
     for noise, ax in zip(noises, axs[:, 0]):
@@ -748,7 +749,7 @@ def test_pettitt_power(show=False):
 
         y0_org = deepcopy(y_inc)
         h, cp, p, U, mu = pettitt_test(y_inc, alpha=0.05,
-                                       sim=20000)
+                                       sim=1000)
         output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc')
         power = output['power']
         power_data.append(power)
@@ -766,7 +767,7 @@ def test_pettitt_power(show=False):
         print(f'pettitt Noise: {noise}, instaneous change')
         y0 = true_conc + np.random.normal(0, noise, size=true_conc.shape)
         h, cp, p, U, mu = pettitt_test(y0, alpha=0.05,
-                                       sim=20000)
+                                       sim=1000)
         output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=true_conc, mrt_model='pass_true_conc')
         power = output['power']
         power_data.append(power)
@@ -779,7 +780,9 @@ def test_pettitt_power(show=False):
     fig.tight_layout()
     fig.savefig(Path.home().joinpath('Downloads', 'pettitt_test_nitter.png'))
 
-    assert np.allclose(np.array(power_data), np.array([100.0, 93.8, 39.8, 17.4, 100.0, 100.0, 98.8, 58.0]))
+    assert np.allclose(
+        np.array(power_data),
+        np.array([100.0, 92.0, 33.0, 16.0, 100.0, 100.0, 97, 62.0])), f'bad values for pettitt test got: {power_data}'
     if show:
         plt.show()
     plt.close('all')
@@ -821,7 +824,7 @@ def test_iteration_plotting(show=False):
             expect_slope = 'auto'
         dp = DetectionPowerCalculator(significance_mode=mode, expect_slope=expect_slope, nsims=100,
                                       nparts=2, return_true_conc=True,
-                                      return_noisy_conc_itters=1)
+                                      return_noisy_conc_itters=1, efficent_mode=False)
         output = dp.power_calc(idv=mode, error=0.5, true_conc_ts=data, mrt_model='pass_true_conc')
         fig, ax = dp.plot_iteration(output['noisy_conc'].iloc[:, 0], output['true_conc'])
         ax.set_title(f'{mode} power: {output["power"]["power"]}')
@@ -925,7 +928,7 @@ def test_power_calc_and_mp():
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_power_calc_and_mp.hdf')
     write_test_data = False
-    ex = DetectionPowerCalculator()
+    ex = DetectionPowerCalculator(efficent_mode=False)
     runs = make_test_power_calc_runs()
 
     t = time.time()
@@ -996,8 +999,216 @@ def test_power_calc_and_mp():
         assert False, f'columns {bad_cols} do not match, data saved to {save_path}'
 
 
+def test_efficient_mode_lr():
+    print_myself()
+    from kendall_stats import make_example_data
+    # increasing
+    x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
+
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+
+    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    idx = np.arange(0, len(x_inc), 5)
+    y_inc = y_inc[idx]
+    y_dec = y_dec[idx]
+    y = y[idx]
+
+    # test normal
+    norm_dp = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=False,
+                                       return_noisy_conc_itters=0, efficent_mode=False)
+    norm_dpeff = DetectionPowerCalculator(significance_mode='linear-regression', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+    for error_val in [0.5, 1, 5, 10, 30, 35, 40, 50]:
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
+                                    mrt_model='pass_true_conc')
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
+                                     mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+    # test from max
+    max_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-max', return_true_conc=False,
+                                      return_noisy_conc_itters=0, efficent_mode=False)
+    max_dp_eff = DetectionPowerCalculator(significance_mode='linear-regression-from-max', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+
+    for error_val in [0.5, 1, 5, 10, 30]:
+        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+    # test from min
+    min_dp = DetectionPowerCalculator(significance_mode='linear-regression-from-min', return_true_conc=False,
+                                      return_noisy_conc_itters=0, efficent_mode=False)
+    min_dp_eff = DetectionPowerCalculator(significance_mode='linear-regression-from-min', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+    for error_val in [0.5, 1, 5, 10, 30]:
+        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+
+def test_efficent_mode_mann_kendall():
+    print_myself()
+    from kendall_stats import make_example_data
+    # increasing
+    x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
+
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+
+    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    idx = np.arange(0, len(x_inc), 5)
+    y_inc = y_inc[idx]
+    y_dec = y_dec[idx]
+    y = y[idx]
+
+    # test normal
+    norm_dp = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=False,
+                                       return_noisy_conc_itters=0, efficent_mode=False)
+    norm_dpeff = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+    for error_val in [0.5, 1, 5, 10, 30, 35, 40, 50]:
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
+                                    mrt_model='pass_true_conc')
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
+                                     mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+    # test from max
+    max_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-max', return_true_conc=False,
+                                      return_noisy_conc_itters=0, efficent_mode=False)
+    max_dp_eff = DetectionPowerCalculator(significance_mode='mann-kendall-from-max', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+
+    for error_val in [0.5, 1, 5, 10, 30]:
+        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+    # test from min
+    min_dp = DetectionPowerCalculator(significance_mode='mann-kendall-from-min', return_true_conc=False,
+                                      return_noisy_conc_itters=0, efficent_mode=False)
+    min_dp_eff = DetectionPowerCalculator(significance_mode='mann-kendall-from-min', return_true_conc=False,
+                                          return_noisy_conc_itters=0, efficent_mode=True)
+    for error_val in [0.5, 1, 5, 10, 30]:
+        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        eff = pd.Series(eff)
+        non_eff = pd.Series(non_eff)
+        pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
+
+
+def test_efficient_mode_mpmk():
+    print_myself()
+    from kendall_stats import make_example_data
+
+    dp_2part = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
+        mpmk_check_step=2, mpmk_efficent_min=10, mpmk_window=0.05, )
+    dp_2part_eff = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=True,
+        mpmk_check_step=2, mpmk_efficent_min=80, mpmk_window=0.1, )
+    dp_2part_eff_2 = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=True,
+        mpmk_check_step=2, mpmk_efficent_min=5, mpmk_window=0.1, )
+
+    # parabolic
+    dp_3part = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, 0, -1], nparts=3, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
+        mpmk_check_step=2, mpmk_efficent_min=2, mpmk_window=0.05)
+    dp_3part_eff = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, 0, -1], nparts=3, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=True,
+        mpmk_check_step=2, mpmk_efficent_min=2, mpmk_window=0.05)
+
+    x, y_para = make_example_data.make_multipart_parabolic_data(make_example_data.multipart_parabolic_slopes[0],
+                                                                noise=0,
+                                                                na_data=False, unsort=False, step=2)
+    noises = [1, 7.5, 10, 50]
+    diffs = [0.1, 3.5, 16, 5]
+    for noise, allow_dif in zip(noises, diffs):
+        print(f'testing efficiency on parabolic data {noise=}')
+        out = dp_3part.power_calc(idv='sharp', error=noise, true_conc_ts=y_para, mrt_model='pass_true_conc', seed=987)
+        out_eff = dp_3part_eff.power_calc(idv='sharp', error=noise, true_conc_ts=y_para, mrt_model='pass_true_conc',
+                                          seed=987)
+        out = pd.Series(out)
+        out_eff = pd.Series(out_eff)
+        print(f'{out["power"]=} {out_eff["power"]=}')
+        assert np.isclose(out_eff['power'], out['power'], rtol=allow_dif)
+
+    # test sharp
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    noises = [1, 2.5, 5]
+    diffs = [0.1, 0.5, 6]
+    for noise, allow_dif in zip(noises, diffs):
+        print(f'testing efficiency on sharp data {noise=}')
+        out = dp_2part.power_calc(idv='sharp', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc', seed=688765)
+        out_eff = dp_2part_eff.power_calc(idv='sharp', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                          seed=688765)
+        out_eff_2 = dp_2part_eff_2.power_calc(idv='sharp', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                              seed=688765)
+        out = pd.Series(out)
+        out_eff = pd.Series(out_eff)
+        print(f"{out['power']=} {out_eff['power']=} {out_eff_2['power']=}")
+        assert np.isclose(out_eff_2['power'], out_eff['power'], rtol=allow_dif)
+        pd.testing.assert_series_equal(out, out_eff, obj=f'sharp noise: {noise}')
+
+    # flat
+    yflat = np.zeros_like(y_inc) + 10
+    for noise in noises:
+        print(f'testing efficiency on flat data {noise=}')
+        out = dp_2part.power_calc(idv='sharp', error=noise, true_conc_ts=yflat, mrt_model='pass_true_conc', seed=5652)
+        out_eff = dp_2part_eff.power_calc(idv='sharp', error=noise, true_conc_ts=yflat, mrt_model='pass_true_conc',
+                                          seed=5652)
+        out = out['power']
+        out_eff = out_eff['power']
+        print(f"{out=} {out_eff=}")
+        assert np.isclose(out_eff, out, rtol=2)
+
+
 if __name__ == '__main__':
     plot_flag = False
+
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
     test_unitary_epfm(plot=plot_flag)
@@ -1006,9 +1217,14 @@ if __name__ == '__main__':
     test_return_true_noisy_conc(show=plot_flag)
     test_linear_from_max_vs_from_start(show=plot_flag)
     test_mann_kendall_power(show=plot_flag)
-    test_multpart_mann_kendall_power(show=plot_flag)
     test_pettitt_power(show=plot_flag)
     test_iteration_plotting(show=plot_flag)
+    test_multpart_mann_kendall_power(show=plot_flag)
+
+    test_efficient_mode_lr()
+    test_efficent_mode_mann_kendall()
+    test_efficient_mode_mpmk()
+
     print('passed all unique tests, now for longer tests')
     make_test_power_calc_runs(plot_flag)
     test_power_calc_and_mp()

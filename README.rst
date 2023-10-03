@@ -449,6 +449,141 @@ Note that the outputs include a 'python_error' column which contains the traceba
         # set run=False when testing the kwargs before a large run.
     )
 
+Resource Requirements
+=======================
+
+The Detection power calculator can use substantial resources depending on the number of iterations and the significance mode used. In general the significance mode efficiency is as follows:
+
+1. Linear regression based techniques
+2. Mann-Kendall based techniques
+3. Pettitt test
+4. MultiPart Mann-Kendal
+
+We have implemented an efficiency mode to decrease the computational resource requirements. The effect of the mode depends on the significance test
+
+For linear regression and Mann-Kendall techniques the efficiency mode first calculates the pvalue and sign for the true (noise free) concentration time series. If the pvalue is greater than the minimum pvalue then the power is set to 0.0 and the power calculations are not run on the noisy concentration time series.  This can significantly decrease the computational resource requirements.
+
+For the MultiPart Mann-Kendall efficiency mode both calculates the trend detection on the true time series (and then returns a power of 0 if the trend is not detected) and reduces the number of possible breakpoints that are assessed by creating a possible window to test each breakpoint. This window is defined by the maxium of either the minimum number of samples (mpmk_efficent_min) or as a fraction of the length of the full time series (mpmk_window). Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `kendall_stats repo <https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall>`_.
+
+For the Pettitt test the efficiency mode is not yet implemented.
+
+Memory Requirements
+----------------------
+For linear regression techniques the memory requirement is relatively minor
+
+For mann-kendall techniques the memory requirement is proportional to the number of samples in the time series. For all Mann-Kendall techniques the program must calculate the "s_array" which is the difference between all pairs of samples.  The s_array is a square matrix with the number of rows and columns equal to the number of samples in the time series.  Therefore the memory requirement is:
+
+* N: 4 * s_array memory
+* 50: 8e-05 gb
+* 100: 0.00032 gb
+* 500: 0.008 gb
+* 1,000: 0.032 gb
+* 5,000: 0.8 gb
+* 10,000: 3.2 gb
+* 25,000: 20.0 gb
+* 50,000: 80.0 gb
+
+We have not assessed the Pettitt test memory requirements.
+
+Example Runtimes
+----------------------
+
+The following table shows the run time for a single iteration of the power calculation for each significance mode.  Note that the resource requirements are for a single threaded process. The table of processing times was run on a single thread (11th Gen Intel(R) Core(TM) i5-11500H @ 2.90GHz with 32 GB of DDR4 RAM). The results are in seconds.  For these tests we set the following variables:
+
+.. code-block:: python
+
+    # constants
+    nsims = 10
+    mpmk_check_step = 1
+    mpmk_efficent_min = 10
+    mpmk_window = 0.05
+    nsims_pettit = 2000
+
+    # iterables
+    methods = DetectionPowerCalculator.implemented_significance_modes
+    ndata = [50, 100, 500, 1000, 5000]
+    efficency_modes = [True, False]
+
+If you want a processing time table for a different machine run:
+
+.. code-block:: python
+
+    from pathlib import Path
+    from gw_detect_power.timetest import timeit_test
+    data = timeit_test()
+    data.to_csv(Path.home().joinpath('Downloads', 'timeit_test_results.txt'))# todo add code to generate processing time table
+
+Note that this may take some time
+
+linear regression techniques
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+-------------------+----------------------------+----------------------------+
+| n data | linear-regression | linear-regression-from-max | linear-regression-from-min |
++========+===================+============================+============================+
+| 50     | 1.01E-03          | 8.62E-04                   | 8.33E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 100    | 1.03E-03          | 8.91E-04                   | 8.74E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 500    | 1.28E-03          | 1.11E-03                   | 9.72E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 1000   | 1.26E-03          | 1.10E-03                   | 1.10E-03                   |
++--------+-------------------+----------------------------+----------------------------+
+| 5000   | 2.69E-03          | 2.03E-03                   | 2.01E-03                   |
++--------+-------------------+----------------------------+----------------------------+
+
+
+Mann-Kendall Techniques
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+--------------+-----------------------+-----------------------+
+| n data | mann-kendall | mann-kendall-from-max | mann-kendall-from-min |
++========+==============+=======================+=======================+
+| 50     | 3.45E-03     | 3.26E-03              | 3.20E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 100    | 3.82E-03     | 3.32E-03              | 3.33E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 500    | 1.27E-02     | 5.70E-03              | 5.44E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 1000   | 5.82E-02     | 1.31E-02              | 1.25E-02              |
++--------+--------------+-----------------------+-----------------------+
+| 5000   | 1.58E+01     | 1.79E+00              | 1.79E+00              |
++--------+--------------+-----------------------+-----------------------+
+
+
+MultiPart Mann-Kendall / Pettitt test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+----------------+------------------------+--------------+
+| n data | efficency_mode | n-section-mann-kendall | pettitt-test |
++========+================+========================+==============+
+| 50     | True           | 5.71E-02               | na           |
++--------+----------------+------------------------+--------------+
+| 50     | False          | 9.27E-02               | 8.91E-01     |
++--------+----------------+------------------------+--------------+
+| 100    | True           | 6.92E-02               | na           |
++--------+----------------+------------------------+--------------+
+| 100    | False          | 2.38E-01               | 9.36E-01     |
++--------+----------------+------------------------+--------------+
+| 500    | True           | 3.95E-01               | na           |
++--------+----------------+------------------------+--------------+
+| 500    | False          | 1.80E+00               | 1.35E+00     |
++--------+----------------+------------------------+--------------+
+| 1000   | True           | 1.22E+00               |  na          |
++--------+----------------+------------------------+--------------+
+| 1000   | False          | 5.91E+00               | 1.83E+00     |
++--------+----------------+------------------------+--------------+
+| 5000   | True           | 1.21E+02               |  na          |
++--------+----------------+------------------------+--------------+
+| 5000   | False          | 5.47E+02               | 5.88E+00     |
++--------+----------------+------------------------+--------------+
+
+
+#todo list test constraints
+
+# todo add table
+
+
 Example plots for each significance mode
 ===========================================
 
