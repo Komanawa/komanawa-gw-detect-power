@@ -456,8 +456,8 @@ The Detection power calculator can use substantial resources depending on the nu
 
 1. Linear regression based techniques
 2. Mann-Kendall based techniques
-3. MultiPart Mann-Kendal
-4. Pettitt test
+3. Pettitt test
+4. MultiPart Mann-Kendal
 
 We have implemented an efficiency mode to decrease the computational resource requirements. The effect of the mode depends on the significance test
 
@@ -488,14 +488,96 @@ We have not assessed the Pettitt test memory requirements.
 Example Runtimes
 ----------------------
 
-The following table shows the run time for a single iteration of the power calculation for each significance mode.  Note that the resource requirements are for a single threaded process. The table of processing times was run on a single thread (11th Gen Intel(R) Core(TM) i5-11500H @ 2.90GHz with 32 GB of DDR4 RAM). the results are in seconds If you want a processing time table for a different machine run:
+The following table shows the run time for a single iteration of the power calculation for each significance mode.  Note that the resource requirements are for a single threaded process. The table of processing times was run on a single thread (11th Gen Intel(R) Core(TM) i5-11500H @ 2.90GHz with 32 GB of DDR4 RAM). The results are in seconds.  For these tests we set the following variables:
 
 .. code-block:: python
 
-    # todo add code to generate processing time table
+    # constants
+    nsims = 10
+    mpmk_check_step = 1
+    mpmk_efficent_min = 10
+    mpmk_window = 0.05
+    nsims_pettit = 2000
 
+    # iterables
+    methods = DetectionPowerCalculator.implemented_significance_modes
+    ndata = [50, 100, 500, 1000, 5000]
+    efficency_modes = [True, False]
+
+If you want a processing time table for a different machine run:
+
+.. code-block:: python
+
+    from pathlib import Path
+    from gw_detect_power.timetest import timeit_test
+    data = timeit_test()
+    data.to_csv(Path.home().joinpath('Downloads', 'timeit_test_results.txt'))# todo add code to generate processing time table
 
 Note that this may take some time
+
+linear regression techniques
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+-------------------+----------------------------+----------------------------+
+| n data | linear-regression | linear-regression-from-max | linear-regression-from-min |
++========+===================+============================+============================+
+| 50     | 1.01E-03          | 8.62E-04                   | 8.33E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 100    | 1.03E-03          | 8.91E-04                   | 8.74E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 500    | 1.28E-03          | 1.11E-03                   | 9.72E-04                   |
++--------+-------------------+----------------------------+----------------------------+
+| 1000   | 1.26E-03          | 1.10E-03                   | 1.10E-03                   |
++--------+-------------------+----------------------------+----------------------------+
+| 5000   | 2.69E-03          | 2.03E-03                   | 2.01E-03                   |
++--------+-------------------+----------------------------+----------------------------+
+
+
+Mann-Kendall Techniques
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+--------------+-----------------------+-----------------------+
+| n data | mann-kendall | mann-kendall-from-max | mann-kendall-from-min |
++========+==============+=======================+=======================+
+| 50     | 3.45E-03     | 3.26E-03              | 3.20E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 100    | 3.82E-03     | 3.32E-03              | 3.33E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 500    | 1.27E-02     | 5.70E-03              | 5.44E-03              |
++--------+--------------+-----------------------+-----------------------+
+| 1000   | 5.82E-02     | 1.31E-02              | 1.25E-02              |
++--------+--------------+-----------------------+-----------------------+
+| 5000   | 1.58E+01     | 1.79E+00              | 1.79E+00              |
++--------+--------------+-----------------------+-----------------------+
+
+
+MultiPart Mann-Kendall / Pettitt test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
++--------+----------------+------------------------+--------------+
+| n data | efficency_mode | n-section-mann-kendall | pettitt-test |
++========+================+========================+==============+
+| 50     | True           | 5.71E-02               | na           |
++--------+----------------+------------------------+--------------+
+| 50     | False          | 9.27E-02               | 8.91E-01     |
++--------+----------------+------------------------+--------------+
+| 100    | True           | 6.92E-02               | na           |
++--------+----------------+------------------------+--------------+
+| 100    | False          | 2.38E-01               | 9.36E-01     |
++--------+----------------+------------------------+--------------+
+| 500    | True           | 3.95E-01               | na           |
++--------+----------------+------------------------+--------------+
+| 500    | False          | 1.80E+00               | 1.35E+00     |
++--------+----------------+------------------------+--------------+
+| 1000   | True           | 1.22E+00               |  na          |
++--------+----------------+------------------------+--------------+
+| 1000   | False          | 5.91E+00               | 1.83E+00     |
++--------+----------------+------------------------+--------------+
+| 5000   | True           | 1.21E+02               |  na          |
++--------+----------------+------------------------+--------------+
+| 5000   | False          | 5.47E+02               | 5.88E+00     |
++--------+----------------+------------------------+--------------+
+
 
 #todo list test constraints
 
