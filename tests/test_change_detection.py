@@ -59,7 +59,6 @@ def test_unitary_epfm(plot=False):
         low_mem=False
     )
     if plot:
-        import matplotlib.pyplot as plt
         fig, (ax, ax2) = plt.subplots(nrows=2, figsize=(10, 10))
         ax.plot(out_years, out_conc, marker='o', label='out_conc', color='r')
         ax.plot(total_source_conc.index, total_source_conc, marker='o', label='source_conc', color='b')
@@ -137,7 +136,6 @@ def test_unitary_epfm_slope(plot=False):
         low_mem=False
     )
     if plot:
-        import matplotlib.pyplot as plt
         fig, (ax, ax2) = plt.subplots(nrows=2, figsize=(10, 10))
         ax.plot(out_years, out_conc, marker='o', label='out_conc', color='r')
         ax.plot(total_source_conc.index, total_source_conc, marker='o', label='source_conc', color='b')
@@ -201,7 +199,6 @@ def test_piston_flow(plot=False):
     assert frac_p2_org is None and frac_p2 is None
 
     if plot:
-        import matplotlib.pyplot as plt
         plt.plot(np.arange(len(true_conc_ts)) / 4, true_conc_ts, marker='o')
         plt.axhline(max_conc, color='k', linestyle='--')
         plt.axvline(max_conc_time, color='k', linestyle='--')
@@ -274,7 +271,6 @@ def test_bepfm_slope(plot=False):
         low_mem=False
     )
     if plot:
-        import matplotlib.pyplot as plt
         fig, (ax, ax2) = plt.subplots(nrows=2, figsize=(10, 10))
         ax.plot(out_years, out_conc, marker='o', label='out_conc', color='r')
         ax.plot(total_source_conc.index, total_source_conc, marker='o', label='source_conc', color='b')
@@ -353,7 +349,6 @@ def test_bpefm(plot=False):
         low_mem=False
     )
     if plot:
-        import matplotlib.pyplot as plt
         fig, (ax, ax2) = plt.subplots(nrows=2, figsize=(10, 10))
         ax.plot(out_years, out_conc, marker='o', label='out_conc', color='r')
         ax.plot(total_source_conc.index, total_source_conc, marker='o', label='source_conc', color='b')
@@ -898,7 +893,6 @@ def make_test_power_calc_runs(plot=False):
     data2 = data.loc[np.arange(0, 6, 0.5)] - 0.5
     assert len(data2) > 10
     if plot:
-        import matplotlib.pyplot as plt
         fig, ax = plt.subplots()
         ax.plot(data.index, data, marker='o', c='r', label='data')
         ax.plot(data2.index, data2, marker='o', c='b', label='data2')
@@ -1084,9 +1078,9 @@ def test_efficent_mode_mann_kendall():
 
     # test normal
     norm_dp = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=False,
-                                       return_noisy_conc_itters=0, efficent_mode=False)
+                                       return_noisy_conc_itters=0, efficent_mode=False, print_freq=100)
     norm_dpeff = DetectionPowerCalculator(significance_mode='mann-kendall', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                          return_noisy_conc_itters=0, efficent_mode=True, print_freq=100)
     for error_val in [0.5, 1, 5, 10, 30, 35, 40, 50]:
         eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
         non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
@@ -1207,7 +1201,7 @@ def test_efficient_mode_mpmk():
         assert np.isclose(out_eff, out, rtol=2)
 
 
-def check_function_mpmk_check_step():  # todo try and solve
+def check_function_mpmk_check_step():
     dp_2part = DetectionPowerCalculator(
         significance_mode='n-section-mann-kendall', nsims=100,
         expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
@@ -1245,6 +1239,9 @@ def check_function_mpmk_check_step():  # todo try and solve
 if __name__ == '__main__':
     plot_flag = False
 
+    make_test_power_calc_runs(plot_flag)
+    test_power_calc_and_mp()
+
     test_unitary_epfm_slope(plot=plot_flag)
     test_piston_flow(plot=plot_flag)
     test_unitary_epfm(plot=plot_flag)
@@ -1263,7 +1260,4 @@ if __name__ == '__main__':
     check_function_mpmk_check_step()
 
     print('passed all unique tests, now for longer tests')
-    make_test_power_calc_runs(plot_flag)
-    time.sleep(20) # todo getting weird error, see if this fixes it
-    test_power_calc_and_mp()
     print('passed all tests')

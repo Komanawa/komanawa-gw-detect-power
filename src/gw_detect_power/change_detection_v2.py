@@ -75,7 +75,7 @@ class DetectionPowerCalculator:
                  mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05,
                  nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
-                 only_significant_noisy=False):
+                 only_significant_noisy=False, print_freq=None):
         """
         
         :param significance_mode: significance mode to use, options:
@@ -121,7 +121,7 @@ class DetectionPowerCalculator:
         :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
                                 trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
         :param mpmk_check_step: int or function, default = 1, number of samples to check for a change point in the
-                                MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False # todo implment and test
+                                MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False
                                 if mpmk is a function it must take a single argument (n, number of samples) and return
                                 an integer check step
         :param mpmk_efficent_min: int, default = 10, minimum number of possible change points to assess
@@ -151,7 +151,11 @@ class DetectionPowerCalculator:
                                        there are fewer noisy simulations with changes detected than return_noisy_conc_itters
                                        all significant simulations will be returned. if there are no noisy simulations
                                        with changes detected then and empty dataframe is returned
+        :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
+                            every print_freq simulations (n%print_freq==0)
         """
+        assert print_freq is None or isinstance(print_freq, int), 'print_freq must be None or an integer'
+        self.print_freq = print_freq
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
                                                                           f'{self.implemented_significance_modes}')
@@ -641,7 +645,8 @@ class DetectionPowerCalculator:
             max_conc_time = None
             mrt_p2 = None
             if self.expect_slope == 'auto':
-                power, significant, expect_slope = self.power_test(np.atleast_1d(true_conc_ts)[np.newaxis, :],
+                power, significant, expect_slope = self.power_test('auto_slope_finder',
+                                                                   np.atleast_1d(true_conc_ts)[np.newaxis, :],
                                                                    expected_slope=None, imax=np.argmax(true_conc_ts),
                                                                    imin=np.argmin(true_conc_ts), true_data=true_conc_ts,
                                                                    return_slope=True)
@@ -671,7 +676,7 @@ class DetectionPowerCalculator:
         conc_with_noise += noise
 
         # run slope test
-        power, significant = self.power_test(conc_with_noise,
+        power, significant = self.power_test(idv, conc_with_noise,
                                              expected_slope=expect_slope,  # just used for sign
                                              imax=np.argmax(true_conc_ts), imin=np.argmin(true_conc_ts),
                                              true_data=true_conc_ts,
@@ -715,10 +720,11 @@ class DetectionPowerCalculator:
             out_data = out_data['power']
         return out_data
 
-    def _power_test_lr(self, y, expected_slope, imax, imin, true_data, return_slope=False):
+    def _power_test_lr(self, idv, y, expected_slope, imax, imin, true_data, return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
         (slope is significant and in the correct direction)
+        :param idv: identifier for the power calc site
         :param y: np.array of shape (nsims, n_samples)
         :param expected_slope: used to determine sign of slope predicted is same as expected
         :param imax: index of the maximum concentration
@@ -750,7 +756,10 @@ class DetectionPowerCalculator:
             if pval_bad or sign_bad:  # cannot reject null hypothesis on noise free data
                 return 0., np.zeros(n_sims, dtype=bool)
 
-        for y0 in y:
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
             o2 = stats.linregress(x, y0)
             slopes.append(o2.slope)
             p_val.append(o2.pvalue)
@@ -767,7 +776,7 @@ class DetectionPowerCalculator:
             return power, p_list, slope_out
         return power, p_list
 
-    def _power_test_mann_kendall(self, y, expected_slope, imax, imin, true_data,
+    def _power_test_mann_kendall(self, idv, y, expected_slope, imax, imin, true_data,
                                  return_slope=False):
         """
         power calculations, probability of detecting a change via linear regression
@@ -802,7 +811,10 @@ class DetectionPowerCalculator:
 
         p_val = []
         slopes = []
-        for y0 in y:
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
             mk = MannKendall(data=y0, alpha=self.min_p_value)
             slopes.append(mk.trend)
             p_val.append(mk.p)
@@ -819,7 +831,7 @@ class DetectionPowerCalculator:
             return power, p_list, slope_out
         return power, p_list
 
-    def _power_test_pettitt(self, y, expected_slope, imax, imin, true_data, return_slope=False):
+    def _power_test_pettitt(self, idv, y, expected_slope, imax, imin, true_data, return_slope=False):
         """
 
         :param y:data
@@ -833,7 +845,10 @@ class DetectionPowerCalculator:
         assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples')
         num_pass = 0
         passed = []
-        for y0 in y:
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
             h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
                                            sim=self.nsims_pettitt)
             num_pass += h
@@ -844,7 +859,7 @@ class DetectionPowerCalculator:
             return power, passed, None
         return power, passed
 
-    def _power_test_mp_kendall(self, y, expected_slope, imax, imin, true_data,
+    def _power_test_mp_kendall(self, idv, y, expected_slope, imax, imin, true_data,
                                return_slope=False):
         """
         :param y: data
@@ -885,12 +900,15 @@ class DetectionPowerCalculator:
             for part, bp in zip(range(1, self.kendall_mp_nparts), best):
                 delta = max(self.mpmpk_efficent_min // 2 * use_check_step,
                             int(np.ceil(self.mpmk_window * len(true_data))))
-                wmin = max(0+self.kendall_mp_min_part_size, bp - delta)
-                wmax = min(len(true_data)-self.kendall_mp_min_part_size, # todo expecting this to fail
+                wmin = max(0 + self.kendall_mp_min_part_size, bp - delta)
+                wmax = min(len(true_data) - self.kendall_mp_min_part_size,
                            bp + delta)
                 window.append((wmin, wmax))
 
-        for y0 in y:
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
             mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
                                     expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
                                     alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
