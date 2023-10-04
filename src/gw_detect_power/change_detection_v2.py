@@ -72,7 +72,7 @@ class DetectionPowerCalculator:
 
     def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
                  expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.50,
-                 mpmk_check_step=1, mpmk_efficent_min=100, mpmk_window=0.05,
+                 mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05,
                  nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
                  only_significant_noisy=False):
@@ -111,7 +111,8 @@ class DetectionPowerCalculator:
 
                              For MultiPartMannKendall test: the test will be run on the noise free data
                                to detect best change points and then the test will be run on the
-                               noisy data for a smaller window around the True change point
+                               noisy data for a smaller window centered on the True change point
+                               see: * mpmk_efficent_min, * mpmk_window
 
                             For Pettitt Test:  Not implemented, will be ignored and a waring passed
         :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
@@ -119,15 +120,24 @@ class DetectionPowerCalculator:
                                 other tests)
         :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
                                 trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
-        :param mpmk_check_step: int, default = 1, number of samples to check for a change point in the
-                                MultiPartMannKendall test
-        :param mpmk_efficent_min: int, default = 100, minimum number of possible change points to assess
-                                  only used if efficent_mode = True
+        :param mpmk_check_step: int or function, default = 1, number of samples to check for a change point in the
+                                MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False # todo implment and test
+                                if mpmk is a function it must take a single argument (n, number of samples) and return
+                                an integer check step
+        :param mpmk_efficent_min: int, default = 10, minimum number of possible change points to assess
+                                  only used if efficent_mode = True  The minimum number of breakpoints to test
+                                  (mpmk_efficent_min) is always respected (i.e. if the window size is less than the
+                                  minimum number of breakpoints to test, then the window size will be increased
+                                  to the minimum number of breakpoints to test, but the space between breakpoints
+                                  will still be defined by check_step). You can specify the exact number of breakpoints
+                                  to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0
         :param mpmk_window: float, default = 0.05, define the window around the true detected change point to run the
                                    MultiPartMannKendall.  The detction window is defined as:
                                    (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n
-                                      is the number of samples in the time series
-
+                                   is the number of samples in the time series
+                                   Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be
+                                   used to define the window size and the check_step will be used to define the
+                                   step size within the window.
         :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
                              (not used for other tests)
         :param ncores: number of cores to use for multiprocessing, None will use all available cores
@@ -207,9 +217,18 @@ class DetectionPowerCalculator:
             assert len(np.atleast_1d(expect_slope)) == self.kendall_mp_nparts, 'expect_slope must be of length nparts'
             assert set(np.atleast_1d(expect_slope)).issubset([1, 0, -1]), (
                 f'expect_slope must be 1 -1, or 0, got:{set(np.atleast_1d(expect_slope))}')
-            assert isinstance(mpmk_check_step, int), 'mpmk_check_step must be an integer'
-            assert mpmk_check_step > 0, 'mpmk_check_step must be greater than 0'
+
+            # mpmk_check_step
+            if callable(mpmk_check_step):
+                n = mpmk_check_step(100)
+                assert isinstance(n, int), 'if mpmk_check_step is a function must return an integer'
+                assert n > 0, 'if mpmk_check_step is a function must return an integer greater than 0'
+            elif isinstance(mpmk_check_step, int):
+                assert mpmk_check_step > 0, 'mpmk_check_step must be greater than 0'
+            else:
+                raise ValueError('mpmk_check_step must be an integer or function')
             self.mpmk_check_step = mpmk_check_step
+
             assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
             self.efficent_mode = efficent_mode
             assert isinstance(mpmk_efficent_min, int), 'mpmk_efficent_min must be an integer'
@@ -836,6 +855,10 @@ class DetectionPowerCalculator:
         :return:
         """
         n_sims, n_samples = y.shape
+        if callable(self.mpmk_check_step):
+            use_check_step = self.mpmk_check_step(n_samples)
+        else:
+            use_check_step = self.mpmk_check_step
         assert (
                 (n_samples >= self.min_samples)
                 and (n_samples >= self.kendall_mp_min_part_size * self.kendall_mp_nparts)
@@ -847,7 +870,7 @@ class DetectionPowerCalculator:
             mpmk = MultiPartKendall(data=true_data, nparts=self.kendall_mp_nparts,
                                     expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
                                     alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
-                                    check_step=self.mpmk_check_step, check_window=None)
+                                    check_step=use_check_step, check_window=None)
             best = mpmk.get_maxz_breakpoints(raise_on_none=False)
             if best is None:  # no matches on the True data not worth running the power calc
                 return 0., np.zeros(n_sims, dtype=bool)
@@ -860,16 +883,18 @@ class DetectionPowerCalculator:
                                                              f' length {self.kendall_mp_nparts - 1}')
             window = []
             for part, bp in zip(range(1, self.kendall_mp_nparts), best):
-                delta = max(self.mpmpk_efficent_min//2, int(np.ceil(self.mpmk_window * len(true_data))))
-                wmin = max(0, bp - delta)
-                wmax = min(len(true_data), bp + delta)
+                delta = max(self.mpmpk_efficent_min // 2 * use_check_step,
+                            int(np.ceil(self.mpmk_window * len(true_data))))
+                wmin = max(0+self.kendall_mp_min_part_size, bp - delta)
+                wmax = min(len(true_data)-self.kendall_mp_min_part_size, # todo expecting this to fail
+                           bp + delta)
                 window.append((wmin, wmax))
 
         for y0 in y:
             mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
                                     expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
                                     alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
-                                    check_step=self.mpmk_check_step, check_window=window)
+                                    check_step=use_check_step, check_window=window)
             power.append(mpmk.acceptable_matches.any())
 
         power_array = np.array(power)

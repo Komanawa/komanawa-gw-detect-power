@@ -920,6 +920,7 @@ def make_test_power_calc_runs(plot=False):
         runs.append(temp)
 
     print(len(runs))
+    plt.close('all')
 
     return runs
 
@@ -1206,6 +1207,41 @@ def test_efficient_mode_mpmk():
         assert np.isclose(out_eff, out, rtol=2)
 
 
+def check_function_mpmk_check_step():  # todo try and solve
+    dp_2part = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
+        mpmk_check_step=4, mpmk_efficent_min=10, mpmk_window=0.05, )
+
+    def check_step_func(n):
+        if n > 130:
+            return 5
+        else:
+            return 4
+
+    dp_2part_func = DetectionPowerCalculator(
+        significance_mode='n-section-mann-kendall', nsims=100,
+        expect_slope=[1, -1], nparts=2, min_part_size=10, no_trend_alpha=0.50,
+        return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
+        mpmk_check_step=check_step_func, mpmk_efficent_min=10, mpmk_window=0.05, )
+
+    from kendall_stats import make_example_data
+    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+                                                                      noise=0,
+                                                                      na_data=False, unsort=False)
+    assert len(x_inc) <= 130
+    noises = [1, 2.5, 5]
+    diffs = [0.1, 0.5, 6]
+    for noise, allow_dif in zip(noises, diffs):
+        print(f'testing efficiency on sharp data {noise=}')
+        out = dp_2part.power_calc(idv='sharp', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc', seed=688765)
+        out2 = dp_2part_func.power_calc(idv='sharp', error=noise, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                        seed=688765)
+        out = pd.Series(out)
+        out2 = pd.Series(out2)
+        pd.testing.assert_series_equal(out, out2)
+
 if __name__ == '__main__':
     plot_flag = False
 
@@ -1224,8 +1260,10 @@ if __name__ == '__main__':
     test_efficient_mode_lr()
     test_efficent_mode_mann_kendall()
     test_efficient_mode_mpmk()
+    check_function_mpmk_check_step()
 
     print('passed all unique tests, now for longer tests')
     make_test_power_calc_runs(plot_flag)
+    time.sleep(20) # todo getting weird error, see if this fixes it
     test_power_calc_and_mp()
     print('passed all tests')
