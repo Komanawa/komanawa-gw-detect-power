@@ -891,19 +891,21 @@ class DetectionPowerCalculator:
                 return 0., np.zeros(n_sims, dtype=bool)
 
             if len(best) > 1:
-                raise ValueError(f'multiple best breakpoints returned, cannot use efficent mode: {best}')
-            best = np.atleast_1d(best[0])
-            assert len(best) == self.kendall_mp_nparts - 1, (f'shouldnt get here '
-                                                             f'best breakpoints must have'
-                                                             f' length {self.kendall_mp_nparts - 1}')
-            window = []
-            for part, bp in zip(range(1, self.kendall_mp_nparts), best):
-                delta = max(self.mpmpk_efficent_min // 2 * use_check_step,
-                            int(np.ceil(self.mpmk_window * len(true_data))))
-                wmin = max(0 + self.kendall_mp_min_part_size, bp - delta)
-                wmax = min(len(true_data) - self.kendall_mp_min_part_size,
-                           bp + delta)
-                window.append((wmin, wmax))
+                warnings.warn(f'multiple best breakpoints returned, cannot use efficent mode: {best}, '
+                              f'reverting to original mode')
+            else:
+                best = np.atleast_1d(best[0])
+                assert len(best) == self.kendall_mp_nparts - 1, (f'shouldnt get here '
+                                                                 f'best breakpoints must have'
+                                                                 f' length {self.kendall_mp_nparts - 1}')
+                window = []
+                for part, bp in zip(range(1, self.kendall_mp_nparts), best):
+                    delta = max(self.mpmpk_efficent_min // 2 * use_check_step,
+                                int(np.ceil(self.mpmk_window * len(true_data))))
+                    wmin = max(0 + self.kendall_mp_min_part_size, bp - delta)
+                    wmax = min(len(true_data) - self.kendall_mp_min_part_size,
+                               bp + delta)
+                    window.append((wmin, wmax))
 
         for i, y0 in enumerate(y):
             if self.print_freq is not None:
