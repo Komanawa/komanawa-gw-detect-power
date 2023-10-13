@@ -6,12 +6,21 @@ depending on sampling duration, sampling frequency, 'true' receptor concentratio
 there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).
 
+
+.. contents:: Table of Contents
+    :depth: 3
+
+
+Key definitions
+==================
+
 In this repo we have a couple key definitions:
 
 * **Receptor**: The receptor is the location where the concentration is measured.  This is typically a groundwater well, stream or lake.
 * **Source**: The source is the location where the concentration is changed.  This is typically a point source (e.g. a wastewater treatment plant) or a non-point source (e.g. a catchment/groundwater source area).
 * **Noise**: here by noise we include the variation in the concentration at the receptor. This includes true sampling noise, but also includes any other variation in the concentration at the receptor that cannot be identified or corrected for (e.g. from weather events etc.). Typically the noise will be estimated as the standard deviation of the receptor concentration time series (assuming no trend), or the standard deviation of the residuals from a model (e.g. linear regression) of the receptor concentration time series.
 * **True Receptor Concentration**: The true receptor concentration is the concentration at the receptor if there was no noise.
+
 
 Look up tables for statistical power
 =====================================
