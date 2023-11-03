@@ -21,6 +21,25 @@ In this repo we have a couple key definitions:
 * **Noise**: here by noise we include the variation in the concentration at the receptor. This includes true sampling noise, but also includes any other variation in the concentration at the receptor that cannot be identified or corrected for (e.g. from weather events etc.). Typically the noise will be estimated as the standard deviation of the receptor concentration time series (assuming no trend), or the standard deviation of the residuals from a model (e.g. linear regression) of the receptor concentration time series.
 * **True Receptor Concentration**: The true receptor concentration is the concentration at the receptor if there was no noise.
 
+High Level suggested detection power methodology
+=================================================
+
+The suggested methodology for calculating the detection power of a site is as follows:
+
+1. Access and review the historical concentration data and review and potentially remove outliers
+2. (optional) if possible you may deconstruct the historical data to remove influences of seasonal/annual/inter-annual cycles, weather events etc.
+3. Ascertain whether or not the historical concentration data has a statistically robust trend (e.g. via a Mann-Kendall test)
+4. Estimate the noise in the receptor concentration time series
+   a. If the historical concentration data has a statistically robust trend, then the noise can be estimated as the standard deviation of the residuals from a model (e.g. a linear regression or Sen-slope/ Sen-intercept).
+   b. If the historical concentration data does not have a statistically robust trend, then the noise can be estimated as the standard deviation of the receptor concentration time series.
+5. Gather data to inform the groundwater age distribution of the site.  For instance a MRT and parameters for a binary piston flow lag model.
+6. Estimate the source concentration from the historical trend (if any) and the groundwater age distribution for instance using the `truets_from_binary_exp_piston_flow function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#id21>`_ or the `gw_age_tools.predict_historical_source_conc function <https://github.com/Komanawa-Solutions-Ltd/gw_age_tools#id10>`_.
+7. Define the reduction expected in the source concentration over the implementation period to create a "once and future source concentration time series".
+8. Predict the true receptor concentration time series (e.g. the concentration at the receptor if there was no noise) based on the "once and future source concentration time series" and the groundwater age distribution e.g., using `gw_age_tools.predict_future_conc_bepm function <https://github.com/Komanawa-Solutions-Ltd/gw_age_tools#id9>`_.
+9. Resample the true receptor concentration time series to the desired sampling frequency and duration.
+10. Estimate the statistical power of detecting the change in concentration based on the predicted true receptor concentration time series and the noise in the receptor concentration time series.  This can be done using the `power_calc function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#id22>`_ and `pass your own true receptor time series option <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#id15>`_.
+
+Note that items 6-10 are implemented in the `gw_detect_power.power_calc function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#id22>`_ if mrt_model='binary_exponential_piston_flow'; however if you have many iterations to run, saving the true receptor concentration time series, resampling it, and passing it to the power_calc function will significantly reduce the computational resource requirements.
 
 Look up tables for statistical power
 =====================================
@@ -651,3 +670,13 @@ Pettitt test
    :height: 500 px
    :align: center
 
+
+
+Further Improvements
+======================
+
+if time/interest allows we would like to implement the following improvements:
+
+* implement a paired t-test for a counter factual approach
+
+If you have any suggestions for improvements please let us know by raising an issue on the github repo.
