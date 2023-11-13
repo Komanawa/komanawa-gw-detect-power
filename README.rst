@@ -1,6 +1,8 @@
 Groundwater Detection Power Calculator
 #######################################
 
+**NOTE**: while this repo was designed for groundwater calcualtions it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
+
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
 depending on sampling duration, sampling frequency, 'true' receptor concentration and the noise in the receptor.
 there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
