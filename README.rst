@@ -89,6 +89,14 @@ To use these tables:
     * mean residence time (mrt (if applicable))
 4. The provided power is the percent chance of detecting the change in concentration
 
+Supporting Documents
+=====================
+
+We have included a number of supporting documents:
+
+`Water Quality Monitoring for Management of Diffuse Nitrate Pollution <supporting_documents/Water_quality_monitoring_for_management_of_diffuse_nitrate_pollution_Final.pdf>`_: This document provides guidance on the design of water quality monitoring programs for the management of diffuse nitrate pollution.  It includes a section on statistical power and the use of the detection power calculator as well as other factors that should be considered when designing a water quality monitoring program.
+
+
 
 Dependencies
 ==================
