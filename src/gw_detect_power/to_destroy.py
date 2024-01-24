@@ -321,3 +321,32 @@ class DetectionPowerCalculator:
             outdata.to_hdf(outpath, 'data')
         return outdata
 
+
+
+    def power_calc(self,  # todo check options, most nones are gone
+                   idv,
+                   error: float,
+                   mrt_model: str,
+                   samp_years: int,
+                   samp_per_year: int,
+                   implementation_time: int,
+                   initial_conc: float,
+                   target_conc: float,
+                   prev_slope: float,
+                   max_conc_lim: float,
+                   min_conc_lim: float,
+                   mrt: float=0,
+                   # options for binary_exponential_piston_flow model
+                   mrt_p1: {float, None} = None,
+                   frac_p1: {float, None} = None,
+                   f_p1: {float, None} = None,
+                   f_p2: {float, None} = None,
+                   # options for the pass_true_conc_ts model
+                   seed: {int, None} = 5585,
+                   testnitter=None,
+                   **kwargs
+                   ):
+
+
+
+
