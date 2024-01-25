@@ -15,8 +15,6 @@ age_tools_imported = True
 pyhomogeneity_imported = True
 kendal_imported = True
 
-# todo names 'true_conc_base_vals' # 'true_conc_alt_vals'
-
 try:
     from gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
 except ImportError:
@@ -51,9 +49,9 @@ except ImportError:
 # todo discuss comparing modelled vs measured results, fail to reject null hypothesis, if you run power calcs against a
 #  status quo then you can say whether your measured results are correct or simply you dont have enough power.
 
-class DetectionPowerCounterFactual(BaseDetectionCalculator):  # todo pass own concentration
+class DetectionPowerCounterFactual(BaseDetectionCalculator):
     implemented_mrt_models = ()
-    implemented_significance_modes = (  # todo non-paired???
+    implemented_significance_modes = (
         'paired-t-test',
         'wilcoxon-signed-rank-test',
     )
@@ -167,7 +165,7 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):  # todo pass own co
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y01, y02, true_conc1, true_conc2): # todo
+    def plot_iteration(self, y01, y02, true_conc1, true_conc2):  # todo
         raise NotImplementedError
 
     def _power_test_paired_t(self, base_with_noise, alt_with_noise):
@@ -212,6 +210,11 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):  # todo pass own co
             raise ValueError(f'nsamples must be greater than {self.min_samples}, you can change the '
                              f'minimum number of samples in the DetectionPowerCalculator class init')
 
+        assert pd.api.types.is_number(error_base), 'error_base must be a float'
+        if error_alt is None:
+            error_alt = error_base
+        assert pd.api.types.is_number(error_alt), 'error_alt must be a float or None (same error as error_base)'
+
         # tile to nsims
         if testnitter is not None:
             rand_shape = (testnitter, nsamples)
@@ -252,12 +255,12 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):  # todo pass own co
 
         if self.return_noisy_conc_itters > 0:
             if self.only_significant_noisy:
-                out_base_with_noise = base_with_noise[significant]
-                out_alt_with_noise = alt_with_noise[significant]
-            outn = min(self.return_noisy_conc_itters, out_base_with_noise.shape[0])
-            out_data['base_noisy_conc'] = pd.DataFrame(data=out_base_with_noise[:outn].T,
+                base_with_noise = base_with_noise[significant]
+                alt_with_noise = alt_with_noise[significant]
+            outn = min(self.return_noisy_conc_itters, base_with_noise.shape[0])
+            out_data['base_noisy_conc'] = pd.DataFrame(data=base_with_noise[:outn].T,
                                                        columns=np.arange(outn))
-            out_data['alt_noisy_conc'] = pd.DataFrame(data=out_alt_with_noise[:outn].T,
+            out_data['alt_noisy_conc'] = pd.DataFrame(data=alt_with_noise[:outn].T,
                                                       columns=np.arange(outn))
 
         if len(out_data) == 1:
@@ -268,16 +271,108 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):  # todo pass own co
                    true_conc_base: np.ndarray,
                    true_conc_alt: np.ndarray,
                    error_alt: {float, None} = None,
-                   seed: {int, None} = None, testnitter=None,
+                   seed_base: {int, None} = None,
+                   seed_alt: {int, None} = None,
+                   testnitter=None,
                    **kwargs
-                   ):  # todo start here,
-        raise NotImplementedError
+                   ):
 
-    def mulitprocess_power_calcs(self):  # todo
-        raise NotImplementedError
+        """
+        calculate the counterfactual detection power of a pair of concentration time series
+        note the power is calculated
+        using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling
+        frequency then you should resample the true_conc_base/alt before passing it to this function
+
+        :param idv: identifiers for the power calc sites, passed straight through to the output
+        :param error_base: standard deviation of the noise to add to the base concentration time series
+        :param true_conc_base: the true concentration timeseries for the base scenario
+        :param true_conc_alt: the true concentration timeseries for the alt scenario
+        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then
+                            error_alt = error_base
+        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will
+                            be generated and returned with the output
+        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will
+                            be generated and returned with the output
+        :param testnitter: None (usually) or a different nitter then self.niter for testing run times
+        :param kwargs: any other kwargs to pass directly to the output Series
+        :return: pd.Series with the power calc results note power is percent 0-100
+                Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
+                in which case a dictionary will be returned:
+                    [
+                    'power': power_df, # always
+                    'true_conc': true_conc_ts, if self.return_true_conc is True
+                    'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
+                    ]
+        """
+        outdata = self._run_power_calc(
+            idv=idv,
+            testnitter=testnitter,
+            seed_base=seed_base,
+            seed_alt=seed_alt,
+            true_conc_base=true_conc_base,
+            true_conc_alt=true_conc_alt,
+            error_base=error_base,
+            error_alt=error_alt,
+            **kwargs
+        )
+        return outdata
+
+    def mulitprocess_power_calcs(
+            self,
+            outpath: {Path, None, str},
+            idv_vals: np.ndarray,
+            true_conc_base_vals: {np.ndarray, list},
+            true_conc_alt_vals: {np.ndarray, list},
+            error_base_vals: {np.ndarray, None, float},
+            error_alt_vals: {np.ndarray, None, float} = None,
+            seed_alt_vals_vals: {np.ndarray, int, None} = None,
+            seed_base_vals_vals: {np.ndarray, int, None} = None,
+            run=True, debug_mode=False,
+            **kwargs
+    ):
+        """
+        multiprocessing wrapper for power_calc, see power_calc for details
+        note that if a given run raises and exception the traceback for the exception will be included in the
+        returned dataset under the column 'python_error' if 'python_error' is None then the run was successful
+        to change the number of cores used pass n_cores to the constructor init
+
+        :param outpath: path to save results to or None (no save)
+        :param idv_vals: id values for each simulation
+        All values from here on out should be either a single value or an array of values with the same shape as
+            id_vals
+        :param true_conc_base_vals:
+        :param true_conc_alt_vals:
+        :param error_base_vals: standard deviation of noise to add to the base time series for each simulation
+        :param error_alt_vals: standard deviation of noise to add to the alt time series for each simulation
+        :param seed_alt_vals_vals: random seed to generate the alternative noise. One of:
+                                    ndarray (integer seeds),
+                                    None (no seeds passed, but will record the seed used)
+                                    int (1 seed for all simulations)
+        :param seed_base_vals_vals: random seed to generate the base noise. One of:
+                                     ndarray (integer seeds),
+                                     None (no seeds passed, but will record the seed used)
+                                     int (1 seed for all simulations)
+                                     Note seed_base != seed_alt (the same noise will be added to both time series,
+                                                                 making the analysis useless)
+        :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
+        :param debug_mode: if True run as single process to allow for easier debugging
+        :param kwargs: any other kwargs to pass directly to the output dataframe
+        :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
+        """
+        use_kwargs = dict(
+            true_conc_base_vals=true_conc_base_vals,
+            true_conc_alt_vals=true_conc_alt_vals,
+            error_base_vals=error_base_vals,
+            error_alt_vals=error_alt_vals,
+            seed_alt_vals_vals=seed_alt_vals_vals,
+            seed_base_vals_vals=seed_base_vals_vals,
+            **kwargs
+        )
+
+        return self._run_multiprocess_pass_conc(outpath, idv_vals, run, debug_mode, use_kwargs)
 
 
-class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):  # todo don't pass own concentration
+class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     implemented_mrt_models = (
         'piston_flow',
         'binary_exponential_piston_flow',
@@ -285,13 +380,264 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):  # todo do
     _auto_mode = True
     _counterfactual = True
 
-    def set_condensed_mode(self):  # todo
-        raise NotImplementedError
+    def set_condensed_mode(self,  # todo document!
+                           target_conc_per=1,
+                           initial_conc_per=1,
+                           error_per=2,
+                           prev_slope_per=2,
+                           max_conc_lim_per=1,
+                           min_conc_lim_per=1,
+                           mrt_per=0,
+                           mrt_p1_per=2,
+                           frac_p1_per=2,
+                           f_p1_per=2,
+                           f_p2_per=2):
+        """
+        set calculator to condense the number of runs based by rounding the inputs to a specified precision
+        :param target_conc_per: precision to round target_conc to (2 = 0.01)
+        :param initial_conc_per: precision to round initial_conc to (2 = 0.01)
+        :param error_per: precision to round error to (2 = 0.01)
+        :param prev_slope_per: precision to round previous_slope to (2 = 0.01)
+        :param max_conc_lim_per: precision to round max_conc_lim to (2 = 0.01)
+        :param min_conc_lim_per: precision to round min_conc_lim to (2 = 0.01)
+        :param mrt_per: precision to round mrt to
+        :param mrt_p1_per: precision to round mrt_p1 to
+        :param frac_p1_per: precision to round frac_p1 to
+        :param f_p1_per: precision to round f_p1 to
+        :param f_p2_per: precision to round f_p2 to
+        :return:
+        """
 
-    def power_calc(self):  # todo
-        # todo a delay parameter (e.g. don't start monitring right away?
-        # todo source target 1, source target 2
-        raise NotImplementedError
+        self.condensed_mode = True
+
+        self.target_conc_base_per = target_conc_per
+        self.target_conc_alt_per = target_conc_per
+        self.initial_conc_per = initial_conc_per
+        self.error_base_per = error_per
+        self.error_alt_per = error_per
+        self.prev_slope_per = prev_slope_per
+        self.max_conc_lim_per = max_conc_lim_per
+        self.min_conc_lim_per = min_conc_lim_per
+        self.mrt_per = mrt_per
+        self.mrt_p1_per = mrt_p1_per
+        self.frac_p1_per = frac_p1_per
+        self.f_p1_per = f_p1_per
+        self.f_p2_per = f_p2_per
+
+    def power_calc(
+            self,
+            idv,
+            error_base: float,
+            mrt_model: str,
+            samp_years: int,
+            samp_per_year: int,
+            implementation_time_alt: int,
+            initial_conc: float,
+            target_conc_alt: float,
+            prev_slope: float,
+            max_conc_lim: float,
+            min_conc_lim: float,
+            mrt: float = 0,
+
+            target_conc_base: {float, None} = None,
+            implementation_time_base: {int, None} = None,
+            error_alt: {float, None} = None,
+            delay_years: {int} = 0,
+
+            # options for binary_exponential_piston_flow model
+            mrt_p1: {float, None} = None,
+            frac_p1: {float, None} = None,
+            f_p1: {float, None} = None,
+            f_p2: {float, None} = None,
+
+            # options for the model run
+            seed_base: {int, None} = None,
+            seed_alt: {int, None} = None,
+            testnitter=None,
+            **kwargs
+
+    ):
+        """
+        calculate the counterfactual detection power of auto created concentration time series
+
+        :param idv: identifiers for the power calc sites, passed straight through to the output
+        :param error_base: standard deviation of the noise to add to the base concentration time series
+        :param mrt_model: the model to use for the mean residence time options:
+                          * 'piston_flow': use the piston flow model (no mixing, default)
+                          * 'binary_exponential_piston_flow': use the binary exponential piston flow model
+                          for unitary exponential_piston_flow model set frac_1 = 1 and mrt_p1 = mrt
+                          for no lag, set mrt=0, mrt_model='piston_flow'
+        :param samp_years: number of years to sample
+        :param samp_per_year: number of samples to collect each year
+        :param implementation_time_alt: number of years over which the target concentration_alt is reached
+        :param initial_conc: initial median value of the concentration
+        :param target_conc_alt: target concentration for the alt scenario
+        :param prev_slope: slope of the previous data (e.g. prior to the initial concentration)
+        :param max_conc_lim: maximum concentration limit user specified or None (default)
+        :param min_conc_lim: minimum concentration limit for the source, only used for the
+                              binary_exponential_piston_flow model
+        :param mrt: the mean residence time of the site
+        :param target_conc_base: the target concentration for the base scenario,
+                                 if None then target_conc_base = initial_conc
+        :param implementation_time_base: number of years over which the target concentration_base is reached,
+                                         if None then implementation_time_base = implementation_time_alt
+        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then
+                            error_alt = error_base
+        :param delay_years: number of years to delay the start of the monitoring, If the delay_years does not allow
+                            enough samples to be collected then an exception will be raised. If delay_years is 0 then
+                            the full length of the concentration time series will be used
+        Options for binary_exponential_piston_flow model:
+        :param mrt_p1: the mean residence time of the first piston flow model (only used for
+                        binary_exponential_piston_flow model)
+        :param frac_p1: the fraction of the first piston flow model (only used for
+                        binary_exponential_piston_flow model)
+        :param f_p1: the fraction of the first piston flow model (only used for
+                        binary_exponential_piston_flow model)
+        :param f_p2: the fraction of the first piston flow model (only used for
+                        binary_exponential_piston_flow model)
+        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will
+                            be generated and returned with the output
+        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will
+                            be generated and returned with the output
+        :param testnitter: None (usually) or a different nitter then self.niter for testing run times
+        :param kwargs: any other kwargs to pass directly to the output Series
+        :return: pd.Series with the power calc results note power is percent 0-100
+                Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
+                in which case a dictionary will be returned:
+                    [
+                    'power': power_df, # always
+                    'true_conc': true_conc_ts, if self.return_true_conc is True
+                    'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
+                    ]
+        """
+
+        if target_conc_base is None:
+            target_conc_base = initial_conc
+        if implementation_time_base is None:
+            implementation_time_base = implementation_time_alt
+        if error_alt is None:
+            error_alt = error_base
+
+        if testnitter is not None:
+            warnings.warn('testnitter is expected to be None unless you are testing run times')
+
+        assert mrt_model in self.implemented_mrt_models, f'mrt_model must be one of: {self.implemented_mrt_models}'
+        assert pd.api.types.is_integer(samp_years), 'samp_years must be an integer'
+        assert pd.api.types.is_integer(samp_per_year), 'samp_per_year must be an integer'
+        assert pd.api.types.is_integer(delay_years), 'delay_years must be an integer'
+        assert delay_years >= 0, 'delay_years must be >= 0'
+        assert pd.api.types.is_number(initial_conc), 'initial_conc must be a number'
+        assert pd.api.types.is_number(target_conc_base), 'target_conc(s) must be a number'
+        assert pd.api.types.is_number(target_conc_alt), 'target_conc(s) must be a number'
+        assert pd.api.types.is_number(prev_slope), 'prev_slope must be a number'
+        assert pd.api.types.is_number(max_conc_lim), 'max_conc must be a number'
+        assert max_conc_lim >= initial_conc, 'max_conc must be greater than or equal to initial_conc'
+        assert max_conc_lim >= max(target_conc_alt, target_conc_base), ('max_conc must be greater than or '
+                                                                        'equal to target_conc(s)')
+        assert pd.api.types.is_integer(implementation_time_base)
+        assert pd.api.types.is_integer(implementation_time_alt)
+
+        # mange lag
+        if mrt_model == 'piston_flow':
+
+            (true_conc_ts_base,
+             max_conc_val_base,
+             max_conc_time_base,
+             mrt_p2) = self.truets_from_piston_flow(mrt,
+                                                    initial_conc, target_conc_base,
+                                                    prev_slope, max_conc_lim,
+                                                    samp_per_year, samp_years,
+                                                    implementation_time_base)
+            (true_conc_ts_alt,
+             max_conc_val_alt,
+             max_conc_time_alt,
+             mrt_p2) = self.truets_from_piston_flow(mrt,
+                                                    initial_conc, target_conc_alt,
+                                                    prev_slope, max_conc_lim,
+                                                    samp_per_year, samp_years,
+                                                    implementation_time_alt)
+
+        elif mrt_model == 'binary_exponential_piston_flow':
+            assert age_tools_imported, (
+                'cannot run binary_exponential_piston_flow model, age_tools not installed'
+                'to install run:\n'
+                'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
+            tvs = ['mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'min_conc_lim']
+            bad = []
+            for t in tvs:
+                if eval(t) is None:
+                    bad.append(t)
+            if len(bad) > 0:
+                raise ValueError(f'for binary_exponential_piston_flow model the following must be specified: {bad}')
+
+            (true_conc_ts_base,
+             max_conc_val_base,
+             max_conc_time_base,
+             mrt_p2) = self.truets_from_binary_exp_piston_flow(
+                mrt, mrt_p1, frac_p1, f_p1, f_p2,
+                initial_conc, target_conc_base, prev_slope, max_conc_lim, min_conc_lim,
+                samp_per_year, samp_years, implementation_time_base,
+                return_extras=False)
+            (true_conc_ts_alt,
+             max_conc_val_alt,
+             max_conc_time_alt,
+             mrt_p2) = self.truets_from_binary_exp_piston_flow(
+                mrt, mrt_p1, frac_p1, f_p1, f_p2,
+                initial_conc, target_conc_alt, prev_slope, max_conc_lim, min_conc_lim,
+                samp_per_year, samp_years, implementation_time_alt,
+                return_extras=False)
+
+        else:
+            raise NotImplementedError(f'mrt_model {mrt_model} not currently implemented')
+
+        assert not np.allclose(true_conc_ts_base, true_conc_ts_alt), ('true_conc_ts_base and true_conc_ts_alt are '
+                                                                      'the same, this should not be')
+
+        delay_years = int(delay_years)
+        if delay_years > 0:
+            samp_delay = delay_years * samp_per_year
+            if (len(true_conc_ts_base) - samp_delay) < self.min_samples:
+                raise ValueError(
+                    f'Cannot delay the start of the monitoring by {delay_years} years, there are not'
+                    f' enough samples ({len(true_conc_ts_base)}).'
+                    f'there are {len(true_conc_ts_base) - samp_delay} samples after delay,'
+                    f'which is < mimimum samples ({self.min_samples})'
+                    f' try reducing the delay_years, increasing the samp_years, or increasing n_amp_per_year')
+            true_conc_ts_base = true_conc_ts_base[samp_delay:]
+            true_conc_ts_alt = true_conc_ts_alt[samp_delay:]
+
+        outdata = self._run_power_calc(
+            idv=idv,
+            testnitter=testnitter,
+            seed_base=seed_base,
+            seed_alt=seed_alt,
+            true_conc_base=true_conc_ts_base,
+            true_conc_alt=true_conc_ts_alt,
+            error_base=error_base,
+            error_alt=error_alt,
+            mrt_model=mrt_model,
+            samp_years=samp_years,
+            samp_per_year=samp_per_year,
+            implementation_time_alt=implementation_time_alt,
+            initial_conc=initial_conc,
+            target_conc_alt=target_conc_alt,
+            prev_slope=prev_slope,
+            max_conc_lim=max_conc_lim,
+            min_conc_lim=min_conc_lim,
+            max_conc_val_base=max_conc_val_base,
+            max_conc_time_base=max_conc_time_base,
+            max_conc_val_alt=max_conc_val_alt,
+            max_conc_time_alt=max_conc_time_alt,
+            mrt=mrt,
+            target_conc_base=target_conc_base,
+            implementation_time_base=implementation_time_base,
+            mrt_p1=mrt_p1,
+            frac_p1=frac_p1,
+            f_p1=f_p1,
+            f_p2=f_p2,
+            **kwargs
+        )
+        return outdata
 
     def mulitprocess_power_calcs(self):  # todo
         raise NotImplementedError
