@@ -697,6 +697,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
 
         return out_data
 
+
     def mulitprocess_power_calcs(
             self,
             outpath: {Path, None, str},
