@@ -56,7 +56,9 @@ except ImportError:
 
 class DetectionPowerCalculator:
     def __init__(self, *args, **kwargs):
-        raise NotImplementedError  # Keynote as a place holder to refactor tests
+        raise NotImplementedError('The DetectionPowerCalculator has been depreciated in version'
+                                  'v2.0.0. To retain the old capability use v1.0.0.')
+        # Keynote as a place holder to refactor tests and others using the repo
 
 
 class DetectionPowerSlope(BaseDetectionCalculator):
