@@ -228,7 +228,8 @@ def test_piston_flow(plot=False):
     assert frac_p2_org is None and frac_p2 is None
     if plot:
         plt.plot(np.arange(len(true_conc_ts)) / 4, true_conc_ts, marker='o')
-
+        plt.show()
+        plt.close('all')
 
 def test_bepfm_slope(plot=False):
     print_myself()
@@ -384,10 +385,10 @@ def test_bpefm(plot=False):
     assert np.allclose(past_conc, true_past_conc)
     assert np.allclose(total_source_conc, true_total_source_conc)
     assert np.allclose(out_conc, out_conc2)
+    plt.close('all')
 
 
 def make_power_calc_kwargs(error_val, samp_years=20):
-    print_myself()
     out = dict(idv='true',
                error=error_val,
                mrt_model='binary_exponential_piston_flow',
@@ -397,8 +398,8 @@ def make_power_calc_kwargs(error_val, samp_years=20):
                initial_conc=10,
                target_conc=5,
                prev_slope=1,
-               max_conc=25,
-               min_conc=1,
+               max_conc_lim=25,
+               min_conc_lim=1,
                mrt=5,
                #
                mrt_p1=3,
@@ -466,8 +467,9 @@ def test_return_true_noisy_conc(show=False):
             elif isinstance(v, pd.Series):
                 true = pd.read_hdf(save_path, k)
                 assert isinstance(true, pd.Series)
-                pd.testing.assert_series_equal(v, true)
-
+                true = true.rename({'previous_slope': 'prev_slope'})
+                pd.testing.assert_series_equal(v.sort_index(), true.sort_index())
+    plt.close('all')
 
 def test_linear_from_max_vs_from_start(show=False):
     print_myself()
@@ -523,7 +525,7 @@ def test_linear_from_max_vs_from_start(show=False):
         for i, dp_name in enumerate(['norm_dp_auto', 'max_dp_auto']):
             use_dp = eval(dp_name)
             temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
-            all_outdata[f'{dp_name}_{error}'] = temp_out
+            all_outdata[f'{dp_name.replace("_auto", "")}_{error}'] = temp_out
             axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o',
                            label='true_conc')
             for n, c in enumerate(['r', 'b', 'orange']):
@@ -557,10 +559,11 @@ def test_linear_from_max_vs_from_start(show=False):
                 pd.testing.assert_frame_equal(v2, true_data)
             elif isinstance(v2, pd.Series):
                 assert isinstance(true_data, pd.Series)
-                pd.testing.assert_series_equal(v2, true_data)
+                true_data = true_data.rename({'previous_slope': 'prev_slope'})
+                pd.testing.assert_series_equal(v2.sort_index(), true_data.sort_index())
             else:
                 raise ValueError(f'Unknown type: {type(v2)}')
-
+    plt.close('all')
 
 def test_mann_kendall_power(show=False):
     print_myself()
@@ -588,11 +591,11 @@ def test_mann_kendall_power(show=False):
     ax.legend()
 
     norm_dp = DetectionPowerSlope(significance_mode='mann-kendall', return_true_conc=True,
-                                       return_noisy_conc_itters=3, efficent_mode=False)
+                                  return_noisy_conc_itters=3, efficent_mode=False)
     max_dp = DetectionPowerSlope(significance_mode='mann-kendall-from-max', return_true_conc=True,
-                                      return_noisy_conc_itters=3, efficent_mode=False)
+                                 return_noisy_conc_itters=3, efficent_mode=False)
     min_dp = DetectionPowerSlope(significance_mode='mann-kendall-from-min', return_true_conc=True,
-                                      return_noisy_conc_itters=3, efficent_mode=False)
+                                 return_noisy_conc_itters=3, efficent_mode=False)
     error_val = 0.5
     norm_inc_power = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
     norm_dec_power = norm_dp.power_calc(idv='norm_dec', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
@@ -609,14 +612,14 @@ def test_mann_kendall_power(show=False):
     norm_dp_auto = AutoDetectionPowerSlope(significance_mode='mann-kendall', return_true_conc=True,
                                            return_noisy_conc_itters=3, efficent_mode=False)
     max_dp_auto = AutoDetectionPowerSlope(significance_mode='mann-kendall-from-max', return_true_conc=True,
-                                            return_noisy_conc_itters=3, efficent_mode=False)
+                                          return_noisy_conc_itters=3, efficent_mode=False)
     all_outdata = {}
     for error in [0, 2, 5]:
         fig, axs = plt.subplots(nrows=2, ncols=2, sharex=True, sharey=True, figsize=(10, 10))
         for i, dp_name in enumerate(['norm_dp_auto', 'max_dp_auto']):
             use_dp = eval(dp_name)
             temp_out = use_dp.power_calc(**make_power_calc_kwargs(error, samp_years=5))
-            all_outdata[f'{dp_name}_{error}'] = temp_out
+            all_outdata[f'{dp_name.replace("_auto", "")}_{error}'] = temp_out
             axs[i, 0].plot(temp_out['true_conc'].index, temp_out['true_conc']['true_conc'], marker='o',
                            label='true_conc')
             for n, c in enumerate(['r', 'b', 'orange']):
@@ -657,9 +660,11 @@ def test_mann_kendall_power(show=False):
                 pd.testing.assert_frame_equal(v2, true_data)
             elif isinstance(v2, pd.Series):
                 assert isinstance(true_data, pd.Series)
-                pd.testing.assert_series_equal(v2, true_data)
+                true_data = true_data.rename({'previous_slope': 'prev_slope'})
+                pd.testing.assert_series_equal(v2.sort_index(), true_data.sort_index())
             else:
                 raise ValueError(f'Unknown type: {type(v2)}')
+    plt.close('all')
 
 
 def test_multpart_mann_kendall_power(show=False):
@@ -733,9 +738,11 @@ def test_multpart_mann_kendall_power(show=False):
                 pd.testing.assert_frame_equal(v2, true_data)
             elif isinstance(v2, pd.Series):
                 assert isinstance(true_data, pd.Series)
-                pd.testing.assert_series_equal(v2, true_data)
+                true_data = true_data.rename({'previous_slope': 'prev_slope'})
+                pd.testing.assert_series_equal(v2.sort_index(), true_data.sort_index())
             else:
                 raise ValueError(f'Unknown type: {type(v2)}')
+    plt.close('all')
 
 
 def test_pettitt_power(show=False):
@@ -833,8 +840,8 @@ def test_iteration_plotting(show=False):
         else:
             expect_slope = 'auto'
         dp = DetectionPowerSlope(significance_mode=mode, expect_slope=expect_slope, nsims=100,
-                                      nparts=2, return_true_conc=True,
-                                      return_noisy_conc_itters=1, efficent_mode=False)
+                                 nparts=2, return_true_conc=True,
+                                 return_noisy_conc_itters=1, efficent_mode=False)
         output = dp.power_calc(idv=mode, error=0.5, true_conc_ts=data, mrt_model='pass_true_conc')
         fig, ax = dp.plot_iteration(output['noisy_conc'].iloc[:, 0], output['true_conc'])
         ax.set_title(f'{mode} power: {output["power"]["power"]}')
@@ -935,15 +942,9 @@ def make_test_power_calc_runs(plot=False):
     return auto_runs, pass_ts_runs
 
 
-def test_power_calc_and_mp():
-    print_myself()
-    save_path = Path(__file__).parent.joinpath('test_data', 'test_power_calc_and_mp.hdf')
-    write_test_data = False
-    auto_runs, ts_runs = make_test_power_calc_runs()
-
-    ex_auto = AutoDetectionPowerSlope(efficent_mode=False)
+def _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs):
     t = time.time()
-    mp_data = ex_auto.mulitprocess_power_calcs(
+    mp_data_auto = ex_auto.mulitprocess_power_calcs(
         outpath=None,
         id_vals=np.array([r.get('idv') for r in auto_runs]),
         error_vals=np.array([r.get('error') for r in auto_runs]),
@@ -952,47 +953,21 @@ def test_power_calc_and_mp():
         implementation_time_vals=np.array([r.get('implementation_time') for r in auto_runs]),
         initial_conc_vals=np.array([r.get('initial_conc') for r in auto_runs]),
         target_conc_vals=np.array([r.get('target_conc') for r in auto_runs]),
-        previous_slope_vals=np.array([r.get('prev_slope') for r in auto_runs]),
-        max_conc_vals=np.array([r.get('max_conc') for r in auto_runs]),
-        min_conc_vals=np.array([r.get('min_conc') for r in auto_runs]),
+        prev_slope_vals=np.array([r.get('prev_slope') for r in auto_runs]),
+        max_conc_lim_vals=np.array([r.get('max_conc_lim') for r in auto_runs]),
+        min_conc_lim_vals=np.array([r.get('min_conc_lim') for r in auto_runs]),
         mrt_model_vals=np.array([r.get('mrt_model') for r in auto_runs]),
         mrt_vals=np.array([r.get('mrt') for r in auto_runs]),
         mrt_p1_vals=np.array([r.get('mrt_p1') for r in auto_runs]),
         frac_p1_vals=np.array([r.get('frac_p1') for r in auto_runs]),
         f_p1_vals=np.array([r.get('f_p1') for r in auto_runs]),
         f_p2_vals=np.array([r.get('f_p2') for r in auto_runs]),
-        true_conc_ts_vals=[r.get('true_conc_ts') for r in auto_runs],
         seed=np.array([r.get('seed') for r in auto_runs]),
     )
     print(f'elapsed time for mp (auto): {time.time() - t}')
 
-    # todo run non-auto
-    ex_auto = AutoDetectionPowerSlope(efficent_mode=False)
-    t = time.time()
-    mp_data = ex_auto.mulitprocess_power_calcs(
-        outpath=None,
-        id_vals=np.array([r.get('idv') for r in auto_runs]),
-        error_vals=np.array([r.get('error') for r in auto_runs]),
-        samp_years_vals=np.array([r.get('samp_years') for r in auto_runs]),
-        samp_per_year_vals=np.array([r.get('samp_per_year') for r in auto_runs]),
-        implementation_time_vals=np.array([r.get('implementation_time') for r in auto_runs]),
-        initial_conc_vals=np.array([r.get('initial_conc') for r in auto_runs]),
-        target_conc_vals=np.array([r.get('target_conc') for r in auto_runs]),
-        previous_slope_vals=np.array([r.get('prev_slope') for r in auto_runs]),
-        max_conc_vals=np.array([r.get('max_conc') for r in auto_runs]),
-        min_conc_vals=np.array([r.get('min_conc') for r in auto_runs]),
-        mrt_model_vals=np.array([r.get('mrt_model') for r in auto_runs]),
-        mrt_vals=np.array([r.get('mrt') for r in auto_runs]),
-        mrt_p1_vals=np.array([r.get('mrt_p1') for r in auto_runs]),
-        frac_p1_vals=np.array([r.get('frac_p1') for r in auto_runs]),
-        f_p1_vals=np.array([r.get('f_p1') for r in auto_runs]),
-        f_p2_vals=np.array([r.get('f_p2') for r in auto_runs]),
-        true_conc_ts_vals=[r.get('true_conc_ts') for r in auto_runs],
-        seed=np.array([r.get('seed') for r in auto_runs]),
-    )
-    print(f'elapsed time for mp (auto): {time.time() - t}')
+    # run non auto
 
-    ex = DetectionPowerSlope(efficent_mode=False)
     t = time.time()
     mp_data = ex.mulitprocess_power_calcs(
         outpath=None,
@@ -1003,9 +978,9 @@ def test_power_calc_and_mp():
         implementation_time_vals=np.array([r.get('implementation_time') for r in ts_runs]),
         initial_conc_vals=np.array([r.get('initial_conc') for r in ts_runs]),
         target_conc_vals=np.array([r.get('target_conc') for r in ts_runs]),
-        previous_slope_vals=np.array([r.get('prev_slope') for r in ts_runs]),
-        max_conc_vals=np.array([r.get('max_conc') for r in ts_runs]),
-        min_conc_vals=np.array([r.get('min_conc') for r in ts_runs]),
+        prev_slope_vals=np.array([r.get('prev_slope') for r in ts_runs]),
+        max_conc_lim_vals=np.array([r.get('max_conc_lim') for r in ts_runs]),
+        min_conc_lim_vals=np.array([r.get('min_conc_lim') for r in ts_runs]),
         mrt_model_vals=np.array([r.get('mrt_model') for r in ts_runs]),
         mrt_vals=np.array([r.get('mrt') for r in ts_runs]),
         mrt_p1_vals=np.array([r.get('mrt_p1') for r in ts_runs]),
@@ -1016,8 +991,15 @@ def test_power_calc_and_mp():
         seed=np.array([r.get('seed') for r in ts_runs]),
     )
     print(f'elapsed time for mp (non-auto): {time.time() - t}')
+    out = pd.concat([mp_data_auto, mp_data])
+    assert 'min_conc' not in out.columns
+    assert 'mrt_p2' in out.columns
+    assert 'true_conc_ts_none' not in out.columns
+
+    return out
 
 
+def _single_process_runs(ex_auto, ex, auto_runs, ts_runs):
     print('running non-mp this takes c. 8-10 mins')
     data = []
     t = time.time()
@@ -1037,6 +1019,20 @@ def test_power_calc_and_mp():
     data = pd.DataFrame(data)
     data.set_index('idv', inplace=True)
     print(f'elapsed time for non-mp: {time.time() - t}')
+    return data
+
+
+def test_power_calc_and_mp():
+    print_myself()
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_power_calc_and_mp.hdf')
+    write_test_data = False
+    auto_runs, ts_runs = make_test_power_calc_runs()
+
+    ex_auto = AutoDetectionPowerSlope(efficent_mode=False)
+    ex = DetectionPowerSlope(efficent_mode=False)
+
+    data = _single_process_runs(ex_auto, ex, auto_runs, ts_runs)
+    mp_data = _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs)
 
     if write_test_data:
         save_path.unlink(missing_ok=True)
@@ -1044,7 +1040,8 @@ def test_power_calc_and_mp():
         mp_data.to_hdf(save_path, key='mp_data', mode='a')
     true_data = pd.read_hdf(save_path, key='data')
     true_mp_data = pd.read_hdf(save_path, key='mp_data')
-
+    true_mp_data = true_mp_data.rename({'previous_slope': 'prev_slope'}, axis=1)
+    true_data = true_data.rename({'previous_slope': 'prev_slope'}, axis=1)
     assert data.shape == mp_data.shape == true_data.shape == true_mp_data.shape, 'data shapes do not match'
     assert set(data.columns) == set(mp_data.columns) == set(true_data.columns) == set(
         true_mp_data.columns), 'data columns do not match'
@@ -1055,9 +1052,13 @@ def test_power_calc_and_mp():
                         and data[col].equals(true_data[col])
                         and data[col].equals(true_mp_data[col]))
         else:
-            col_same = (np.allclose(data[col], mp_data[col], equal_nan=True)
-                        and np.allclose(data[col], true_data[col], equal_nan=True)
-                        and np.allclose(data[col], true_mp_data[col], equal_nan=True))
+            temp_data = data[col].astype(float)
+            temp_mp_data = mp_data[col].astype(float)
+            temp_true_data = true_data[col].astype(float)
+            temp_true_mp_data = true_mp_data[col].astype(float)
+            col_same = (np.allclose(temp_data, temp_mp_data, equal_nan=True)
+                        and np.allclose(temp_data, temp_true_data, equal_nan=True)
+                        and np.allclose(temp_data, temp_true_mp_data, equal_nan=True))
         if not col_same:
             bad_cols.append(col)
     if len(bad_cols) == 0:
@@ -1090,45 +1091,51 @@ def test_efficient_mode_lr():
 
     # test normal
     norm_dp = DetectionPowerSlope(significance_mode='linear-regression', return_true_conc=False,
-                                       return_noisy_conc_itters=0, efficent_mode=False)
+                                  return_noisy_conc_itters=0, efficent_mode=False)
     norm_dpeff = DetectionPowerSlope(significance_mode='linear-regression', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                     return_noisy_conc_itters=0, efficent_mode=True)
     for error_val in [0.5, 1, 5, 10, 30, 35, 40, 50]:
-        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
-        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc',
+                                     seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
         eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
-                                    mrt_model='pass_true_conc')
+                                    mrt_model='pass_true_conc', seed=5585)
         non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
-                                     mrt_model='pass_true_conc')
+                                     mrt_model='pass_true_conc', seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
     # test from max
     max_dp = DetectionPowerSlope(significance_mode='linear-regression-from-max', return_true_conc=False,
-                                      return_noisy_conc_itters=0, efficent_mode=False)
+                                 return_noisy_conc_itters=0, efficent_mode=False)
     max_dp_eff = DetectionPowerSlope(significance_mode='linear-regression-from-max', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                     return_noisy_conc_itters=0, efficent_mode=True)
 
     for error_val in [0.5, 1, 5, 10, 30]:
-        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
-        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                    seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
     # test from min
     min_dp = DetectionPowerSlope(significance_mode='linear-regression-from-min', return_true_conc=False,
-                                      return_noisy_conc_itters=0, efficent_mode=False)
+                                 return_noisy_conc_itters=0, efficent_mode=False)
     min_dp_eff = DetectionPowerSlope(significance_mode='linear-regression-from-min', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                     return_noisy_conc_itters=0, efficent_mode=True)
     for error_val in [0.5, 1, 5, 10, 30]:
-        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
-        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc',
+                                    seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
@@ -1154,45 +1161,51 @@ def test_efficent_mode_mann_kendall():
 
     # test normal
     norm_dp = DetectionPowerSlope(significance_mode='mann-kendall', return_true_conc=False,
-                                       return_noisy_conc_itters=0, efficent_mode=False, print_freq=100)
+                                  return_noisy_conc_itters=0, efficent_mode=False, print_freq=100)
     norm_dpeff = DetectionPowerSlope(significance_mode='mann-kendall', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True, print_freq=100)
+                                     return_noisy_conc_itters=0, efficent_mode=True, print_freq=100)
     for error_val in [0.5, 1, 5, 10, 30, 35, 40, 50]:
-        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
-        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc')
+        eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y, mrt_model='pass_true_conc',
+                                     seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
         eff = norm_dpeff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
-                                    mrt_model='pass_true_conc')
+                                    mrt_model='pass_true_conc', seed=5585)
         non_eff = norm_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=np.zeros_like(y),
-                                     mrt_model='pass_true_conc')
+                                     mrt_model='pass_true_conc', seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
     # test from max
     max_dp = DetectionPowerSlope(significance_mode='mann-kendall-from-max', return_true_conc=False,
-                                      return_noisy_conc_itters=0, efficent_mode=False)
+                                 return_noisy_conc_itters=0, efficent_mode=False)
     max_dp_eff = DetectionPowerSlope(significance_mode='mann-kendall-from-max', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                     return_noisy_conc_itters=0, efficent_mode=True)
 
     for error_val in [0.5, 1, 5, 10, 30]:
-        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
-        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc')
+        eff = max_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = max_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_inc, mrt_model='pass_true_conc',
+                                    seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
 
     # test from min
     min_dp = DetectionPowerSlope(significance_mode='mann-kendall-from-min', return_true_conc=False,
-                                      return_noisy_conc_itters=0, efficent_mode=False)
+                                 return_noisy_conc_itters=0, efficent_mode=False)
     min_dp_eff = DetectionPowerSlope(significance_mode='mann-kendall-from-min', return_true_conc=False,
-                                          return_noisy_conc_itters=0, efficent_mode=True)
+                                     return_noisy_conc_itters=0, efficent_mode=True)
     for error_val in [0.5, 1, 5, 10, 30]:
-        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
-        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc')
+        eff = min_dp_eff.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc',
+                                    seed=5585)
+        non_eff = min_dp.power_calc(idv='norm_inc', error=error_val, true_conc_ts=y_dec, mrt_model='pass_true_conc',
+                                    seed=5585)
         eff = pd.Series(eff)
         non_eff = pd.Series(non_eff)
         pd.testing.assert_series_equal(eff, non_eff), f'error: {error_val}'
@@ -1314,30 +1327,34 @@ def check_function_mpmk_check_step():
 
 
 # todo test kwarg passing
+# todo test condensed vs non-condenced mode
+# todo re-run
 if __name__ == '__main__':
     plot_flag = False
 
-    make_test_power_calc_runs(plot_flag)
+    run_already_passed = True
 
-    test_unitary_epfm_slope(plot=plot_flag)
-    test_piston_flow(plot=plot_flag)
-    test_unitary_epfm(plot=plot_flag)
-    test_bepfm_slope(plot=plot_flag)
-    test_bpefm(plot=plot_flag)
-    test_return_true_noisy_conc(show=plot_flag)
-    test_linear_from_max_vs_from_start(show=plot_flag)
+    # todo rounding is likely the cause of the problem test_pettitt_power(show=plot_flag)
+    if run_already_passed:
+        make_test_power_calc_runs(plot_flag)
+        test_power_calc_and_mp()
 
-    test_mann_kendall_power(show=plot_flag)
-    test_pettitt_power(show=plot_flag)
-    test_iteration_plotting(show=plot_flag)
-    test_multpart_mann_kendall_power(show=plot_flag)
+        test_unitary_epfm_slope(plot=plot_flag)
+        test_piston_flow(plot=plot_flag)
+        test_unitary_epfm(plot=plot_flag)
+        test_bepfm_slope(plot=plot_flag)
+        test_bpefm(plot=plot_flag)
+        test_return_true_noisy_conc(show=plot_flag)
+        test_linear_from_max_vs_from_start(show=plot_flag)
 
-    test_efficient_mode_lr()
-    test_efficent_mode_mann_kendall()
-    test_efficient_mode_mpmk()
-    check_function_mpmk_check_step()
+        test_mann_kendall_power(show=plot_flag)
+        test_iteration_plotting(show=plot_flag)
+        test_multpart_mann_kendall_power(show=plot_flag)
 
-    print('passed all unique tests, now for longer tests')
+        test_efficient_mode_lr()
+        test_efficent_mode_mann_kendall()
+        test_efficient_mode_mpmk()
+        check_function_mpmk_check_step()
 
-    test_power_calc_and_mp()
+
     print('passed all tests')

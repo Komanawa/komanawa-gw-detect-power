@@ -4,17 +4,11 @@ power calcs
 created matt_dumont
 on: 18/05/23
 """
-import time
-import traceback
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from scipy import stats
 import logging
-import multiprocessing
-import os
-import psutil
-import sys
 import warnings
 from gw_detect_power.base_detection_calculator import BaseDetectionCalculator, _run_multiprocess
 
@@ -332,6 +326,209 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         ax.legend()
         return fig, ax
 
+    def _power_test_lr(self, idv, y, expected_slope, imax, imin, true_data, return_slope=False):
+        """
+        power calculations, probability of detecting a change via linear regression
+        (slope is significant and in the correct direction)
+        :param idv: identifier for the power calc site
+        :param y: np.array of shape (nsims, n_samples)
+        :param expected_slope: used to determine sign of slope predicted is same as expected
+        :param imax: index of the maximum concentration
+        :param imin: index of the minimum concentration
+        :param return_slope: return the slope of the concentration data used to calculate expect slope
+        :return:
+        """
+        n_samples0 = y.shape[1]
+        if self._power_from_max:
+            y = y[:, imax:]
+            true_data = true_data[imax:]
+        if self._power_from_min:
+            y = y[:, imin:]
+            true_data = true_data[imin:]
+        n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
+                                               'raised here that means that the max concentration is too far along'
+                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
+        x = np.arange(n_samples)
+        p_val = []
+        slopes = []
+        if self.efficent_mode and not return_slope:
+            o2 = stats.linregress(x, true_data)
+            pval_bad = o2.pvalue > self.min_p_value
+            sign_bad = False
+            if expected_slope is not None:
+                sign_bad = np.sign(o2.slope) != np.sign(expected_slope)
+
+            if pval_bad or sign_bad:  # cannot reject null hypothesis on noise free data
+                return 0., np.zeros(n_sims, dtype=bool)
+
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
+            o2 = stats.linregress(x, y0)
+            slopes.append(o2.slope)
+            p_val.append(o2.pvalue)
+        p_val = np.array(p_val)
+        slopes = np.array(slopes)
+        p_list = p_val < self.min_p_value
+        if expected_slope is not None:
+            sign_corr = np.sign(slopes) == np.sign(expected_slope)
+            p_list = p_list & sign_corr
+        power = p_list.sum() / n_sims * 100
+
+        if return_slope:
+            slope_out = np.sign(np.nanmedian(slopes[p_list]))
+            return power, p_list, slope_out
+        return power, p_list
+
+    def _power_test_mann_kendall(self, idv, y, expected_slope, imax, imin, true_data,
+                                 return_slope=False):
+        """
+        power calculations, probability of detecting a change via linear regression
+        (slope is significant and in the correct direction)
+        :param y: np.array of shape (nsims, n_samples)
+        :param expected_slope: used to determine sign of slope predicted is same as expected
+        :param imax: index of the maximum concentration
+        :param imin: index of the minimum concentration
+        :param return_slope: return the slope of the concentration data used to calculate expect slope
+        :return:
+        """
+        n_samples0 = y.shape[1]
+        if self._power_from_max:
+            y = y[:, imax:]
+            true_data = true_data[imax:]
+        if self._power_from_min:
+            y = y[:, imin:]
+            true_data = true_data[imin:]
+        n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
+                                               'raised here that means that the max concentration is too far along'
+                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
+
+        if self.efficent_mode and not return_slope:
+            mk = MannKendall(data=true_data, alpha=self.min_p_value)
+            pval_bad = mk.p > self.min_p_value
+            sign_bad = False
+            if expected_slope is not None:
+                sign_bad = np.sign(mk.trend) != np.sign(expected_slope)
+            if pval_bad or sign_bad:  # cannot reject null hypothesis on noise free data
+                return 0., np.zeros(n_sims, dtype=bool)
+
+        p_val = []
+        slopes = []
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
+            mk = MannKendall(data=y0, alpha=self.min_p_value)
+            slopes.append(mk.trend)
+            p_val.append(mk.p)
+        p_val = np.array(p_val)
+        slopes = np.array(slopes)
+        p_list = p_val < self.min_p_value
+        if expected_slope is not None:
+            sign_corr = np.sign(slopes) == np.sign(expected_slope)
+            p_list = p_list & sign_corr
+        power = p_list.sum() / n_sims * 100
+        slope_out = np.sign(np.nanmedian(slopes[p_list]))
+
+        if return_slope:
+            return power, p_list, slope_out
+        return power, p_list
+
+    def _power_test_pettitt(self, idv, y, expected_slope, imax, imin, true_data, return_slope=False):
+        """
+
+        :param y:data
+        :param expected_slope: not used
+        :param imax: not used
+        :param imin: not used
+        :param return_slope: not really used, dummy
+        :return:
+        """
+        n_sims, n_samples = y.shape
+        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples')
+        num_pass = 0
+        passed = []
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
+            h, cp, p, U, mu = pettitt_test(y0, alpha=self.min_p_value,
+                                           sim=self.nsims_pettitt)
+            num_pass += h
+            passed.append(h)
+        passed = np.atleast_1d(passed)
+        power = num_pass / n_sims * 100
+        if return_slope:
+            return power, passed, None
+        return power, passed
+
+    def _power_test_mp_kendall(self, idv, y, expected_slope, imax, imin, true_data,
+                               return_slope=False):
+        """
+        :param y: data
+        :param expected_slope: expected slope values
+        :param imax: not used
+        :param imin: not used
+        :param return_slope: dummy
+        :return:
+        """
+        n_sims, n_samples = y.shape
+        if callable(self.mpmk_check_step):
+            use_check_step = self.mpmk_check_step(n_samples)
+        else:
+            use_check_step = self.mpmk_check_step
+        assert (
+                (n_samples >= self.min_samples)
+                and (n_samples >= self.kendall_mp_min_part_size * self.kendall_mp_nparts)
+        ), (f'{n_samples=} must be greater than min_samples={self.min_samples},'
+            f' or nparts={self.kendall_mp_nparts} * min_part_size={self.kendall_mp_min_part_size}')
+        power = []
+        window = None
+        if self.efficent_mode:
+            mpmk = MultiPartKendall(data=true_data, nparts=self.kendall_mp_nparts,
+                                    expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
+                                    check_step=use_check_step, check_window=None)
+            best = mpmk.get_maxz_breakpoints(raise_on_none=False)
+            if best is None:  # no matches on the True data not worth running the power calc
+                return 0., np.zeros(n_sims, dtype=bool)
+
+            if len(best) > 1:
+                warnings.warn(f'multiple best breakpoints returned, cannot use efficent mode: {best}, '
+                              f'reverting to original mode')
+            else:
+                best = np.atleast_1d(best[0])
+                assert len(best) == self.kendall_mp_nparts - 1, (f'shouldnt get here '
+                                                                 f'best breakpoints must have'
+                                                                 f' length {self.kendall_mp_nparts - 1}')
+                window = []
+                for part, bp in zip(range(1, self.kendall_mp_nparts), best):
+                    delta = max(self.mpmpk_efficent_min // 2 * use_check_step,
+                                int(np.ceil(self.mpmk_window * len(true_data))))
+                    wmin = max(0 + self.kendall_mp_min_part_size, bp - delta)
+                    wmax = min(len(true_data) - self.kendall_mp_min_part_size,
+                               bp + delta)
+                    window.append((wmin, wmax))
+
+        for i, y0 in enumerate(y):
+            if self.print_freq is not None:
+                if i % self.print_freq == 0:
+                    print(f'{idv} {i + 1} of {n_sims}')
+            mpmk = MultiPartKendall(data=y0, nparts=self.kendall_mp_nparts,
+                                    expect_part=expected_slope, min_size=self.kendall_mp_min_part_size,
+                                    alpha=self.min_p_value, no_trend_alpha=self.kendall_mp_no_trend_alpha,
+                                    check_step=use_check_step, check_window=window)
+            power.append(mpmk.acceptable_matches.any())
+
+        power_array = np.array(power)
+        power_out = power_array.sum() / n_sims * 100
+        if return_slope:
+            return power_out, power_array, None
+        return power_out, power_array
+
     def _run_power_calc(self, testnitter, seed, true_conc_ts, idv, error, expect_slope, max_conc_val,
                         max_conc_time, **kwargs):
         if testnitter is not None:
@@ -344,6 +541,8 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         if nsamples < self.min_samples:
             raise ValueError(f'nsamples must be greater than {self.min_samples}, you can change the '
                              f'minimum number of samples in the DetectionPowerCalculator class init')
+        assert np.isfinite(true_conc_ts).all(), 'true_conc_ts must be finite'
+
         # tile to nsims
         if testnitter is not None:
             rand_shape = (testnitter, nsamples)
@@ -475,8 +674,9 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         outpath, id_vals, use_kwargs = self._multiprocess_checks(outpath, id_vals, **use_kwargs)
 
         runs = []
-        for i in range(len(id_vals)):
+        for i, idv in enumerate(id_vals):
             kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+            kwargs['idv'] = idv
             runs.append(kwargs)
 
         print(f'running {len(runs)} runs')
@@ -512,7 +712,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     condensed_mode = False
 
     # precision to round values to (2 = 0.01), set stupidly high to ensure no rounding on default
-    previous_slope_per = 9
+    prev_slope_per = 9
     max_conc_lim_per = 9
     min_conc_lim_per = 9
     mrt_per = 9
@@ -521,7 +721,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     f_p1_per = 9
     f_p2_per = 9
 
-    def set_condensed_mode(self, previous_slope_per=2,
+    def set_condensed_mode(self, prev_slope_per=2,  # todo document!
                            max_conc_lim_per=1,
                            min_conc_lim_per=1,
                            mrt_per=0,
@@ -531,7 +731,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                            f_p2_per=2, ):
         """
         set calculator to condense the number of runs based by rounding the inputs to a specified precision
-        :param previous_slope_per: precision to round previous_slope to (2 = 0.01)
+        :param prev_slope_per: precision to round previous_slope to (2 = 0.01)
         :param max_conc_lim_per: precision to round max_conc_lim to (2 = 0.01)
         :param min_conc_lim_per: precision to round min_conc_lim to (2 = 0.01)
         :param mrt_per: precision to round mrt to
@@ -543,7 +743,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
         """
 
         self.condensed_mode = True
-        self.previous_slope_per = previous_slope_per
+        self.prev_slope_per = prev_slope_per
         self.max_conc_lim_per = max_conc_lim_per
         self.min_conc_lim_per = min_conc_lim_per
         self.mrt_per = mrt_per
@@ -649,7 +849,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                 'cannot run binary_exponential_piston_flow model, age_tools not installed'
                 'to install run:\n'
                 'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
-            tvs = ['mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'min_conc']
+            tvs = ['mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'min_conc_lim']
             bad = []
             for t in tvs:
                 if eval(t) is None:
@@ -690,13 +890,13 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                                         min_conc_lim=min_conc_lim,
                                         mrt=mrt,
                                         mrt_p1=mrt_p1,
+                                        mrt_p2=mrt_p2,
                                         frac_p1=frac_p1,
                                         f_p1=f_p1,
                                         f_p2=f_p2,
                                         **kwargs)
 
         return out_data
-
 
     def mulitprocess_power_calcs(
             self,
@@ -708,7 +908,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
             implementation_time_vals: {np.ndarray, int},
             initial_conc_vals: {np.ndarray, float},
             target_conc_vals: {np.ndarray, float},
-            previous_slope_vals: {np.ndarray, float},
+            prev_slope_vals: {np.ndarray, float},
             max_conc_lim_vals: {np.ndarray, float},
             min_conc_lim_vals: {np.ndarray, float},
             mrt_model_vals: {np.ndarray, str},
@@ -728,7 +928,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                           implementation_time_vals=implementation_time_vals,
                           initial_conc_vals=initial_conc_vals,
                           target_conc_vals=target_conc_vals,
-                          previous_slope_vals=previous_slope_vals,
+                          prev_slope_vals=prev_slope_vals,
                           max_conc_lim_vals=max_conc_lim_vals,
                           min_conc_lim_vals=min_conc_lim_vals,
                           mrt_model_vals=mrt_model_vals,
@@ -750,13 +950,13 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
             print('creating and condensing runs')
             use_kwargs = {k: self._round_kwarg_value(v, k) for k, v in use_kwargs.items()}
 
-            for i in range(len(id_vals)):
+            for i, idv in enumerate(id_vals):
                 if i % 1000 == 0:
                     print(f'forming/condesing run {i} of {len(id_vals)}')
 
                 use_idv = '_'.join([self._get_id_str(use_kwargs[e][i], e) for e in
                                     ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
-                                     'target_conc', 'previous_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
+                                     'target_conc', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
                                      'mrt',
                                      'mrt_p1', 'frac_p1', 'f_p1', 'f_p2']
                                     ])
@@ -765,10 +965,15 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                     continue
                 run_list.append(use_idv)
                 kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+                kwargs['idv'] = idv
                 runs.append(kwargs)
 
         else:
             all_use_idv = id_vals
+            for i, idv in enumerate(id_vals):
+                kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+                kwargs['idv'] = idv
+                runs.append(kwargs)
 
         if self.condensed_mode:
             print(f'running {len(runs)} runs, simplified from {len(id_vals)} runs')
