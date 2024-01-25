@@ -946,7 +946,7 @@ def _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs):
     t = time.time()
     mp_data_auto = ex_auto.mulitprocess_power_calcs(
         outpath=None,
-        id_vals=np.array([r.get('idv') for r in auto_runs]),
+        idv_vals=np.array([r.get('idv') for r in auto_runs]),
         error_vals=np.array([r.get('error') for r in auto_runs]),
         samp_years_vals=np.array([r.get('samp_years') for r in auto_runs]),
         samp_per_year_vals=np.array([r.get('samp_per_year') for r in auto_runs]),
@@ -971,7 +971,7 @@ def _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs):
     t = time.time()
     mp_data = ex.mulitprocess_power_calcs(
         outpath=None,
-        id_vals=np.array([r.get('idv') for r in ts_runs]),
+        idv_vals=np.array([r.get('idv') for r in ts_runs]),
         error_vals=np.array([r.get('error') for r in ts_runs]),
         samp_years_vals=np.array([r.get('samp_years') for r in ts_runs]),
         samp_per_year_vals=np.array([r.get('samp_per_year') for r in ts_runs]),

@@ -106,6 +106,10 @@ class BaseDetectionCalculator:
 
         base_data = dict(
             error_vals=(False, False, False),
+            error_base_vals=(False, False, False),
+            error_alt_vals=(True, False, False),
+            seed_alt_vals_vals=(True, True, False),
+            seed_base_vals_vals=(True, True, False),
             seed=(True, True, False),
         )
 
@@ -132,6 +136,105 @@ class BaseDetectionCalculator:
         none_allowed, is_int, is_any = data.get(key, (False, False, True))
 
         return none_allowed, is_int, is_any
+
+    def _run_multiprocess_pass_conc(self, outpath, idv_vals, run, debug_mode, use_kwargs):
+        outpath, idv_vals, use_kwargs = self._multiprocess_checks(outpath, idv_vals, **use_kwargs)
+
+        runs = []
+        for i, idv in enumerate(idv_vals):
+            kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+            kwargs['idv'] = idv
+            runs.append(kwargs)
+
+        print(f'running {len(runs)} runs')
+        if not run:
+            print(f'stopping as {run=}')
+            return
+
+        if debug_mode:
+            result_data = []
+            for run_kwargs in runs:
+                print(f'running power calc for: {run_kwargs["idv"]} with debug_mode=True (single process)')
+                result_data.append(self.power_calc(**run_kwargs))
+
+        else:
+            result_data = _run_multiprocess(self._power_calc_mp, runs, num_cores=self.ncores,
+                                            logging_level=self.log_level)
+        result_data = pd.DataFrame(result_data)
+        result_data.set_index('idv', inplace=True)
+
+        if outpath is not None:
+            print(f'saving results to: {outpath}')
+            outpath.parent.mkdir(parents=True, exist_ok=True)
+            result_data.to_hdf(outpath, 'data')
+        return result_data
+
+    def _run_multiprocess_auto(self, outpath, idv_vals, run, debug_mode, use_kwargs):
+        outpath, idv_vals, use_kwargs = self._multiprocess_checks(outpath, idv_vals, **use_kwargs)
+
+        # make runs
+        runs = []
+
+        if self.condensed_mode:
+            all_use_idv = []
+            run_list = []
+            print('creating and condensing runs')
+            use_kwargs = {k: self._round_kwarg_value(v, k) for k, v in use_kwargs.items()}
+
+            for i, idv in enumerate(idv_vals):
+                if i % 1000 == 0:
+                    print(f'forming/condesing run {i} of {len(idv_vals)}')
+
+                use_idv = '_'.join([self._get_id_str(use_kwargs[e][i], e) for e in
+                                    ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
+                                     'target_conc', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
+                                     'mrt',
+                                     'mrt_p1', 'frac_p1', 'f_p1', 'f_p2']
+                                    ])
+                all_use_idv.append(use_idv)
+                if use_idv in run_list:
+                    continue
+                run_list.append(use_idv)
+                kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+                kwargs['idv'] = idv
+                runs.append(kwargs)
+
+        else:
+            all_use_idv = idv_vals
+            for i, idv in enumerate(idv_vals):
+                kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
+                kwargs['idv'] = idv
+                runs.append(kwargs)
+
+        if self.condensed_mode:
+            print(f'running {len(runs)} runs, simplified from {len(idv_vals)} runs')
+        else:
+            print(f'running {len(runs)} runs')
+
+        if not run:
+            print(f'stopping as {run=}')
+            return
+
+        if debug_mode:
+            result_data = []
+            for run_kwargs in runs:
+                print(f'running power calc for: {run_kwargs["idv"]} with debug_mode=True (single process)')
+                result_data.append(self.power_calc(**run_kwargs))
+
+        else:
+            result_data = _run_multiprocess(self._power_calc_mp, runs, num_cores=self.ncores,
+                                            logging_level=self.log_level)
+        result_data = pd.DataFrame(result_data)
+        result_data.set_index('idv', inplace=True)
+
+        outdata = result_data.loc[all_use_idv]
+        outdata.loc[:, 'idv'] = idv_vals
+        outdata.set_index('idv', inplace=True, drop=True)
+
+        if outpath is not None:
+            outpath.parent.mkdir(parents=True, exist_ok=True)
+            outdata.to_hdf(outpath, 'data')
+        return outdata
 
     @staticmethod
     def _adjust_shape(x, shape, none_allowed, is_int, idv, any_val=False):

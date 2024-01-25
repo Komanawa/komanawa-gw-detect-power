@@ -594,14 +594,17 @@ class DetectionPowerSlope(BaseDetectionCalculator):
     def power_calc(self, idv, error: float, true_conc_ts: np.ndarray,
                    seed: {int, None} = None, testnitter=None, **kwargs):
         """
+        calculate the slope detection power of a given concentration time series, note the power is calculated
+        using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling
+        frequency then you should resample the true_conc_ts before passing it to this function
 
         :param idv: identifiers for the power calc sites, passed straight through to the output
         :param error: standard deviation of the noise
-        :param true_conc_ts: the true concentration timeseries (only used for
-                        pass_true_conc model)
+        :param true_conc_ts: the true concentration timeseries for the power calc
         :param seed: int or None for random seed
         :param testnitter: None (usually) or a different nitter then self.niter for testing run times
-        :return: pd.DataFrame with the power calc results (len=1) note power is percent 0-100
+        :param kwargs: any other kwargs to pass directly to the output Series
+        :return: pd.Series with the power calc results note power is percent 0-100
                 Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
                 in which case a dictionary will be returned:
                     [
@@ -636,10 +639,10 @@ class DetectionPowerSlope(BaseDetectionCalculator):
 
     def mulitprocess_power_calcs(self,
                                  outpath: {Path, None, str},
-                                 id_vals: np.ndarray,
+                                 idv_vals: np.ndarray,
                                  error_vals: {np.ndarray, float},
-                                 true_conc_ts_vals: {np.ndarray, list, None} = None,
-                                 seed: {np.ndarray, int, None} = 5585,
+                                 true_conc_ts_vals: {np.ndarray, list},
+                                 seed: {np.ndarray, int, None} = None,
                                  run=True, debug_mode=False,
                                  **kwargs
                                  ):
@@ -649,19 +652,20 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         returned dataset under the column 'python_error' if 'python_error' is None then the run was successful
         to change the number of cores used pass n_cores to the constructor init
 
-        :param outpath: path to save results to
-        :param id_vals: id values for each simulation
+        :param outpath: path to save results to or None (no save)
+        :param idv_vals: id values for each simulation
 
         All values from here on out should be either a single value or an array of values with the same shape as
             id_vals
 
         :param error_vals: standard deviation of noise to add for each simulation
-        :param true_conc_ts_vals: the true concentration time series for each simulation only used for the
-                                    'pass_true_conc' mrt_model, note that this can be a list of arrays of different
+        :param true_conc_ts_vals: the true concentration time series for each simulation, note that this can be a
+                                    list of arrays of different
                                     lengths for each simulation, Numpy does not support jagged arrays
         :param seed: ndarray (integer seeds), None (no seeds), or int (1 seed for all simulations)
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
         :param debug_mode: if True run as single process to allow for easier debugging
+        :param kwargs: any other kwargs to pass directly to the output dataframe
         :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
         """
 
@@ -670,37 +674,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
                           seed=seed,
                           **kwargs
                           )
-
-        outpath, id_vals, use_kwargs = self._multiprocess_checks(outpath, id_vals, **use_kwargs)
-
-        runs = []
-        for i, idv in enumerate(id_vals):
-            kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
-            kwargs['idv'] = idv
-            runs.append(kwargs)
-
-        print(f'running {len(runs)} runs')
-        if not run:
-            print(f'stopping as {run=}')
-            return
-
-        if debug_mode:
-            result_data = []
-            for run_kwargs in runs:
-                print(f'running power calc for: {run_kwargs["idv"]} with debug_mode=True (single process)')
-                result_data.append(self.power_calc(**run_kwargs))
-
-        else:
-            result_data = _run_multiprocess(self._power_calc_mp, runs, num_cores=self.ncores,
-                                            logging_level=self.log_level)
-        result_data = pd.DataFrame(result_data)
-        result_data.set_index('idv', inplace=True)
-
-        if outpath is not None:
-            print(f'saving results to: {outpath}')
-            outpath.parent.mkdir(parents=True, exist_ok=True)
-            result_data.to_hdf(outpath, 'data')
-        return result_data
+        return self._run_multiprocess_pass_conc(outpath, idv_vals, run, debug_mode, use_kwargs)
 
 
 class AutoDetectionPowerSlope(DetectionPowerSlope):
@@ -711,26 +685,23 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     _auto_mode = True
     condensed_mode = False
 
-    # precision to round values to (2 = 0.01), set stupidly high to ensure no rounding on default
-    prev_slope_per = 9
-    max_conc_lim_per = 9
-    min_conc_lim_per = 9
-    mrt_per = 9
-    mrt_p1_per = 9
-    frac_p1_per = 9
-    f_p1_per = 9
-    f_p2_per = 9
-
-    def set_condensed_mode(self, prev_slope_per=2,  # todo document!
+    def set_condensed_mode(self,
+                           target_conc_per=1,
+                           initial_conc_per=1,
+                           error_per=2,
+                           prev_slope_per=2,  # todo document!
                            max_conc_lim_per=1,
                            min_conc_lim_per=1,
                            mrt_per=0,
                            mrt_p1_per=2,
                            frac_p1_per=2,
                            f_p1_per=2,
-                           f_p2_per=2, ):
+                           f_p2_per=2):
         """
         set calculator to condense the number of runs based by rounding the inputs to a specified precision
+        :param target_conc_per: precision to round target_conc to (2 = 0.01)
+        :param initial_conc_per: precision to round initial_conc to (2 = 0.01)
+        :param error_per: precision to round error to (2 = 0.01)
         :param prev_slope_per: precision to round previous_slope to (2 = 0.01)
         :param max_conc_lim_per: precision to round max_conc_lim to (2 = 0.01)
         :param min_conc_lim_per: precision to round min_conc_lim to (2 = 0.01)
@@ -743,6 +714,10 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
         """
 
         self.condensed_mode = True
+
+        self.target_conc_per = target_conc_per
+        self.initial_conc_per = initial_conc_per
+        self.error_per = error_per
         self.prev_slope_per = prev_slope_per
         self.max_conc_lim_per = max_conc_lim_per
         self.min_conc_lim_per = min_conc_lim_per
@@ -759,7 +734,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                    mrt_p1: {float, None} = None, frac_p1: {float, None} = None, f_p1: {float, None} = None,
                    f_p2: {float, None} = None,
                    # options for the model run
-                   seed: {int, None} = 5585,
+                   seed: {int, None} = None,
                    testnitter=None,
                    **kwargs):
         """
@@ -776,7 +751,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
         :param samp_years: number of years to sample
         :param samp_per_year: number of samples to collect each year
         :param implementation_time: number of years over which reductions are implemented
-        :param initial_conc: inital median value of the concentration
+        :param initial_conc: initial median value of the concentration
         :param target_conc: target concentration to reduce to
         :param prev_slope: slope of the previous data (e.g. prior to the initial concentration)
         :param max_conc_lim: maximum concentration limit user specified or None (default)
@@ -810,20 +785,17 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
         """
         if testnitter is not None:
             warnings.warn('testnitter is expected to be None unless you are testing run times')
+
         assert mrt_model in self.implemented_mrt_models, f'mrt_model must be one of: {self.implemented_mrt_models}'
-        if mrt_model != 'pass_true_conc':
-            assert pd.api.types.is_integer(
-                samp_years), 'samp_years must be an integer unless mrt_model="pass_true_conc"'
-            assert pd.api.types.is_integer(
-                samp_per_year), 'samp_per_year must be an integer unless mrt_model="pass_true_conc"'
-            assert pd.api.types.is_number(
-                initial_conc), 'initial_conc must be a number unless mrt_model="pass_true_conc"'
-            assert pd.api.types.is_number(target_conc), 'target_conc must be a number unless mrt_model="pass_true_conc"'
-            assert pd.api.types.is_number(prev_slope), 'prev_slope must be a number unless mrt_model="pass_true_conc"'
-            assert pd.api.types.is_number(max_conc_lim), 'max_conc must be a number unless mrt_model="pass_true_conc"'
-            assert max_conc_lim >= initial_conc, 'max_conc must be greater than or equal to initial_conc'
-            assert max_conc_lim >= target_conc, 'max_conc must be greater than or equal to target_conc'
-            assert pd.api.types.is_integer(implementation_time)
+        assert pd.api.types.is_integer(samp_years), 'samp_years must be an integer '
+        assert pd.api.types.is_integer(samp_per_year), 'samp_per_year must be an integer '
+        assert pd.api.types.is_number(initial_conc), 'initial_conc must be a number '
+        assert pd.api.types.is_number(target_conc), 'target_conc must be a number '
+        assert pd.api.types.is_number(prev_slope), 'prev_slope must be a number '
+        assert pd.api.types.is_number(max_conc_lim), 'max_conc must be a number '
+        assert max_conc_lim >= initial_conc, 'max_conc must be greater than or equal to initial_conc'
+        assert max_conc_lim >= target_conc, 'max_conc must be greater than or equal to target_conc'
+        assert pd.api.types.is_integer(implementation_time)
 
         # mange lag
         if mrt_model == 'piston_flow':
@@ -901,7 +873,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     def mulitprocess_power_calcs(
             self,
             outpath: {Path, None, str},
-            id_vals: np.ndarray,
+            idv_vals: np.ndarray,
             error_vals: {np.ndarray, float},
             samp_years_vals: {np.ndarray, int},
             samp_per_year_vals: {np.ndarray, int},
@@ -919,7 +891,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
             f_p2_vals: {np.ndarray, float, None} = None,
             seed: {np.ndarray, int, None} = None,
             run=True, debug_mode=False, **kwargs
-    ):
+    ):  # todo write documentation
 
         use_kwargs = dict(error_vals=error_vals,
                           seed=seed,
@@ -939,68 +911,4 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
                           f_p2_vals=f_p2_vals,
                           **kwargs)
 
-        outpath, id_vals, use_kwargs = self._multiprocess_checks(outpath, id_vals, **use_kwargs)
-
-        # make runs
-        runs = []
-
-        if self.condensed_mode:
-            all_use_idv = []
-            run_list = []
-            print('creating and condensing runs')
-            use_kwargs = {k: self._round_kwarg_value(v, k) for k, v in use_kwargs.items()}
-
-            for i, idv in enumerate(id_vals):
-                if i % 1000 == 0:
-                    print(f'forming/condesing run {i} of {len(id_vals)}')
-
-                use_idv = '_'.join([self._get_id_str(use_kwargs[e][i], e) for e in
-                                    ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
-                                     'target_conc', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
-                                     'mrt',
-                                     'mrt_p1', 'frac_p1', 'f_p1', 'f_p2']
-                                    ])
-                all_use_idv.append(use_idv)
-                if use_idv in run_list:
-                    continue
-                run_list.append(use_idv)
-                kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
-                kwargs['idv'] = idv
-                runs.append(kwargs)
-
-        else:
-            all_use_idv = id_vals
-            for i, idv in enumerate(id_vals):
-                kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
-                kwargs['idv'] = idv
-                runs.append(kwargs)
-
-        if self.condensed_mode:
-            print(f'running {len(runs)} runs, simplified from {len(id_vals)} runs')
-        else:
-            print(f'running {len(runs)} runs')
-
-        if not run:
-            print(f'stopping as {run=}')
-            return
-
-        if debug_mode:
-            result_data = []
-            for run_kwargs in runs:
-                print(f'running power calc for: {run_kwargs["idv"]} with debug_mode=True (single process)')
-                result_data.append(self.power_calc(**run_kwargs))
-
-        else:
-            result_data = _run_multiprocess(self._power_calc_mp, runs, num_cores=self.ncores,
-                                            logging_level=self.log_level)
-        result_data = pd.DataFrame(result_data)
-        result_data.set_index('idv', inplace=True)
-
-        outdata = result_data.loc[all_use_idv]
-        outdata.loc[:, 'idv'] = id_vals
-        outdata.set_index('idv', inplace=True, drop=True)
-
-        if outpath is not None:
-            outpath.parent.mkdir(parents=True, exist_ok=True)
-            outdata.to_hdf(outpath, 'data')
-        return outdata
+        return self._run_multiprocess_auto(outpath, idv_vals, run, debug_mode, use_kwargs)
