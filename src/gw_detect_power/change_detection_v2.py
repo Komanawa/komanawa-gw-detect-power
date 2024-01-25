@@ -154,6 +154,9 @@ class DetectionPowerCalculator:
         :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
                             every print_freq simulations (n%print_freq==0)
         """
+        warnings.warn(('DetectionPowerCalculator will be deprecated in v2.0.0 and '
+                       'replaced with AutoDetectionPowerSlope and DetectionPowerSlope classes'),
+                      DeprecationWarning)
         assert print_freq is None or isinstance(print_freq, int), 'print_freq must be None or an integer'
         self.print_freq = print_freq
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
