@@ -59,7 +59,7 @@ def no_lag_table(test_size=False):
         dpc = AutoDetectionPowerSlope(min_samples=5)
         outdata = dpc.mulitprocess_power_calcs(
             outpath=None,
-            id_vals=indata.index.values,
+            idv_vals=indata.index.values,
             error_vals=indata.n_noise.values,
             samp_years_vals=indata.samp_t.values,
             samp_per_year_vals=indata.nsamp.values,
@@ -115,7 +115,7 @@ def piston_flow_lag_table(test_size=False):
             dpc = AutoDetectionPowerSlope(min_samples=5)
             outdata = dpc.mulitprocess_power_calcs(
                 outpath=None,
-                id_vals=indata.index.values,
+                idv_vals=indata.index.values,
                 error_vals=indata.n_noise.values,
                 samp_years_vals=indata.samp_t.values,
                 samp_per_year_vals=indata.nsamp.values,
