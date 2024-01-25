@@ -9,7 +9,7 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import py7zr
-from gw_detect_power import DetectionPowerCalculator
+from gw_detect_power import AutoDetectionPowerSlope
 from gw_detect_power.lookup_table_inits import implementation_times, base_vars, base_outkeys, \
     other_outkeys, pf_mrts, lookup_dir
 
@@ -56,7 +56,7 @@ def no_lag_table(test_size=False):
         outdata['power'] = np.random.random(len(outdata)) * 100
 
     else:
-        dpc = DetectionPowerCalculator(min_samples=5)
+        dpc = AutoDetectionPowerSlope(min_samples=5)
         outdata = dpc.mulitprocess_power_calcs(
             outpath=None,
             id_vals=indata.index.values,
@@ -112,7 +112,7 @@ def piston_flow_lag_table(test_size=False):
             outdata['power'] = np.random.random(len(outdata)) * 100
 
         else:
-            dpc = DetectionPowerCalculator(min_samples=5)
+            dpc = AutoDetectionPowerSlope(min_samples=5)
             outdata = dpc.mulitprocess_power_calcs(
                 outpath=None,
                 id_vals=indata.index.values,
@@ -142,8 +142,8 @@ def piston_flow_lag_table(test_size=False):
         _save_compressed_file(outdata, lookup_dir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
 
 
-if __name__ == '__main__':
-    run_model = True  # a flag it True will run the model if false will just setup and check inputs
+if __name__ == '__main__': # todo re-run after tests
+    run_model = True  # a flag it True will run the model if false will just setup and check inputs # todo flip flag
     test_size = False
     # epfm_lag_table(test_size) # just too big
     no_lag_table(test_size)
