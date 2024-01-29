@@ -27,6 +27,54 @@ except ImportError:
 
 
 class DetectionPowerCounterFactual(BaseDetectionCalculator):
+    """
+    This class is used to calculate the counterfactual detection power of a pair of concentration time series
+    The user specifies the true concentration time series for the base and alt scenarios and the noise level
+    for both scenarios.  The power is calculated by adding many noise realisations to the
+    true concentration time series and running a paired t test or wilcoxon signed rank test to determine
+    if the null hypothesis (The scenarios are the same) can be rejected.
+
+    The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.
+
+    :param significance_mode: str, one of:
+                                'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
+                                'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric),
+                                                             scipy.stats.wilcoxon
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
+                  power= number of detected changes/1000 noise simulations)
+    :param p_value: minimum p value (see also alternative), if
+                       p >= p_value the null hypothesis will not be rejected (base and alt are the same)
+                       p < p_value the null hypothesis will be rejected (base and alt are different)
+    :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
+    :param alternative: str, one of:
+                            'alt!=base': two sided test (default),
+                            'alt<base': one sided test ~
+                            'alt>base'
+    :param wx_zero_method: str, one of:
+                                “wilcox”: Discards all zero-differences (default); see [4].
+                                “pratt”: Includes zero-differences in the ranking process, but drops the ranks
+                                         of the zeros (more conservative); see [3]. In this case, the normal
+                                         approximation is adjusted as in [5].
+                                “zsplit”: Includes zero-differences in the ranking process and splits the zero
+                                          rank between positive and negative ones.
+                            for more info see:
+                              https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by
+                            0.5 towards the mean value when computing the z-statistic. Default is False.
+    :param wx_method: str, see scipy.stats.wilcoxon for more info
+    :param ncores: number of cores to use for multiprocessing, None will use all available cores
+    :param log_level: logging level for multiprocessing subprocesses
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs
+                             (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
+                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
+                                        power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
+                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
+                                   all significant simulations will be returned. if there are no noisy simulations
+                                   with changes detected then and empty dataframe is returned
+    """
+
     implemented_mrt_models = ()
     implemented_significance_modes = (
         'paired-t-test',
@@ -49,46 +97,7 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
                  return_noisy_conc_itters=0,
                  only_significant_noisy=False,
                  ):
-        """
 
-        :param significance_mode: str, one of:
-                                    'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
-                                    'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric),
-                                                                 scipy.stats.wilcoxon
-        :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
-                      power= number of detected changes/1000 noise simulations)
-        :param p_value: minimum p value (see also alternative), if
-                           p >= p_value the null hypothesis will not be rejected (base and alt are the same)
-                           p < p_value the null hypothesis will be rejected (base and alt are different)
-        :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
-        :param alternative: str, one of:
-                                'alt!=base': two sided test (default),
-                                'alt<base': one sided test ~
-                                'alt>base'
-        :param wx_zero_method: str, one of:
-                                    “wilcox”: Discards all zero-differences (default); see [4].
-                                    “pratt”: Includes zero-differences in the ranking process, but drops the ranks
-                                             of the zeros (more conservative); see [3]. In this case, the normal
-                                             approximation is adjusted as in [5].
-                                    “zsplit”: Includes zero-differences in the ranking process and splits the zero
-                                              rank between positive and negative ones.
-                                for more info see:
-                                  https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
-        :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by
-                                0.5 towards the mean value when computing the z-statistic. Default is False.
-        :param wx_method: str, see scipy.stats.wilcoxon for more info
-        :param ncores: number of cores to use for multiprocessing, None will use all available cores
-        :param log_level: logging level for multiprocessing subprocesses
-        :param return_true_conc: return the true concentration time series for each simulation with power calcs
-                                 (not supported with multiprocessing power calcs)
-        :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
-                                         if 0 then no noisy simulations are returned, not supported with multiprocessing
-                                            power calcs
-        :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
-                                       there are fewer noisy simulations with changes detected than return_noisy_conc_itters
-                                       all significant simulations will be returned. if there are no noisy simulations
-                                       with changes detected then and empty dataframe is returned
-        """
 
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
@@ -370,6 +379,57 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
 
 
 class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
+    """
+    This class is used to calculate the counterfactual detection power of a pair of auto created concentration
+    time series. The user specifies an initial concentration, and a target concentration for both a base and
+    alternative scenario. Other parameters include groundwater age distribution models and parameters,
+    implementation time and the slope of the previous data.
+
+    The user then specifies the sampling duration, delay, and frequency. The power is calculated by adding many
+    user specified noise realisations to both the base and alternative concentration time series and running
+    a paired t test or wilcoxon signed rank test to determine if the null hypothesis
+    (The scenarios are the same) can be rejected.
+
+    The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.
+
+    :param significance_mode: str, one of:
+                                'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
+                                'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric),
+                                                             scipy.stats.wilcoxon
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
+                  power= number of detected changes/1000 noise simulations)
+    :param p_value: minimum p value (see also alternative), if
+                       p >= p_value the null hypothesis will not be rejected (base and alt are the same)
+                       p < p_value the null hypothesis will be rejected (base and alt are different)
+    :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
+    :param alternative: str, one of:
+                            'alt!=base': two sided test (default),
+                            'alt<base': one sided test ~
+                            'alt>base'
+    :param wx_zero_method: str, one of:
+                                “wilcox”: Discards all zero-differences (default); see [4].
+                                “pratt”: Includes zero-differences in the ranking process, but drops the ranks
+                                         of the zeros (more conservative); see [3]. In this case, the normal
+                                         approximation is adjusted as in [5].
+                                “zsplit”: Includes zero-differences in the ranking process and splits the zero
+                                          rank between positive and negative ones.
+                            for more info see:
+                              https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by
+                            0.5 towards the mean value when computing the z-statistic. Default is False.
+    :param wx_method: str, see scipy.stats.wilcoxon for more info
+    :param ncores: number of cores to use for multiprocessing, None will use all available cores
+    :param log_level: logging level for multiprocessing subprocesses
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs
+                             (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
+                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
+                                        power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
+                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
+                                   all significant simulations will be returned. if there are no noisy simulations
+                                   with changes detected then and empty dataframe is returned
+    """
     implemented_mrt_models = (
         'piston_flow',
         'binary_exponential_piston_flow',

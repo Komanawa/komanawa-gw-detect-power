@@ -9,7 +9,7 @@ Groundwater Detection Power Calculator
 .. todo todo discuss comparing modelled vs measured results, fail to reject null hypothesis, if you run power calcs against a status quo then you can say whether your measured results are correct or simply you dont have enough power.
 
 
-**NOTE**: while this repo was designed for groundwater calcualtions it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
+**NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
 depending on sampling duration, sampling frequency, 'true' receptor concentration and the noise in the receptor.

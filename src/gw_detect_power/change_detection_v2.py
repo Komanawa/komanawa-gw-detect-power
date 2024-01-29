@@ -56,6 +56,91 @@ class DetectionPowerCalculator:
 
 
 class DetectionPowerSlope(BaseDetectionCalculator):
+    """
+    The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing
+    a slope in the concentration data. The user passes a True concentration time series and the power is calculated
+    by adding many noise realisations to the concentration data and then running one of multiple change detection tests on the noisy
+    data.
+
+    The Power is calculated as the percentage (0-100) of simulations which detect a slope.
+
+    :param significance_mode: significance mode to use, options:
+             * linear-regression: linear regression of the concentration data from time 0 to the end
+                                  change detected if p < min_p_value
+             * linear-regression-from-[max|min]: linear regression of the concentration data from the
+                                           maximum concentration of the noise free concentration data to the end
+                                           change detected if p < min_p_value
+             * mann-kendall: mann-kendall test of the concentration data from time 0 to the end,
+                             change detected if p < min_p_value
+             * mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum
+                                          of the noisefree concentration data to the end,
+                                          change detected if p < min_p_value
+             * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are
+                                       detected then a change is detected
+             * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
+                            detected
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
+                  power= number of detected changes/1000 noise simulations)
+    :param min_p_value: minimum p value to consider a change detected
+    :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
+    :param expect_slope: expected slope of the concentration data, use depends on significance mode:
+                          * linear-regression, linear-regression-from-max, mann-kendall, mann-kendall-from-max:
+                             one of 1 (increasing), -1 (decreasing), or 'auto' will match the slope of the
+                             concentration data before noise is added
+                          * n-section-mann-kendall: expected trend in each part of the time series
+                             (1 increasing, -1 decreasing, 0 no trend)
+                          * pettitt-test: not used.
+    :param efficent_mode: bool, default = True, if True then
+                         For linear regression and MannKendall based tests:  run the test on the noise free data
+                           to see if any change can be detected, if no change is detected then the test will not be
+                           on the noisy data
+
+                         For MultiPartMannKendall test: the test will be run on the noise free data
+                           to detect best change points and then the test will be run on the
+                           noisy data for a smaller window centered on the True change point
+                           see: * mpmk_efficent_min, * mpmk_window
+
+                        For Pettitt Test:  Not implemented, will be ignored and a waring passed
+    :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
+    :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
+                            other tests)
+    :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
+                            trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
+    :param mpmk_check_step: int or function, default = 1, number of samples to check for a change point in the
+                            MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False
+                            if mpmk is a function it must take a single argument (n, number of samples) and return
+                            an integer check step
+    :param mpmk_efficent_min: int, default = 10, minimum number of possible change points to assess
+                              only used if efficent_mode = True  The minimum number of breakpoints to test
+                              (mpmk_efficent_min) is always respected (i.e. if the window size is less than the
+                              minimum number of breakpoints to test, then the window size will be increased
+                              to the minimum number of breakpoints to test, but the space between breakpoints
+                              will still be defined by check_step). You can specify the exact number of breakpoints
+                              to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0
+    :param mpmk_window: float, default = 0.05, define the window around the true detected change point to run the
+                               MultiPartMannKendall.  The detction window is defined as:
+                               (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n
+                               is the number of samples in the time series
+                               Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be
+                               used to define the window size and the check_step will be used to define the
+                               step size within the window.
+    :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
+                         (not used for other tests)
+    :param ncores: number of cores to use for multiprocessing, None will use all available cores
+    :param log_level: logging level for multiprocessing subprocesses
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs
+                             (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
+                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
+                                        power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
+                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
+                                   all significant simulations will be returned. if there are no noisy simulations
+                                   with changes detected then and empty dataframe is returned
+    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
+                        every print_freq simulations (n%print_freq==0)
+    """
+
     implemented_mrt_models = ()
     implemented_significance_modes = (
         'linear-regression',
@@ -74,84 +159,6 @@ class DetectionPowerSlope(BaseDetectionCalculator):
                  nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
                  only_significant_noisy=False, print_freq=None):
-        """
-
-        :param significance_mode: significance mode to use, options:
-                 * linear-regression: linear regression of the concentration data from time 0 to the end
-                                      change detected if p < min_p_value
-                 * linear-regression-from-[max|min]: linear regression of the concentration data from the
-                                               maximum concentration of the noise free concentration data to the end
-                                               change detected if p < min_p_value
-                 * mann-kendall: mann-kendall test of the concentration data from time 0 to the end,
-                                 change detected if p < min_p_value
-                 * mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum
-                                              of the noisefree concentration data to the end,
-                                              change detected if p < min_p_value
-                 * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are
-                                           detected then a change is detected
-                 * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
-                                detected
-        :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
-                      power= number of detected changes/1000 noise simulations)
-        :param min_p_value: minimum p value to consider a change detected
-        :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
-        :param expect_slope: expected slope of the concentration data, use depends on significance mode:
-                              * linear-regression, linear-regression-from-max, mann-kendall, mann-kendall-from-max:
-                                 one of 1 (increasing), -1 (decreasing), or 'auto' will match the slope of the
-                                 concentration data before noise is added
-                              * n-section-mann-kendall: expected trend in each part of the time series
-                                 (1 increasing, -1 decreasing, 0 no trend)
-                              * pettitt-test: not used.
-        :param efficent_mode: bool, default = True, if True then
-                             For linear regression and MannKendall based tests:  run the test on the noise free data
-                               to see if any change can be detected, if no change is detected then the test will not be
-                               on the noisy data
-
-                             For MultiPartMannKendall test: the test will be run on the noise free data
-                               to detect best change points and then the test will be run on the
-                               noisy data for a smaller window centered on the True change point
-                               see: * mpmk_efficent_min, * mpmk_window
-
-                            For Pettitt Test:  Not implemented, will be ignored and a waring passed
-        :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
-        :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
-                                other tests)
-        :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
-                                trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
-        :param mpmk_check_step: int or function, default = 1, number of samples to check for a change point in the
-                                MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False
-                                if mpmk is a function it must take a single argument (n, number of samples) and return
-                                an integer check step
-        :param mpmk_efficent_min: int, default = 10, minimum number of possible change points to assess
-                                  only used if efficent_mode = True  The minimum number of breakpoints to test
-                                  (mpmk_efficent_min) is always respected (i.e. if the window size is less than the
-                                  minimum number of breakpoints to test, then the window size will be increased
-                                  to the minimum number of breakpoints to test, but the space between breakpoints
-                                  will still be defined by check_step). You can specify the exact number of breakpoints
-                                  to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0
-        :param mpmk_window: float, default = 0.05, define the window around the true detected change point to run the
-                                   MultiPartMannKendall.  The detction window is defined as:
-                                   (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n
-                                   is the number of samples in the time series
-                                   Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be
-                                   used to define the window size and the check_step will be used to define the
-                                   step size within the window.
-        :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
-                             (not used for other tests)
-        :param ncores: number of cores to use for multiprocessing, None will use all available cores
-        :param log_level: logging level for multiprocessing subprocesses
-        :param return_true_conc: return the true concentration time series for each simulation with power calcs
-                                 (not supported with multiprocessing power calcs)
-        :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
-                                         if 0 then no noisy simulations are returned, not supported with multiprocessing
-                                            power calcs
-        :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
-                                       there are fewer noisy simulations with changes detected than return_noisy_conc_itters
-                                       all significant simulations will be returned. if there are no noisy simulations
-                                       with changes detected then and empty dataframe is returned
-        :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
-                            every print_freq simulations (n%print_freq==0)
-        """
 
         assert print_freq is None or isinstance(print_freq, int), 'print_freq must be None or an integer'
         self.print_freq = print_freq
@@ -680,6 +687,93 @@ class DetectionPowerSlope(BaseDetectionCalculator):
 
 
 class AutoDetectionPowerSlope(DetectionPowerSlope):
+    """
+    This class is used to calculate the slope detection power of an auto created concentration
+    time series. The user specifies an initial concentration, a target concentration. Other parameters
+    include groundwater age distribution models and parameters, implementation time and the slope of
+    the previous data. The user then specifies the sampling duration, and frequency.
+    The power is calculated by adding many noise realisations to the concentration data and then running one of
+    multiple change detection tests on the noisy data.
+
+    The Power is calculated as the percentage (0-100) of simulations which detect a slope.
+
+    :param significance_mode: significance mode to use, options:
+             * linear-regression: linear regression of the concentration data from time 0 to the end
+                                  change detected if p < min_p_value
+             * linear-regression-from-[max|min]: linear regression of the concentration data from the
+                                           maximum concentration of the noise free concentration data to the end
+                                           change detected if p < min_p_value
+             * mann-kendall: mann-kendall test of the concentration data from time 0 to the end,
+                             change detected if p < min_p_value
+             * mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum
+                                          of the noisefree concentration data to the end,
+                                          change detected if p < min_p_value
+             * n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are
+                                       detected then a change is detected
+             * pettitt-test: pettitt test to identify change points. if change points are detected then a change is
+                            detected
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
+                  power= number of detected changes/1000 noise simulations)
+    :param min_p_value: minimum p value to consider a change detected
+    :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
+    :param expect_slope: expected slope of the concentration data, use depends on significance mode:
+                          * linear-regression, linear-regression-from-max, mann-kendall, mann-kendall-from-max:
+                             one of 1 (increasing), -1 (decreasing), or 'auto' will match the slope of the
+                             concentration data before noise is added
+                          * n-section-mann-kendall: expected trend in each part of the time series
+                             (1 increasing, -1 decreasing, 0 no trend)
+                          * pettitt-test: not used.
+    :param efficent_mode: bool, default = True, if True then
+                         For linear regression and MannKendall based tests:  run the test on the noise free data
+                           to see if any change can be detected, if no change is detected then the test will not be
+                           on the noisy data
+
+                         For MultiPartMannKendall test: the test will be run on the noise free data
+                           to detect best change points and then the test will be run on the
+                           noisy data for a smaller window centered on the True change point
+                           see: * mpmk_efficent_min, * mpmk_window
+
+                        For Pettitt Test:  Not implemented, will be ignored and a waring passed
+    :param nparts: number of parts to use for the n-section-mann-kendall test (not used for other tests)
+    :param min_part_size: minimum number of samples in each part for the n-section-mann-kendall test (not used for
+                            other tests)
+    :param no_trend_alpha: alpha value to use for the no trend sections in the n-section-mann-kendall test
+                            trendless sections are only accepted if p > no_trend_alpha (not used for other tests)
+    :param mpmk_check_step: int or function, default = 1, number of samples to check for a change point in the
+                            MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False
+                            if mpmk is a function it must take a single argument (n, number of samples) and return
+                            an integer check step
+    :param mpmk_efficent_min: int, default = 10, minimum number of possible change points to assess
+                              only used if efficent_mode = True  The minimum number of breakpoints to test
+                              (mpmk_efficent_min) is always respected (i.e. if the window size is less than the
+                              minimum number of breakpoints to test, then the window size will be increased
+                              to the minimum number of breakpoints to test, but the space between breakpoints
+                              will still be defined by check_step). You can specify the exact number of breakpoints
+                              to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0
+    :param mpmk_window: float, default = 0.05, define the window around the true detected change point to run the
+                               MultiPartMannKendall.  The detction window is defined as:
+                               (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n
+                               is the number of samples in the time series
+                               Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be
+                               used to define the window size and the check_step will be used to define the
+                               step size within the window.
+    :param nsims_pettit: number of simulations to run for calculating the pvalue of the pettitt test
+                         (not used for other tests)
+    :param ncores: number of cores to use for multiprocessing, None will use all available cores
+    :param log_level: logging level for multiprocessing subprocesses
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs
+                             (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
+                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
+                                        power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
+                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
+                                   all significant simulations will be returned. if there are no noisy simulations
+                                   with changes detected then and empty dataframe is returned
+    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
+                        every print_freq simulations (n%print_freq==0)
+    """
+
     implemented_mrt_models = (
         'piston_flow',
         'binary_exponential_piston_flow',
