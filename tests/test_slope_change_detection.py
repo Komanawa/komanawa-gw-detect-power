@@ -548,12 +548,16 @@ def test_linear_from_max_vs_from_start(show=False):
         save_path.unlink(missing_ok=True)
         for k, v in all_outdata.items():
             for k2, v2 in v.items():
+                if k2 == 'significant':
+                    continue
                 use_k = f'{k}_{k2}'
                 v2.to_hdf(save_path, use_k)
 
     # test data
     for k, v in all_outdata.items():
         for k2, v2 in v.items():
+            if k2 == 'significant':
+                continue
             use_k = f'{k}_{k2}'
             true_data = pd.read_hdf(save_path, use_k)
             if isinstance(v2, pd.DataFrame):
@@ -650,12 +654,16 @@ def test_mann_kendall_power(show=False):
         save_path.unlink(missing_ok=True)
         for k, v in all_outdata.items():
             for k2, v2 in v.items():
+                if k2 == 'significant':
+                    continue
                 use_k = f'{k}_{k2}'
                 v2.to_hdf(save_path, use_k)
 
     # test data
     for k, v in all_outdata.items():
         for k2, v2 in v.items():
+            if k2 == 'significant':
+                continue
             use_k = f'{k}_{k2}'
             true_data = pd.read_hdf(save_path, use_k)
             if isinstance(v2, pd.DataFrame):
@@ -728,6 +736,8 @@ def test_multpart_mann_kendall_power(show=False):
         save_path.unlink(missing_ok=True)
         for k, v in all_outdata.items():
             for k2, v2 in v.items():
+                if k2 == 'significant':
+                    continue
                 use_k = f'{k}_{k2}'
                 v2.to_hdf(save_path, use_k)
 
@@ -735,6 +745,8 @@ def test_multpart_mann_kendall_power(show=False):
     for k, v in all_outdata.items():
         for k2, v2 in v.items():
             use_k = f'{k}_{k2}'
+            if k2 == 'significant':
+                continue
             true_data = pd.read_hdf(save_path, use_k)
             if isinstance(v2, pd.DataFrame):
                 assert isinstance(true_data, pd.DataFrame)
@@ -1415,30 +1427,27 @@ def test_condenced_non_condenced():
 # todo re-run tests with new code
 if __name__ == '__main__':
     plot_flag = False
-    if False: # todo remove and re-run tests
-        make_test_power_calc_runs(plot_flag)
-        test_power_calc_and_mp()
+    make_test_power_calc_runs(plot_flag)
+    test_power_calc_and_mp()
 
-        test_condenced_non_condenced()
-        test_kwarg_passing()
-        test_pettitt_power(show=plot_flag)
-        test_unitary_epfm_slope(plot=plot_flag)
-        test_piston_flow(plot=plot_flag)
-        test_unitary_epfm(plot=plot_flag)
-        test_bepfm_slope(plot=plot_flag)
-        test_bpefm(plot=plot_flag)
-        test_iteration_plotting(show=plot_flag)
+    test_condenced_non_condenced()
+    test_kwarg_passing()
+    test_pettitt_power(show=plot_flag)
+    test_unitary_epfm_slope(plot=plot_flag)
+    test_piston_flow(plot=plot_flag)
+    test_unitary_epfm(plot=plot_flag)
+    test_bepfm_slope(plot=plot_flag)
+    test_bpefm(plot=plot_flag)
+    test_iteration_plotting(show=plot_flag)
 
-        test_efficient_mode_lr()
-        test_efficent_mode_mann_kendall()
-        test_efficient_mode_mpmk()
-        check_function_mpmk_check_step()
-
-    # todo these need to have data checked then re-saved as there is now a "significant" entry in the dictionary
-    test_multpart_mann_kendall_power(show=plot_flag)
+    test_efficient_mode_lr()
+    test_efficent_mode_mann_kendall()
+    test_efficient_mode_mpmk()
+    check_function_mpmk_check_step()
     test_return_true_noisy_conc(show=plot_flag)
+
+    test_multpart_mann_kendall_power(show=plot_flag)
     test_linear_from_max_vs_from_start(show=plot_flag)
     test_mann_kendall_power(show=plot_flag)
-
 
     print('passed all tests')
