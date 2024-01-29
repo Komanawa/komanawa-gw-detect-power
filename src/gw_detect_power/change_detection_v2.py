@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import stats
 import logging
 import warnings
-from gw_detect_power.base_detection_calculator import BaseDetectionCalculator, _run_multiprocess
+from gw_detect_power.base_detection_calculator import BaseDetectionCalculator
 
 # handle import of optional dependencies
 age_tools_imported = True
@@ -546,10 +546,10 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         # tile to nsims
         if testnitter is not None:
             rand_shape = (testnitter, nsamples)
-            conc_with_noise = np.tile(true_conc_ts, testnitter).reshape(rand_shape)
+            conc_with_noise = np.tile(true_conc_ts, testnitter).reshape(rand_shape).astype(float)
         else:
             rand_shape = (self.nsims, nsamples)
-            conc_with_noise = np.tile(true_conc_ts, self.nsims).reshape(rand_shape)
+            conc_with_noise = np.tile(true_conc_ts, self.nsims).reshape(rand_shape).astype(float)
 
         # generate noise
         np.random.seed(seed)
@@ -584,9 +584,11 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         if self.return_noisy_conc_itters > 0:
             if self.only_significant_noisy:
                 conc_with_noise = conc_with_noise[significant]
+                significant = significant[significant]
             outn = min(self.return_noisy_conc_itters, conc_with_noise.shape[0])
             out_data['noisy_conc'] = pd.DataFrame(data=conc_with_noise[:outn].T,
                                                   columns=np.arange(outn))
+            out_data['significant'] = significant[:outn]
         if len(out_data) == 1:
             out_data = out_data['power']
         return out_data
@@ -642,7 +644,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
                                  idv_vals: np.ndarray,
                                  error_vals: {np.ndarray, float},
                                  true_conc_ts_vals: {np.ndarray, list},
-                                 seed: {np.ndarray, int, None} = None,
+                                 seed_vals: {np.ndarray, int, None} = None,
                                  run=True, debug_mode=False,
                                  **kwargs
                                  ):
@@ -671,7 +673,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
 
         use_kwargs = dict(error_vals=error_vals,
                           true_conc_ts_vals=true_conc_ts_vals,
-                          seed=seed,
+                          seed_vals=seed_vals,
                           **kwargs
                           )
         return self._run_multiprocess_pass_conc(outpath, idv_vals, run, debug_mode, use_kwargs)
@@ -685,11 +687,11 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     _auto_mode = True
     condensed_mode = False
 
-    def set_condensed_mode(self,
+    def set_condensed_mode(self,  # todo document!
                            target_conc_per=1,
                            initial_conc_per=1,
                            error_per=2,
-                           prev_slope_per=2,  # todo document!
+                           prev_slope_per=2,
                            max_conc_lim_per=1,
                            min_conc_lim_per=1,
                            mrt_per=0,
@@ -889,12 +891,46 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
             frac_p1_vals: {np.ndarray, float, None} = None,
             f_p1_vals: {np.ndarray, float, None} = None,
             f_p2_vals: {np.ndarray, float, None} = None,
-            seed: {np.ndarray, int, None} = None,
+            seed_vals: {np.ndarray, int, None} = None,
             run=True, debug_mode=False, **kwargs
-    ):  # todo write documentation
+    ):
+        """
+        multiprocessing wrapper for power_calc, see power_calc for details
+        :param outpath: a path to save the results to or None (no save), df is returned regardless
+        :param idv_vals: an array of identifiers for each simulation
+        :param error_vals: The standard deviation of the noise for each simulation
+        :param samp_years_vals: the number of years to sample
+        :param samp_per_year_vals: The number of samples to collect each year
+        :param implementation_time_vals: The number of years over which reductions are implemented
+        :param initial_conc_vals: The initial concentration for each simulation
+        :param target_conc_vals:  target concentration for the simulation
+        :param prev_slope_vals: previous slope for each simulation
+        :param max_conc_lim_vals: maximum concentration limit for each simulation
+        :param min_conc_lim_vals: minimum concentration limit for the source for each simulation
+        :param mrt_model_vals: mrt model for each simulation
+        :param mrt_vals: mean residence time for each simulation
+        :param mrt_p1_vals: mean residence time of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param frac_p1_vals: fraction of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param f_p1_vals: the exponential fraction of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param f_p2_vals: the exponential fraction of the second piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+
+        :param seed: the random seed for each simulation, one of the following:
+                            * None: no seed, random seed will be generated for each simulation (but it will be recorded in the output dataframe)
+                            * int: a single seed for all simulations
+                            * np.ndarray: an array of seeds, one for each simulation
+        :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
+        :param debug_mode: if True run as single process to allow for easier debugging
+        :param kwargs: other kwargs to pass directly to the output dataframe must be either a single value or an array
+                        of values with the same shape as id_vals
+        :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
+        """
 
         use_kwargs = dict(error_vals=error_vals,
-                          seed=seed,
+                          seed_vals=seed_vals,
                           samp_years_vals=samp_years_vals,
                           samp_per_year_vals=samp_per_year_vals,
                           implementation_time_vals=implementation_time_vals,

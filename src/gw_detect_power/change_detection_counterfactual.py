@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 import warnings
 import logging
-from gw_detect_power.base_detection_calculator import BaseDetectionCalculator, _run_multiprocess
+from gw_detect_power.base_detection_calculator import BaseDetectionCalculator
 
 # handle import of optional dependencies
 age_tools_imported = True
@@ -23,26 +23,6 @@ except ImportError:
     warnings.warn(
         'age_tools not installed, age distribution related functions will be unavailable, to install run '
         'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools'
-    )
-
-try:
-    from pyhomogeneity import pettitt_test
-except ImportError:
-    pettitt_test = None
-    pyhomogeneity_imported = False
-    warnings.warn(
-        'pyhomogeneity not installed, pettitt_test will be unavailable, to install run '
-        'pip install pyhomogeneity'
-    )
-
-try:
-    from kendall_stats import MannKendall, MultiPartKendall
-except ImportError:
-    MannKendall, MultiPartKendall = None, None
-    kendal_imported = False
-    warnings.warn(
-        'kendall_stats not installed, mann_kendall will be unavailable, to install run '
-        'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git'
     )
 
 
@@ -71,7 +51,6 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
                  return_true_conc=False,
                  return_noisy_conc_itters=0,
                  only_significant_noisy=False,
-                 print_freq=None,
                  ):
         """
 
@@ -112,12 +91,8 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
                                        there are fewer noisy simulations with changes detected than return_noisy_conc_itters
                                        all significant simulations will be returned. if there are no noisy simulations
                                        with changes detected then and empty dataframe is returned
-        :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed
-                            every print_freq simulations (n%print_freq==0)
         """
 
-        assert print_freq is None or isinstance(print_freq, int), 'print_freq must be None or an integer'
-        self.print_freq = print_freq
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
                                                                           f'{self.implemented_significance_modes}')
@@ -221,8 +196,8 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         else:
             rand_shape = (self.nsims, nsamples)
 
-        base_with_noise = np.tile(true_conc_base, testnitter).reshape(rand_shape)
-        alt_with_noise = np.tile(true_conc_alt, testnitter).reshape(rand_shape)
+        base_with_noise = np.tile(true_conc_base, rand_shape[0]).reshape(rand_shape).astype(float)
+        alt_with_noise = np.tile(true_conc_alt, rand_shape[0]).reshape(rand_shape).astype(float)
 
         # generate noise
         np.random.seed(seed_base)
@@ -250,19 +225,19 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         out_data = {}
         out_data['power'] = out
         if self.return_true_conc:
-            out_data['true_conc'] = pd.DataFrame(data=[true_conc_base, true_conc_alt],
-                                                 columns=['true_conc_base', 'true_conc_alt'])
+            out_data['true_conc'] = pd.DataFrame(data=dict(true_conc_base=true_conc_base, true_conc_alt=true_conc_alt))
 
         if self.return_noisy_conc_itters > 0:
             if self.only_significant_noisy:
                 base_with_noise = base_with_noise[significant]
                 alt_with_noise = alt_with_noise[significant]
+                significant = significant[significant]
             outn = min(self.return_noisy_conc_itters, base_with_noise.shape[0])
             out_data['base_noisy_conc'] = pd.DataFrame(data=base_with_noise[:outn].T,
                                                        columns=np.arange(outn))
             out_data['alt_noisy_conc'] = pd.DataFrame(data=alt_with_noise[:outn].T,
                                                       columns=np.arange(outn))
-
+            out_data['significant'] = significant[:outn]
         if len(out_data) == 1:
             out_data = out_data['power']
         return out_data
@@ -379,6 +354,7 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     )
     _auto_mode = True
     _counterfactual = True
+    condensed_mode = False
 
     def set_condensed_mode(self,  # todo document!
                            target_conc_per=1,
@@ -639,5 +615,101 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
         )
         return outdata
 
-    def mulitprocess_power_calcs(self):  # todo
-        raise NotImplementedError
+    def mulitprocess_power_calcs(self,
+                                 outpath: {Path, None, str},
+                                 idv_vals: np.ndarray,
+                                 error_base_vals: {np.ndarray, float},
+                                 samp_years_vals: {np.ndarray, int},
+                                 samp_per_year_vals: {np.ndarray, int},
+                                 implementation_time_alt_vals: {np.ndarray, int},
+                                 initial_conc_vals: {np.ndarray, float},
+                                 target_conc_alt_vals: {np.ndarray, float},
+                                 prev_slope_vals: {np.ndarray, float},
+                                 max_conc_lim_vals: {np.ndarray, float},
+                                 min_conc_lim_vals: {np.ndarray, float},
+                                 mrt_model_vals: {np.ndarray, str},
+                                 mrt_vals: {np.ndarray, float},
+                                 target_conc_base_vals: {np.ndarray, float, None} = None,
+                                 implementation_time_base_vals: {np.ndarray, int, None} = None,
+                                 error_alt_vals: {np.ndarray, float, None} = None,
+                                 delay_years_vals: {np.ndarray, int, None} = None,
+                                 mrt_p1_vals: {np.ndarray, float, None} = None,
+                                 frac_p1_vals: {np.ndarray, float, None} = None,
+                                 f_p1_vals: {np.ndarray, float, None} = None,
+                                 f_p2_vals: {np.ndarray, float, None} = None,
+                                 seed_alt_vals: {np.ndarray, int, None} = None,
+                                 seed_base_vals: {np.ndarray, int, None} = None,
+                                 run=True, debug_mode=False, **kwargs
+                                 ):
+        """
+        multiprocessing wrapper for power_calc, see power_calc for details
+        :param outpath: path to save results to or None (no save)
+        :param idv_vals: id values for each simulation
+        :param error_base_vals: standard deviation of noise to add to the base time series for each simulation
+        :param samp_years_vals: sampling years for each simulation
+        :param samp_per_year_vals: sampling per year for each simulation
+        :param implementation_time_alt_vals: implementation time for the alternative scenario for each simulation
+        :param initial_conc_vals: initial concentration for each simulation
+        :param target_conc_alt_vals: target concentration for the alternative scenario for each simulation
+        :param prev_slope_vals: previous slope for each simulation
+        :param max_conc_lim_vals: maximum concentration limit for each simulation
+        :param min_conc_lim_vals: minimum concentration limit for the source for each simulation
+        :param mrt_model_vals: mrt model for each simulation
+        :param mrt_vals: mean residence time for each simulation
+        :param target_conc_base_vals: target concentration for the base scenario for each simulation, if None then
+                                    target_conc_base = initial_conc
+        :param implementation_time_base_vals: implementation time for the base scenario for each simulation, if None then
+                                            implementation_time_base = implementation_time_alt
+        :param error_alt_vals: standard deviation of the noise to add to the alt concentration time series, if None then
+                            error_alt = error_base
+        :param delay_years_vals: number of years to delay the start of the monitoring for each simulation, If the
+                                delay_years does not allow enough samples to be collected then an exception will be
+                                raised. If delay_years is 0 then the full length of the concentration time series will
+                                be used
+        :param mrt_p1_vals: mean residence time of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param frac_p1_vals: fraction of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param f_p1_vals: the exponential fraction of the first piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param f_p2_vals: the exponential fraction of the second piston flow model for each simulation
+                            Only used for binary_exponential_piston_flow model
+        :param seed_alt_vals:  random seed to generate the alternative noise for each simulation. One of:
+                                    ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)
+        :param seed_base_vals: random seed to generate the base noise for each simulation. One of:
+                                        ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)
+                                        Note seed_base != seed_alt (the same noise will be added to both time series,
+                                                                    making the analysis useless)
+        :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
+        :param debug_mode: if True run as single process to allow for easier debugging
+        :param kwargs: other kwargs to pass directly to the output dataframe must be either a single value or an array
+                        of values with the same shape as id_vals
+        :return: pd.DataFrame with the power calc results note power is percent 0-100
+        """
+
+        use_kwargs = dict(
+            error_base_vals=error_base_vals,
+            samp_years_vals=samp_years_vals,
+            samp_per_year_vals=samp_per_year_vals,
+            implementation_time_alt_vals=implementation_time_alt_vals,
+            initial_conc_vals=initial_conc_vals,
+            target_conc_alt_vals=target_conc_alt_vals,
+            prev_slope_vals=prev_slope_vals,
+            max_conc_lim_vals=max_conc_lim_vals,
+            min_conc_lim_vals=min_conc_lim_vals,
+            mrt_model_vals=mrt_model_vals,
+            mrt_vals=mrt_vals,
+            target_conc_base_vals=target_conc_base_vals,
+            implementation_time_base_vals=implementation_time_base_vals,
+            error_alt_vals=error_alt_vals,
+            delay_years_vals=delay_years_vals,
+            mrt_p1_vals=mrt_p1_vals,
+            frac_p1_vals=frac_p1_vals,
+            f_p1_vals=f_p1_vals,
+            f_p2_vals=f_p2_vals,
+            seed_alt_vals=seed_alt_vals,
+            seed_base_vals=seed_base_vals,
+
+            **kwargs)
+
+        return self._run_multiprocess_auto(outpath, idv_vals, run, debug_mode, use_kwargs)

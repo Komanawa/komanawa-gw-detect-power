@@ -231,6 +231,7 @@ def test_piston_flow(plot=False):
         plt.show()
         plt.close('all')
 
+
 def test_bepfm_slope(plot=False):
     print_myself()
     example = AutoDetectionPowerSlope(efficent_mode=False)
@@ -471,6 +472,7 @@ def test_return_true_noisy_conc(show=False):
                 pd.testing.assert_series_equal(v.sort_index(), true.sort_index())
     plt.close('all')
 
+
 def test_linear_from_max_vs_from_start(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_linear_from_max_vs_from_start.hdf')
@@ -564,6 +566,7 @@ def test_linear_from_max_vs_from_start(show=False):
             else:
                 raise ValueError(f'Unknown type: {type(v2)}')
     plt.close('all')
+
 
 def test_mann_kendall_power(show=False):
     print_myself()
@@ -750,7 +753,7 @@ def test_pettitt_power(show=False):
     from pyhomogeneity import pettitt_test
     from kendall_stats import make_example_data
     power_data = []
-    pd = DetectionPowerSlope(significance_mode='pettitt-test', nsims_pettit=1000, nsims=100, efficent_mode=False)
+    pd = DetectionPowerSlope(significance_mode='pettitt-test', nsims_pettit=1000, nsims=1000, efficent_mode=False)
     noises = [0, 0.25, 1, 2]
     fig, axs = plt.subplots(nrows=4, ncols=2, figsize=(10, 10))
     for noise, ax in zip(noises, axs[:, 0]):
@@ -785,7 +788,8 @@ def test_pettitt_power(show=False):
         y0 = true_conc + np.random.normal(0, noise, size=true_conc.shape)
         h, cp, p, U, mu = pettitt_test(y0, alpha=0.05,
                                        sim=1000)
-        output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=true_conc, mrt_model='pass_true_conc')
+        output = pd.power_calc(idv='pettitt', error=noise, true_conc_ts=true_conc, mrt_model='pass_true_conc',
+                               seed=5585)
         power = output['power']
         power_data.append(power)
         ax.scatter(np.arange(len(y0)), y0, marker='o', label='raw_data')
@@ -795,11 +799,14 @@ def test_pettitt_power(show=False):
         ax.set_title(f'Pettitt Test, noise: {noise}, pval: {round(p, 2)}\n{power=}')
         ax.legend()
     fig.tight_layout()
-    fig.savefig(Path.home().joinpath('Downloads', 'pettitt_test_nitter.png'))
 
+    expect = [100.0, 89.2, 38.3, 15.2, 100.0, 100.0, 98.9, 62.1]
     assert np.allclose(
         np.array(power_data),
-        np.array([100.0, 92.0, 33.0, 16.0, 100.0, 100.0, 97, 62.0])), f'bad values for pettitt test got: {power_data}'
+        expect,
+        atol=0.1
+    ), (f'bad values for pettitt test got: {power_data} should be {expect}, note if they are similar the problem may be'
+        f'the inability to pass a seed to the pettitt test')
     if show:
         plt.show()
     plt.close('all')
@@ -962,7 +969,7 @@ def _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs):
         frac_p1_vals=np.array([r.get('frac_p1') for r in auto_runs]),
         f_p1_vals=np.array([r.get('f_p1') for r in auto_runs]),
         f_p2_vals=np.array([r.get('f_p2') for r in auto_runs]),
-        seed=np.array([r.get('seed') for r in auto_runs]),
+        seed_vals=np.array([r.get('seed') for r in auto_runs]),
     )
     print(f'elapsed time for mp (auto): {time.time() - t}')
 
@@ -988,7 +995,7 @@ def _mutli_process_runs(ex_auto, ex, auto_runs, ts_runs):
         f_p1_vals=np.array([r.get('f_p1') for r in ts_runs]),
         f_p2_vals=np.array([r.get('f_p2') for r in ts_runs]),
         true_conc_ts_vals=[r.get('true_conc_ts') for r in ts_runs],
-        seed=np.array([r.get('seed') for r in ts_runs]),
+        seed_vals=np.array([r.get('seed') for r in ts_runs]),
     )
     print(f'elapsed time for mp (non-auto): {time.time() - t}')
     out = pd.concat([mp_data_auto, mp_data])
@@ -1326,35 +1333,112 @@ def check_function_mpmk_check_step():
         pd.testing.assert_series_equal(out, out2)
 
 
-# todo test kwarg passing
-# todo test condensed vs non-condenced mode
-# todo re-run
+def test_kwarg_passing():
+    t = ('Now Mrs. Riley, and only Mrs. Riley, how many fingers am I holding up?  Four! What do you think now dear?'
+         "I'm thinking of getting stronger glasses.")
+    unique_kwargs = t.split(' ')
+
+    dcp = DetectionPowerSlope(significance_mode='linear-regression', return_true_conc=False,
+                              return_noisy_conc_itters=0, efficent_mode=False)
+    got_single = []
+    for kwarg in unique_kwargs:
+        out = dcp.power_calc(idv='norm_inc', error=0.1,
+                             true_conc_ts=np.arange(10),
+                             seed=5585, mult_kwarg=kwarg, single_kwarg='single')
+        got_single.append(out['mult_kwarg'])
+        assert out['single_kwarg'] == 'single'
+
+    out = dcp.mulitprocess_power_calcs(None,
+                                       idv_vals=['norm_inc'] * len(unique_kwargs),
+                                       error_vals=[0.1] * len(unique_kwargs),
+                                       true_conc_ts_vals=[np.zeros(10)] * len(unique_kwargs),
+                                       seed_vals=np.array([5585] * len(unique_kwargs)),
+                                       mult_kwarg_vals=unique_kwargs,
+                                       single_kwarg='single')
+    assert set(out['mult_kwarg'].unique()) == set(unique_kwargs) == set(got_single)
+    assert np.all(out['single_kwarg'] == 'single')
+
+
+def test_condenced_non_condenced():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_condenced_non_condenced_slope.hdf')
+    save_data = False
+    kwargs = dict(
+        outpath=None,
+        idv_vals=np.arange(9),
+        error_vals=np.array([5.1, 5.101, 5.10001] * 3),
+        max_conc_lim_vals=np.array([20.001, 20, 20.1] * 3),
+        initial_conc_vals=np.array([10, 10.001, 10.1] * 3),
+        target_conc_vals=np.array([6, 6.001, 6.1] * 3),
+        mrt_vals=np.array([1.4, 1.1, 1.0] * 3),
+        mrt_p1_vals=np.array([1.4, 1.1, 1.0] * 3),
+
+        samp_years_vals=10,
+        samp_per_year_vals=5,
+        implementation_time_vals=5,
+        prev_slope_vals=0,
+        min_conc_lim_vals=1,
+        mrt_model_vals='binary_exponential_piston_flow',
+        frac_p1_vals=1,
+        f_p1_vals=0.7,
+        f_p2_vals=0.7,
+        seed_vals=5585,
+    )
+
+    dp_auto = AutoDetectionPowerSlope()
+    out_raw = dp_auto.mulitprocess_power_calcs(**kwargs)
+
+    dp_auto.set_condensed_mode(
+        target_conc_per=0,
+        initial_conc_per=0,
+        error_per=1,
+        prev_slope_per=2,
+        max_conc_lim_per=0,
+        min_conc_lim_per=0,
+        mrt_per=0,
+        mrt_p1_per=0,
+        frac_p1_per=2,
+        f_p1_per=2,
+        f_p2_per=2)
+
+    out_cond = dp_auto.mulitprocess_power_calcs(**kwargs)
+    if save_data:
+        out_raw.to_hdf(save_path, key='out_raw')
+        out_cond.to_hdf(save_path, key='out_cond')
+    expect_raw = pd.read_hdf(save_path, key='out_raw')
+    assert isinstance(expect_raw, pd.DataFrame)
+    expect_cond = pd.read_hdf(save_path, key='out_cond')
+    assert isinstance(expect_cond, pd.DataFrame)
+    pd.testing.assert_frame_equal(out_raw, expect_raw)
+    pd.testing.assert_frame_equal(out_cond, expect_cond)
+
+
+# todo re-run tests with new code
 if __name__ == '__main__':
     plot_flag = False
-
-    run_already_passed = True
-
-    # todo rounding is likely the cause of the problem test_pettitt_power(show=plot_flag)
-    if run_already_passed:
+    if False: # todo remove and re-run tests
         make_test_power_calc_runs(plot_flag)
         test_power_calc_and_mp()
 
+        test_condenced_non_condenced()
+        test_kwarg_passing()
+        test_pettitt_power(show=plot_flag)
         test_unitary_epfm_slope(plot=plot_flag)
         test_piston_flow(plot=plot_flag)
         test_unitary_epfm(plot=plot_flag)
         test_bepfm_slope(plot=plot_flag)
         test_bpefm(plot=plot_flag)
-        test_return_true_noisy_conc(show=plot_flag)
-        test_linear_from_max_vs_from_start(show=plot_flag)
-
-        test_mann_kendall_power(show=plot_flag)
         test_iteration_plotting(show=plot_flag)
-        test_multpart_mann_kendall_power(show=plot_flag)
 
         test_efficient_mode_lr()
         test_efficent_mode_mann_kendall()
         test_efficient_mode_mpmk()
         check_function_mpmk_check_step()
+
+    # todo these need to have data checked then re-saved as there is now a "significant" entry in the dictionary
+    test_multpart_mann_kendall_power(show=plot_flag)
+    test_return_true_noisy_conc(show=plot_flag)
+    test_linear_from_max_vs_from_start(show=plot_flag)
+    test_mann_kendall_power(show=plot_flag)
 
 
     print('passed all tests')

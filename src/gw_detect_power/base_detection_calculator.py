@@ -89,7 +89,7 @@ class BaseDetectionCalculator:
         :param float_percision:
         :return:
         """
-
+        name = name.replace('_vals', '')
         if hasattr(self, f'{name}_per'):
             float_percision = getattr(self, f'{name}_per')
         else:
@@ -176,6 +176,17 @@ class BaseDetectionCalculator:
         runs = []
 
         if self.condensed_mode:
+            if self._counterfactual:
+                identifiers = ['error_base','error_alt', 'samp_years', 'samp_per_year', 'implementation_time_base',
+                               'implementation_time_alt', 'delay_years',
+                               'initial_conc',
+                               'target_conc_base','target_conc_alt', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
+                               'mrt', 'mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'seed_alt', 'seed_base']
+            else:
+                identifiers = ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
+                               'target_conc', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
+                               'mrt', 'mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'seed']
+
             all_use_idv = []
             run_list = []
             print('creating and condensing runs')
@@ -185,18 +196,13 @@ class BaseDetectionCalculator:
                 if i % 1000 == 0:
                     print(f'forming/condesing run {i} of {len(idv_vals)}')
 
-                use_idv = '_'.join([self._get_id_str(use_kwargs[e][i], e) for e in
-                                    ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
-                                     'target_conc', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
-                                     'mrt',
-                                     'mrt_p1', 'frac_p1', 'f_p1', 'f_p2']
-                                    ])
+                use_idv = '_'.join([self._get_id_str(use_kwargs[e+'_vals'][i], e) for e in identifiers])
                 all_use_idv.append(use_idv)
                 if use_idv in run_list:
                     continue
                 run_list.append(use_idv)
                 kwargs = {k.replace('_vals', ''): v[i] for k, v in use_kwargs.items()}
-                kwargs['idv'] = idv
+                kwargs['idv'] = use_idv
                 runs.append(kwargs)
 
         else:
@@ -249,7 +255,7 @@ class BaseDetectionCalculator:
         :return:
         """
         if any_val:
-            if hasattr(x, '__iter__'):
+            if hasattr(x, '__iter__') and not isinstance(x, str):
                 x = np.atleast_1d(x)
                 assert len(x) == shape[0], (f'wrong_shape for {idv} must have shape {shape} or not be iterable '
                                             f'got: shp {x.shape} dtype {x.dtype}')
@@ -507,6 +513,15 @@ class BaseDetectionCalculator:
         id_vals = np.atleast_1d(id_vals)
         expect_shape = id_vals.shape
 
+        # check other inputs
+        for key, value in kwargs.items():
+            if key in ['mrt_model_vals', 'true_conc_ts_vals']:
+                continue
+            none_allowed, is_int, is_any = self._get_key_info(key)
+            temp = self._adjust_shape(value, expect_shape, none_allowed=none_allowed, is_int=is_int, idv=key,
+                                      any_val=is_any)
+            kwargs[key] = temp
+
         if self._auto_mode:
             mrt_model_vals = kwargs['mrt_model_vals']
             if isinstance(mrt_model_vals, str):
@@ -525,12 +540,20 @@ class BaseDetectionCalculator:
             kwargs['mrt_model_vals'] = mrt_model_vals
 
             # check min/max values
-            if 'max_conc_lim_vals' in kwargs:
-                assert 'initial_conc_vals' in kwargs, 'if max_conc_lim_vals is passed initial_conc_vals must be passed'
-                not_na_idx = pd.notna(kwargs['max_conc_lim_vals']) & pd.notna(kwargs['initial_conc_vals'])
-                assert (kwargs['max_conc_lim_vals'][not_na_idx] >= kwargs['initial_conc_vals'][not_na_idx]).all(), (
-                    'max_conc_lim must be greater than or equal to initial_conc')
+            assert 'initial_conc_vals' in kwargs, 'if max_conc_lim_vals is passed initial_conc_vals must be passed'
+            not_na_idx = pd.notna(kwargs['max_conc_lim_vals']) & pd.notna(kwargs['initial_conc_vals'])
+            assert (kwargs['max_conc_lim_vals'][not_na_idx] >= kwargs['initial_conc_vals'][not_na_idx]).all(), (
+                'max_conc_lim must be greater than or equal to initial_conc')
 
+            if self._counterfactual:
+                not_na_idx = pd.notna(kwargs['max_conc_lim_vals']) & pd.notna(kwargs['target_conc_base_vals'])
+                assert (kwargs['max_conc_lim_vals'][not_na_idx] >= kwargs['target_conc_base_vals'][not_na_idx]).all(), (
+                    'max_conc_lim must be greater than or equal to target_conc_base')
+                not_na_idx = pd.notna(kwargs['max_conc_lim_vals']) & pd.notna(kwargs['target_conc_alt_vals'])
+                assert (kwargs['max_conc_lim_vals'][not_na_idx] >= kwargs['target_conc_alt_vals'][not_na_idx]).all(), (
+                    'max_conc_lim must be greater than or equal to target_conc_alt')
+
+            else:
                 not_na_idx = pd.notna(kwargs['max_conc_lim_vals']) & pd.notna(kwargs['target_conc_vals'])
                 assert (kwargs['max_conc_lim_vals'][not_na_idx] >= kwargs['target_conc_vals'][not_na_idx]).all(), (
                     'max_conc_lim must be greater than or equal to target_conc')
@@ -540,15 +563,6 @@ class BaseDetectionCalculator:
             kwargs['true_conc_alt_vals'] = self._check_propogate_truets(kwargs['true_conc_alt_vals'], expect_shape)
         else:
             kwargs['true_conc_ts_vals'] = self._check_propogate_truets(kwargs['true_conc_ts_vals'], expect_shape)
-
-        # check other inputs
-        for key, value in kwargs.items():
-            if key in ['mrt_model_vals', 'true_conc_ts_vals']:
-                continue
-            none_allowed, is_int, is_any = self._get_key_info(key)
-            temp = self._adjust_shape(value, expect_shape, none_allowed=none_allowed, is_int=is_int, idv=key,
-                                      any_val=is_any)
-            kwargs[key] = temp
 
         return outpath, id_vals, kwargs
 
