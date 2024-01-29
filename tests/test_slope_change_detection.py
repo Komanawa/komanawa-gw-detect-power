@@ -1424,7 +1424,6 @@ def test_condenced_non_condenced():
     pd.testing.assert_frame_equal(out_cond, expect_cond)
 
 
-# todo re-run tests with new code
 if __name__ == '__main__':
     plot_flag = False
     make_test_power_calc_runs(plot_flag)
