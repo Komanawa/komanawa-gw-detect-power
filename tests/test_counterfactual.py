@@ -2,9 +2,11 @@
 created matt_dumont 
 on: 25/01/24
 """
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import itertools
 from gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
 
 
@@ -29,24 +31,38 @@ def make_bilinar_test_data(slope1, slope2, length, delta1=0, delta2=0):
     return x1, x2
 
 
-def understand_pairttest():
-    for alter in ['two-sided', 'greater', 'less']:
-        for scale in [0.1, 1, 10, 100, 1000]:
-            base, alt = make_step_test_data(2, 100)
-            assert (alt > base).all()
-            base = np.repeat(base[np.newaxis], 100, axis=0)
-            alt = np.repeat(alt[np.newaxis], 100, axis=0)
-            noise_alt = np.random.normal(0, scale, base.shape)
-            noise_base = np.random.normal(0, scale, base.shape)
-            alt = alt + noise_alt
-            base = base + noise_base
-            from scipy.stats import ttest_rel
-            ttv = ttest_rel(base, alt, axis=1, alternative=alter)
-            print(f'{alter=}, {scale=}, {np.mean(ttv.pvalue <= 0.05)}')
+def test_plot_iteration(plot=False):
+    dp = DetectionPowerCounterFactual(significance_mode='paired-t-test',
+                                      nsims=1000,
+                                      p_value=0.05,
+                                      min_samples=10,
+                                      alternative='alt!=base',
+                                      wx_zero_method='wilcox', wx_correction=False, wx_method='auto',
+                                      ncores=None,
+                                      return_true_conc=True,
+                                      return_noisy_conc_itters=5,
+                                      only_significant_noisy=False,
+                                      )
+    base, alt = make_bilinar_test_data(0.1, -0.1, 100)
+    out = dp.power_calc(idv='test',
+                        error_base=30,
+                        error_alt=30,
+                        true_conc_base=base,
+                        true_conc_alt=alt,
+                        seed_alt=1,
+                        seed_base=2,
+                        )
+    for i in range(5):
+        use_base = out['true_conc']['true_conc_base']
+        use_alt = out['true_conc']['true_conc_alt']
+        noisy_base = out['base_noisy_conc'].iloc[:, i]
+        noisy_alt = out['alt_noisy_conc'].iloc[:, i]
+        fig, ax = dp.plot_iteration(noisy_base, noisy_alt, use_base, use_alt)
+        ax.set_title(f'itter {i}')
 
-
-def test_plot_iteration():  # todo
-    raise NotImplementedError
+    if plot:
+        plt.show()
+    plt.close('all')
 
 
 def test_power_calc_functionality():
@@ -158,6 +174,8 @@ def test_power_calc_functionality():
 
 
 def test_paired_ttest_power():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_paired_ttest_power_counter.hdf')
+    save_data = False
     got = []
     noises = [0.1, 1, 10, 100, 1000]
     data = {}
@@ -190,16 +208,19 @@ def test_paired_ttest_power():
                                     seed_alt=1,
                                     seed_base=2,
                                     )
-                got.append([alter, noise, dname, out['power']])
+                got.append([alter, noise, dname, out['power'], (alt > base).mean()])
+    got = pd.DataFrame(got, columns=['alter', 'noise', 'dname', 'power', 'alt>base'])
 
-    got = pd.DataFrame(got, columns=['alter', 'noise', 'dname', 'power'])
-
-    # todo check power makes sense and save
-
-    raise NotImplementedError
+    if save_data:
+        got.to_hdf(save_path, key='data')
+    expect = pd.read_hdf(save_path, key='data')
+    assert isinstance(expect, pd.DataFrame)
+    pd.testing.assert_frame_equal(got, expect, check_dtype=False, check_like=True, check_exact=False)
 
 
 def test_wilcoxon_power():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_wilcoxon_power_counter.hdf')
+    save_data = False
     got = []
     noises = [0.1, 1, 10, 100, 1000]
     data = {}
@@ -232,12 +253,15 @@ def test_wilcoxon_power():
                                     seed_alt=1,
                                     seed_base=2,
                                     )
-                got.append([alter, noise, dname, out['power']])
+                got.append([alter, noise, dname, out['power'], (alt > base).mean()])
+    got = pd.DataFrame(got, columns=['alter', 'noise', 'dname', 'power', 'alt>base'])
 
-    got = pd.DataFrame(got, columns=['alter', 'noise', 'dname', 'power'])
+    if save_data:
+        got.to_hdf(save_path, key='data')
 
-    # todo check power makes sense and save
-    raise NotImplementedError
+    expect = pd.read_hdf(save_path, key='data')
+    assert isinstance(expect, pd.DataFrame)
+    pd.testing.assert_frame_equal(got, expect, check_dtype=False, check_like=True, check_exact=False)
 
 
 def test_multiprocess_power_calc():
@@ -349,12 +373,80 @@ def test_multiprocess_power_calc():
     assert set(out['mult_kwargs']) == set(unique_kwargs)
 
 
-def test_auto_true_conc():  # todo
-    # todo test running with an incresin and decreating options
-    raise NotImplementedError
+def test_auto_true_conc(plot=False):
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_auto_true_conc_counter.hdf')
+    save_data = False
+    dp_auto = AutoDetectionPowerCounterFactual(significance_mode='wilcoxon-signed-rank-test',
+                                               nsims=1000,
+                                               p_value=0.05,
+                                               min_samples=10,
+                                               alternative='alt!=base',
+                                               wx_zero_method='wilcox', wx_correction=False, wx_method='auto',
+                                               ncores=None,
+                                               return_true_conc=True,
+                                               return_noisy_conc_itters=0,
+                                               only_significant_noisy=False,
+                                               )
+    delays = [0, 5]
+    targ_bases = [None, 12]
+    targ_alts = [6, 8]
+    imp_bases = [None, 4]
+    imp_alts = [4, 6]
+    got = {}
+    for delay, targ_base, targ_alt, imp_base, imp_alt in itertools.product(delays, targ_bases, targ_alts, imp_bases,
+                                                                           imp_alts):
+        idv = (f'{delay=}\n'
+               f'{targ_base=}_{imp_base=}\n'
+               f'{targ_alt=}_{imp_alt=}')
+        out = dp_auto.power_calc(
+            idv=idv,
+            implementation_time_alt=imp_alt,
+            target_conc_alt=targ_alt,
+            target_conc_base=targ_base,
+            implementation_time_base=imp_base,
+            delay_years=delay,
+            error_base=0,
+            mrt_model='piston_flow',
+            samp_years=10,
+            samp_per_year=5,
+            initial_conc=10,
+            prev_slope=0,
+            max_conc_lim=20,
+            min_conc_lim=1,
+            mrt=0,
+            error_alt=None,
+            mrt_p1=0,
+            frac_p1=0,
+            f_p1=0,
+            f_p2=0,
+            seed_base=1,
+            seed_alt=2,
+        )
+        got[idv] = t = out['true_conc']
+
+        if plot:
+            fig, ax = plt.subplots()
+            ax.plot(t.index, t['true_conc_alt'].values, label='alt_conc', marker='o', color='r')
+            ax.plot(t.index, t['true_conc_base'].values, label='base_conc', marker='o', color='b')
+            ax.legend()
+            ax.set_title(idv)
+    if plot:
+        plt.show()
+        plt.close('all')
+
+    if save_data:
+        for k, v in got.items():
+            v.to_hdf(save_path, key=k)
+
+    for k, v in got.items():
+        expect = pd.read_hdf(save_path, key=k)
+        assert isinstance(expect, pd.DataFrame)
+        pd.testing.assert_frame_equal(v, expect, check_dtype=False, check_like=True, check_exact=False)
 
 
 def test_power_calc_auto():
+    save_path = Path(__file__).parent.joinpath('test_data', 'test_power_calc_auto_counter.hdf')
+    save_data = False
     got = []
     noises = [0.1, 1, 10, 100, 1000]
     delay = [0, 1, 5]
@@ -415,8 +507,11 @@ def test_power_calc_auto():
                 i += 1
     got = pd.DataFrame(got)
 
-    # todo check power makes sense and save
-    raise NotImplementedError
+    if save_data:
+        got.to_hdf(save_path, key='data')
+    expect = pd.read_hdf(save_path, key='data')
+    assert isinstance(expect, pd.DataFrame)
+    pd.testing.assert_frame_equal(got, expect, check_dtype=False, check_like=True, check_exact=False)
 
 
 def test_multiprocess_power_calc_auto():
@@ -599,11 +694,15 @@ def test_condenced_non_condenced():
 
 
 if __name__ == '__main__':
+    plt_flag = False
+    test_power_calc_auto()
+    test_paired_ttest_power()
+    test_wilcoxon_power()
     test_condenced_non_condenced()
     test_multiprocess_power_calc_auto()
-    test_power_calc_auto()
     test_multiprocess_power_calc()
-    test_paired_ttest_power()
     test_power_calc_functionality()
-    understand_pairttest()
+    test_auto_true_conc(plot=plt_flag)
+    test_plot_iteration(plt_flag)
+
     pass

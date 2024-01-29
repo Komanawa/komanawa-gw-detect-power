@@ -26,9 +26,6 @@ except ImportError:
     )
 
 
-# todo discuss comparing modelled vs measured results, fail to reject null hypothesis, if you run power calcs against a
-#  status quo then you can say whether your measured results are correct or simply you dont have enough power.
-
 class DetectionPowerCounterFactual(BaseDetectionCalculator):
     implemented_mrt_models = ()
     implemented_significance_modes = (
@@ -140,18 +137,41 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y01, y02, true_conc1, true_conc2):  # todo
-        raise NotImplementedError
+    def plot_iteration(self, y0_base, y0_alt, true_conc_base, true_conc_alt):
+        """
+        plot the concentration data itteration and the true concentration data
+        :param y0_base: noisy concentration data for the base scenario
+        :param y0_alt: noisy concentration data for the alt scenario
+        :param true_conc_base: True concentration data for the base scenario
+        :param true_conc_alt: True concentration data for the alt scenario
+        :return:
+        """
 
-    def _power_test_paired_t(self, base_with_noise, alt_with_noise):
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots(figsize=(10, 10))
+        power, plist, pvals = self._power_test(np.array([y0_base]), np.array([y0_alt]), return_p=True)
+        for key, c in zip(['base', 'alt'], ['b', 'r']):
+            y0 = eval('y0_' + key)
+            true_conc = eval('true_conc_' + key)
+            ax.scatter(np.arange(len(y0)), y0, c=c, label=f'{key}: noisy data')
+            ax.plot(np.arange(len(true_conc)), true_conc, c='r', label=f'{key}: True data', marker='.')
+            ax.axhline(np.median(true_conc), c=c, ls=':', alpha=0.5, label=f'{key}: True median')
+        ax.legend(title='pvalue: {:.2f}'.format(pvals.mean()))
+        ax.set_xlabel('time')
+        ax.set_ylabel('concentration')
+        return fig, ax
+
+    def _power_test_paired_t(self, base_with_noise, alt_with_noise, return_p=False):
         assert base_with_noise.shape == alt_with_noise.shape, ('base_with_noise and alt_with_noise must have the same '
                                                                'shape')
         outdata = stats.ttest_rel(alt_with_noise, base_with_noise, axis=1, alternative=self.alternative)
         p_list = outdata.pvalue < self.min_p_value
         power = p_list.mean() * 100
+        if return_p:
+            return power, p_list, outdata.pvalue
         return power, p_list
 
-    def _power_test_wilcoxon(self, base_with_noise, alt_with_noise):
+    def _power_test_wilcoxon(self, base_with_noise, alt_with_noise, return_p=False):
         assert base_with_noise.shape == alt_with_noise.shape, ('base_with_noise and alt_with_noise must have the same '
                                                                'shape')
         outdata = stats.wilcoxon(alt_with_noise, base_with_noise, axis=1, alternative=self.alternative,
@@ -160,6 +180,8 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         assert hasattr(outdata, 'pvalue'), 'scipy changed'
         p_list = outdata.pvalue < self.min_p_value
         power = p_list.mean() * 100
+        if return_p:
+            return power, p_list, outdata.pvalue
         return power, p_list
 
     def _run_power_calc(self, idv, testnitter, seed_base, seed_alt, true_conc_base, true_conc_alt, error_base,
@@ -356,7 +378,7 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     _counterfactual = True
     condensed_mode = False
 
-    def set_condensed_mode(self,  # todo document!
+    def set_condensed_mode(self,
                            target_conc_per=1,
                            initial_conc_per=1,
                            error_per=2,

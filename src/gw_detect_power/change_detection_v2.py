@@ -687,7 +687,7 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     _auto_mode = True
     condensed_mode = False
 
-    def set_condensed_mode(self,  # todo document!
+    def set_condensed_mode(self,
                            target_conc_per=1,
                            initial_conc_per=1,
                            error_per=2,

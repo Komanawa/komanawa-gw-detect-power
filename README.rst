@@ -6,6 +6,7 @@ Groundwater Detection Power Calculator
    :align: center
 
 .. todo document new features/structure and setting condensed mode.
+.. todo todo discuss comparing modelled vs measured results, fail to reject null hypothesis, if you run power calcs against a status quo then you can say whether your measured results are correct or simply you dont have enough power.
 
 
 **NOTE**: while this repo was designed for groundwater calcualtions it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
