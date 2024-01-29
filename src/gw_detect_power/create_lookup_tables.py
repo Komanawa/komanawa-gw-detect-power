@@ -142,8 +142,8 @@ def piston_flow_lag_table(test_size=False):
         _save_compressed_file(outdata, lookup_dir.joinpath(f'piston_flow_lag_table_imp_{imp_time}.xlsx'))
 
 
-if __name__ == '__main__': # todo re-run after tests
-    run_model = True  # a flag it True will run the model if false will just setup and check inputs # todo flip flag
+if __name__ == '__main__':
+    run_model = False  # a flag it True will run the model if false will just setup and check inputs
     test_size = False
     # epfm_lag_table(test_size) # just too big
     no_lag_table(test_size)

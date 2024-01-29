@@ -100,6 +100,5 @@ def run_model(method, ndata, emode):
 
 
 if __name__ == '__main__':
-    # todo re-run after tests
     data = timeit_test()
     data.to_csv(Path(__file__).parent.joinpath('timeit_test_results.txt'))

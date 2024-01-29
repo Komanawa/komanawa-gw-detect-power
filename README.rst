@@ -5,6 +5,7 @@ Groundwater Detection Power Calculator
    :height: 400 px
    :align: center
 
+.. todo document new features/structure and setting condensed mode.
 
 
 **NOTE**: while this repo was designed for groundwater calcualtions it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
