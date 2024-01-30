@@ -5,10 +5,6 @@ Groundwater Detection Power Calculator
    :height: 400 px
    :align: center
 
-.. todo document new features/structure and setting condensed mode.
-.. todo todo discuss comparing modelled vs measured results, fail to reject null hypothesis, if you run power calcs against a status quo then you can say whether your measured results are correct or simply you dont have enough power.
-
-
 **NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
@@ -43,14 +39,11 @@ The suggested methodology for calculating the detection power of a site is as fo
    a. If the historical concentration data has a statistically robust trend, then the noise can be estimated as the standard deviation of the residuals from a model (e.g. a linear regression or Sen-slope/ Sen-intercept).
    b. If the historical concentration data does not have a statistically robust trend, then the noise can be estimated as the standard deviation of the receptor concentration time series.
 5. Gather data to inform the groundwater age distribution of the site.  For instance a MRT and parameters for a binary piston flow lag model.
-6. Estimate the source concentration from the historical trend (if any) and the groundwater age distribution for instance using the `gw_detect_power.truets_from_binary_exp_piston_flow function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#truets-from-binary-exp-piston-flow-function>`_ or the `gw_age_tools.predict_historical_source_conc function <https://github.com/Komanawa-Solutions-Ltd/gw_age_tools#predict-historical-source-conc>`_.
+6. Estimate the source concentration from the historical trend (if any) and the groundwater age distribution.
 7. Define the reduction expected in the source concentration over the implementation period to create a "once and future source concentration time series".
-8. Predict the true receptor concentration time series (e.g. the concentration at the receptor if there was no noise) based on the "once and future source concentration time series" and the groundwater age distribution e.g., using `gw_age_tools.predict_future_conc_bepm function <https://github.com/Komanawa-Solutions-Ltd/gw_age_tools#predict-historical-source-conc>`_.
+8. Predict the true receptor concentration time series (e.g. the concentration at the receptor if there was no noise) based on the "once and future source concentration time series" and the groundwater age distribution.
 9. Resample the true receptor concentration time series to the desired sampling frequency and duration.
-10. Estimate the statistical power of detecting the change in concentration based on the predicted true receptor concentration time series and the noise in the receptor concentration time series.  This can be done using the `gw_detect_power.power_calc function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#power-calc-function>`_ and `pass your own true receptor time series option <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#pass-your-own-true-receptor-time-series>`_.
-
-Note that items 6-10 are implemented in the `gw_detect_power.power_calc function <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power#power-calc-function>`_ if mrt_model='binary_exponential_piston_flow'; however if you have many iterations to run, saving the true receptor concentration time series, resampling it, and passing it to the power_calc function will significantly reduce the computational resource requirements.
-
+10. Estimate the statistical power of detecting the change in concentration based on the predicted true receptor concentration time series and the noise in the receptor concentration time series.
 
 Look up tables for statistical power
 =====================================
@@ -100,6 +93,11 @@ We have included a number of supporting documents:
 
 
 
+Python package usage
+=====================
+
+.. todo see read the docs and the worked example for more details
+
 Dependencies
 ==================
 
@@ -139,8 +137,8 @@ Install from Github
     pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_detect_power
 
 
-Methodology
-================
+Methodology (slope detection)
+===============================
 
 The statistical power calculation is fairly straight forward.  the steps are:
 
@@ -150,25 +148,6 @@ The statistical power calculation is fairly straight forward.  the steps are:
 4. Assess the significance of the noisy receptor time series.
 5. If the change is statistically significant (p< minimum p value) and in the expected direction, then the detection power is 1.0, otherwise it is 0.0
 6. Repeat steps 2-5 for the number of iterations specified by the user ('n_iterations' kwarg) the statistical power is then reported as the mean of the detection power over the number of iterations (as a percentage).
-
-
-Options to create the 'True' receptor time series
--------------------------------------------------------
-
-We have implemented four different options to create the 'True' receptor time series.  These are:
-
-* Simple linear reductions between initial and target concentration
-* Simple linear reductions concentration with a Piston Flow lag with a positive, negative, or no previous slope (see 'true_ts_from_piston_flow' function)
-* Simple linear reductions with an single or binary exponential piston flow lag with a positive or no previous slope (see 'truets_from_binary_exp_piston_flow' function)
-
-Pass your own True receptor time series
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-the user is able to pass a bespoke receptor time series to the function. This is done by passing a numpy array to the 'true_conc_ts' kwarg, mrt_model='pass_true_conc'. All other kwargs except 'idv', and 'error' must be set as None. The sampling rate will be assumed to be the same as the passed receptor concentration.  That is a true_conc_ts with 20 values will have the randomly generated error added to each value and then be assessed for statistical power. An example of this behaviour is show in the figure below.
-
-.. figure:: figures/linear-regression_iteration.png
-   :height: 500 px
-   :align: center
 
 Options to assess the significance of the noisy receptor time series
 --------------------------------------------------------------------------
@@ -209,32 +188,15 @@ the effect on the pvalue is shown in the figure below:
    :height: 500 px
    :align: center
 
+Methodology (Counterfactual)
+===============================
 
-Python Package Usage
-======================
+.. todo document counterfactual methodology
 
-.. todo delete
+Resource Requirements (slope)
+==============================
 
-plot_iteration function
------------------------------------------------------
-
-We have provided a simple function to plot a single iteration of the power calculation.  This function is called DetectionPowerCalculator.plot_iteration it is based on the power_calc function, but only runs a single iteration. The run is for a single threaded process only.  An example follows.  Example plots are available in the example plots section below.
-
-.. code-block:: python
-
-    dp = DetectionPowerCalculator(significance_mode='mann-kendall', expect_slope='auto', nsims=100,
-                                      nparts=None, return_true_conc=True,
-                                      return_noisy_conc_itters=1)
-    output = dp.power_calc(idv=mode, error=0.5, true_conc_ts=data, mrt_model='pass_true_conc')
-    fig, ax = dp.plot_iteration(output['noisy_conc'].iloc[:, 0], output['true_conc'])
-    ax.set_title(f'{mode} power: {output["power"]["power"]}')
-    fig.tight_layout()
-    plt.show()
-
-
-
-Resource Requirements
-=======================
+**NOTE**: we have not assessed the resource requirements for the counterfactual methodology as they are significantly lower than the slope methodology.
 
 The Detection power calculator can use substantial resources depending on the number of iterations and the significance mode used. In general the significance mode efficiency is as follows:
 
@@ -369,8 +331,8 @@ MultiPart Mann-Kendall / Pettitt test
 
 
 
-Example plots for each significance mode
-===========================================
+Example plots for each significance mode (slope)
+=================================================
 
 Linear Regression from first point to last point
 -----------------------------------------------------
@@ -427,12 +389,7 @@ Pettitt test
    :align: center
 
 
-
 Further Improvements
 ======================
-
-if time/interest allows we would like to implement the following improvements:
-
-* implement a paired t-test for a counter factual approach
 
 If you have any suggestions for improvements please let us know by raising an issue on the github repo.
