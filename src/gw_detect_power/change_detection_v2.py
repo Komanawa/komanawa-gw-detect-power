@@ -280,7 +280,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y0, true_conc):
+    def plot_iteration(self, y0, true_conc, ax=None):
         """
         plot the concentration data itteration and the true concentration data
         if provided as well as the power test results
@@ -291,7 +291,10 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         """
         istart = 0
         import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=(10, 10))
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 10))
+        else:
+            fig = ax.get_figure()
         ax.scatter(np.arange(len(y0)), y0, c='k', label=f'noisy data')
         ax.plot(np.arange(len(true_conc)), true_conc, c='r', label=f'True data', marker='.')
         if self.significance_mode in ['linear-regression', 'linear-regression-from-max', 'linear-regression-from-min']:

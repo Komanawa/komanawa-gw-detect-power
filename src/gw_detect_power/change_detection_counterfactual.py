@@ -146,18 +146,22 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y0_base, y0_alt, true_conc_base, true_conc_alt):
+    def plot_iteration(self, y0_base, y0_alt, true_conc_base, true_conc_alt, ax=None):
         """
         plot the concentration data itteration and the true concentration data
         :param y0_base: noisy concentration data for the base scenario
         :param y0_alt: noisy concentration data for the alt scenario
         :param true_conc_base: True concentration data for the base scenario
         :param true_conc_alt: True concentration data for the alt scenario
+        :param ax: matplotlib axis to plot to, if None then a new figure and axis will be created
         :return:
         """
 
         import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=(10, 10))
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(10, 10))
+        else:
+            fig = ax.figure
         power, plist, pvals = self._power_test(np.array([y0_base]), np.array([y0_alt]), return_p=True)
         for key, c in zip(['base', 'alt'], ['b', 'r']):
             y0 = eval('y0_' + key)

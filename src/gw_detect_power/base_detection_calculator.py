@@ -177,10 +177,11 @@ class BaseDetectionCalculator:
 
         if self.condensed_mode:
             if self._counterfactual:
-                identifiers = ['error_base','error_alt', 'samp_years', 'samp_per_year', 'implementation_time_base',
+                identifiers = ['error_base', 'error_alt', 'samp_years', 'samp_per_year', 'implementation_time_base',
                                'implementation_time_alt', 'delay_years',
                                'initial_conc',
-                               'target_conc_base','target_conc_alt', 'prev_slope', 'max_conc_lim', 'min_conc_lim', 'mrt_model',
+                               'target_conc_base', 'target_conc_alt', 'prev_slope', 'max_conc_lim', 'min_conc_lim',
+                               'mrt_model',
                                'mrt', 'mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'seed_alt', 'seed_base']
             else:
                 identifiers = ['error', 'samp_years', 'samp_per_year', 'implementation_time', 'initial_conc',
@@ -196,7 +197,7 @@ class BaseDetectionCalculator:
                 if i % 1000 == 0:
                     print(f'forming/condesing run {i} of {len(idv_vals)}')
 
-                use_idv = '_'.join([self._get_id_str(use_kwargs[e+'_vals'][i], e) for e in identifiers])
+                use_idv = '_'.join([self._get_id_str(use_kwargs[e + '_vals'][i], e) for e in identifiers])
                 all_use_idv.append(use_idv)
                 if use_idv in run_list:
                     continue
@@ -486,10 +487,9 @@ class BaseDetectionCalculator:
             out = {
                 'idv': kwargs['idv'],
                 'python_error': traceback.format_exc(),
-                'true_conc_ts_none': kwargs['true_conc_ts'] is None,
             }
             for k in kwargs:
-                if k not in ['true_conc_ts', 'idv']:
+                if k not in ['true_conc_ts', 'true_conc_base', 'true_conc_alt', 'idv']:
                     out[k] = kwargs[k]
         out = pd.Series(out)
         return out
