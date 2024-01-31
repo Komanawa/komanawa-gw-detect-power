@@ -167,7 +167,7 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
             y0 = eval('y0_' + key)
             true_conc = eval('true_conc_' + key)
             ax.scatter(np.arange(len(y0)), y0, c=c, label=f'{key}: noisy data')
-            ax.plot(np.arange(len(true_conc)), true_conc, c='r', label=f'{key}: True data', marker='.')
+            ax.plot(np.arange(len(true_conc)), true_conc, c=c, label=f'{key}: True data', marker='.')
             ax.axhline(np.median(true_conc), c=c, ls=':', alpha=0.5, label=f'{key}: True median')
         ax.legend(title='pvalue: {:.2f}'.format(pvals.mean()))
         ax.set_xlabel('time')
