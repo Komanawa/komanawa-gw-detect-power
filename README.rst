@@ -16,6 +16,58 @@ and groundwater temporal dispersion (e.g. mixing of different aged waters via a 
 .. contents:: Table of Contents
     :depth: 3
 
+Supporting Documents
+=====================
+
+We have included a number of supporting documents:
+
+`Water Quality Monitoring for Management of Diffuse Nitrate Pollution <supporting_documents/Water_quality_monitoring_for_management_of_diffuse_nitrate_pollution_Final.pdf>`_: This document provides guidance on the design of water quality monitoring programs for the management of diffuse nitrate pollution.  It includes a section on statistical power and the use of the detection power calculator as well as other factors that should be considered when designing a water quality monitoring program.
+
+
+Installation
+==================
+
+This package is currently held as a simple github repo,
+but the intention is to make it available on PyPI in the future, It also sources other repos that are only hosted on
+github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
+all dependencies are installed.
+
+Install from Github
+----------------------
+
+.. code-block:: bash
+
+    conda create -c conda-forge --name gw_detect  python=3.11 pandas=2.0.3 numpy=1.25.2 matplotlib=3.7.2 scipy=1.11.2 pytables=3.8.0 psutil=5.9.5
+    conda activate gw_detect
+
+    pip install pyhomogeneity
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_detect_powe
+
+Python package usage
+=====================
+
+.. todo see read the docs and the worked example for more details
+
+In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
+This repo is available at `https://github.com/Komanawa-Solutions-Ltd/gw_detect_power-worked-examples <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power-worked-examples>`_.
+
+Dependencies
+==================
+
+* pandas>=2.0.3
+* numpy>=1.25.2
+* scipy>=1.11.2
+* tables>=3.8.0
+* psutil>=5.9.5
+
+Optional Dependencies
+----------------------
+
+* pyhomogeneity (for the Pettitt test)
+* kendall_stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
+* gw_age_tools (for the binary piston flow lag)
 
 Key definitions
 ==================
@@ -26,6 +78,7 @@ In this repo we have a couple key definitions:
 * **Source**: The source is the location where the concentration is changed.  This is typically a point source (e.g. a wastewater treatment plant) or a non-point source (e.g. a catchment/groundwater source area).
 * **Noise**: here by noise we include the variation in the concentration at the receptor. This includes true sampling noise, but also includes any other variation in the concentration at the receptor that cannot be identified or corrected for (e.g. from weather events etc.). Typically the noise will be estimated as the standard deviation of the receptor concentration time series (assuming no trend), or the standard deviation of the residuals from a model (e.g. linear regression) of the receptor concentration time series.
 * **True Receptor Concentration**: The true receptor concentration is the concentration at the receptor if there was no noise.
+
 
 High Level suggested detection power methodology
 =================================================
@@ -84,58 +137,6 @@ To use these tables:
     * mean residence time (mrt (if applicable))
 4. The provided power is the percent chance of detecting the change in concentration
 
-Supporting Documents
-=====================
-
-We have included a number of supporting documents:
-
-`Water Quality Monitoring for Management of Diffuse Nitrate Pollution <supporting_documents/Water_quality_monitoring_for_management_of_diffuse_nitrate_pollution_Final.pdf>`_: This document provides guidance on the design of water quality monitoring programs for the management of diffuse nitrate pollution.  It includes a section on statistical power and the use of the detection power calculator as well as other factors that should be considered when designing a water quality monitoring program.
-
-
-
-Python package usage
-=====================
-
-.. todo see read the docs and the worked example for more details
-
-Dependencies
-==================
-
-* pandas>=2.0.3
-* numpy>=1.25.2
-* scipy>=1.11.2
-* tables>=3.8.0
-* psutil>=5.9.5
-
-Optional Dependencies
-----------------------
-
-* pyhomogeneity (for the Pettitt test)
-* kendall_stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
-* gw_age_tools (for the binary piston flow lag)
-
-
-Installation
-==================
-
-This package is currently held as a simple github repo,
-but the intention is to make it available on PyPI in the future, It also sources other repos that are only hosted on
-github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
-all dependencies are installed.
-
-Install from Github
-----------------------
-
-.. code-block:: bash
-
-    conda create -c conda-forge --name gw_detect  python=3.11 pandas=2.0.3 numpy=1.25.2 matplotlib=3.7.2 scipy=1.11.2 pytables=3.8.0 psutil=5.9.5
-    conda activate gw_detect
-
-    pip install pyhomogeneity
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_detect_power
-
 
 Methodology (slope detection)
 ===============================
@@ -191,7 +192,12 @@ the effect on the pvalue is shown in the figure below:
 Methodology (Counterfactual)
 ===============================
 
-.. todo document counterfactual methodology
+The counterfactual methodology is similar to the slope methodology, but instead of assessing the significance of the slope it assesses the significance of the difference between the true receptor concentration time series and the noisy receptor concentration time series.
+
+We have implemented the following significance tests:
+
+* Paired t-test
+* Wilcoxon signed rank test
 
 Resource Requirements (slope)
 ==============================
