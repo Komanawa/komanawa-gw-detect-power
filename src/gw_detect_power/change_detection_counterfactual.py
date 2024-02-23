@@ -28,51 +28,43 @@ except ImportError:
 
 class DetectionPowerCounterFactual(BaseDetectionCalculator):
     """
-    This class is used to calculate the counterfactual detection power of a pair of concentration time series
-    The user specifies the true concentration time series for the base and alt scenarios and the noise level
-    for both scenarios.  The power is calculated by adding many noise realisations to the
-    true concentration time series and running a paired t test or wilcoxon signed rank test to determine
-    if the null hypothesis (The scenarios are the same) can be rejected.
+    This class is used to calculate the counterfactual detection power of a pair of concentration time series The user specifies the true concentration time series for the base and alt scenarios and the noise level for both scenarios.  The power is calculated by adding many noise realisations to the true concentration time series and running a paired t test or wilcoxon signed rank test to determine if the null hypothesis (The scenarios are the same) can be rejected.
 
     The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.
 
     :param significance_mode: str, one of:
-                                'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
-                                'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric),
-                                                             scipy.stats.wilcoxon
-    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
-                  power= number of detected changes/1000 noise simulations)
-    :param p_value: minimum p value (see also alternative), if
-                       p >= p_value the null hypothesis will not be rejected (base and alt are the same)
-                       p < p_value the null hypothesis will be rejected (base and alt are different)
+
+                                * 'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
+                                * 'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric), scipy.stats.wilcoxon
+
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)
+    :param p_value: minimum p value (see also alternative), if:
+
+                      * p >= p_value the null hypothesis will not be rejected (base and alt are the same)
+                      * p < p_value the null hypothesis will be rejected (base and alt are different)
+
     :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
     :param alternative: str, one of:
-                            'alt!=base': two sided test (default),
-                            'alt<base': one sided test ~
-                            'alt>base'
+
+                            * 'alt!=base': two sided test (default),
+                            * 'alt<base': one sided test ~
+                            * 'alt>base'
+
     :param wx_zero_method: str, one of:
-                                “wilcox”: Discards all zero-differences (default); see [4].
-                                “pratt”: Includes zero-differences in the ranking process, but drops the ranks
-                                         of the zeros (more conservative); see [3]. In this case, the normal
-                                         approximation is adjusted as in [5].
-                                “zsplit”: Includes zero-differences in the ranking process and splits the zero
-                                          rank between positive and negative ones.
-                            for more info see:
-                              https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
-    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by
-                            0.5 towards the mean value when computing the z-statistic. Default is False.
+
+                               * “wilcox”: Discards all zero-differences (default); see [4].
+                               * “pratt”: Includes zero-differences in the ranking process, but drops the ranks of the zeros (more conservative); see [3]. In this case, the normal approximation is adjusted as in [5].
+                               * “zsplit”: Includes zero-differences in the ranking process and splits the zero rank between positive and negative ones.
+
+                            for more info see: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+
+    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.
     :param wx_method: str, see scipy.stats.wilcoxon for more info
     :param ncores: number of cores to use for multiprocessing, None will use all available cores
     :param log_level: logging level for multiprocessing subprocesses
-    :param return_true_conc: return the true concentration time series for each simulation with power calcs
-                             (not supported with multiprocessing power calcs)
-    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
-                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
-                                        power calcs
-    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
-                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
-                                   all significant simulations will be returned. if there are no noisy simulations
-                                   with changes detected then and empty dataframe is returned
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
     """
 
     implemented_mrt_models = ()
@@ -97,7 +89,6 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
                  return_noisy_conc_itters=0,
                  only_significant_noisy=False,
                  ):
-
 
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
                                                                           f'implemented, must be one of '
@@ -149,6 +140,7 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
     def plot_iteration(self, y0_base, y0_alt, true_conc_base, true_conc_alt, ax=None):
         """
         plot the concentration data itteration and the true concentration data
+
         :param y0_base: noisy concentration data for the base scenario
         :param y0_alt: noisy concentration data for the alt scenario
         :param true_conc_base: True concentration data for the base scenario
@@ -288,31 +280,24 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
                    ):
 
         """
-        calculate the counterfactual detection power of a pair of concentration time series
-        note the power is calculated
-        using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling
-        frequency then you should resample the true_conc_base/alt before passing it to this function
+        calculate the counterfactual detection power of a pair of concentration time series note the power is calculated using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling frequency then you should resample the true_conc_base/alt before passing it to this function
 
         :param idv: identifiers for the power calc sites, passed straight through to the output
         :param error_base: standard deviation of the noise to add to the base concentration time series
         :param true_conc_base: the true concentration timeseries for the base scenario
         :param true_conc_alt: the true concentration timeseries for the alt scenario
-        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then
-                            error_alt = error_base
-        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will
-                            be generated and returned with the output
-        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will
-                            be generated and returned with the output
+        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base
+        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will be generated and returned with the output
+        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will be generated and returned with the output
         :param testnitter: None (usually) or a different nitter then self.niter for testing run times
         :param kwargs: any other kwargs to pass directly to the output Series
         :return: pd.Series with the power calc results note power is percent 0-100
-                Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
-                in which case a dictionary will be returned:
-                    [
-                    'power': power_df, # always
-                    'true_conc': true_conc_ts, if self.return_true_conc is True
-                    'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
-                    ]
+
+        Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0 in which case a dictionary will be returned:
+        {'power': power_df, # always
+        'true_conc': true_conc_ts, if self.return_true_conc is True
+        'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
+        }
         """
         outdata = self._run_power_calc(
             idv=idv,
@@ -341,29 +326,30 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
             **kwargs
     ):
         """
-        multiprocessing wrapper for power_calc, see power_calc for details
-        note that if a given run raises and exception the traceback for the exception will be included in the
-        returned dataset under the column 'python_error' if 'python_error' is None then the run was successful
-        to change the number of cores used pass n_cores to the constructor init
+        multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
 
         :param outpath: path to save results to or None (no save)
         :param idv_vals: id values for each simulation
-        All values from here on out should be either a single value or an array of values with the same shape as
-            id_vals
-        :param true_conc_base_vals:
-        :param true_conc_alt_vals:
+
+        All values from here on out should be either a single value or an array of values with the same shape as id_vals
+
+        :param true_conc_base_vals: time series concentration dta for the 'base' scenario.  Note sampling frequency is assumed to be correct.
+        :param true_conc_alt_vals: time series concentration dta for the 'alt' scenario.  Note sampling frequency is assumed to be correct.
         :param error_base_vals: standard deviation of noise to add to the base time series for each simulation
         :param error_alt_vals: standard deviation of noise to add to the alt time series for each simulation
         :param seed_alt_vals_vals: random seed to generate the alternative noise. One of:
-                                    ndarray (integer seeds),
-                                    None (no seeds passed, but will record the seed used)
-                                    int (1 seed for all simulations)
+
+                                   * ndarray (integer seeds),
+                                   * None (no seeds passed, but will record the seed used)
+                                   * int (1 seed for all simulations)
+
         :param seed_base_vals_vals: random seed to generate the base noise. One of:
-                                     ndarray (integer seeds),
-                                     None (no seeds passed, but will record the seed used)
-                                     int (1 seed for all simulations)
-                                     Note seed_base != seed_alt (the same noise will be added to both time series,
-                                                                 making the analysis useless)
+
+                                    * ndarray (integer seeds),
+                                    * None (no seeds passed, but will record the seed used)
+                                    * int (1 seed for all simulations)
+
+        Note seed_base != seed_alt (the same noise will be added to both time series, making the analysis useless)
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
         :param debug_mode: if True run as single process to allow for easier debugging
         :param kwargs: any other kwargs to pass directly to the output dataframe
@@ -384,55 +370,41 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
 
 class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     """
-    This class is used to calculate the counterfactual detection power of a pair of auto created concentration
-    time series. The user specifies an initial concentration, and a target concentration for both a base and
-    alternative scenario. Other parameters include groundwater age distribution models and parameters,
-    implementation time and the slope of the previous data.
+    This class is used to calculate the counterfactual detection power of a pair of auto created concentration time series. The user specifies an initial concentration, and a target concentration for both a base and alternative scenario. Other parameters include groundwater age distribution models and parameters, implementation time and the slope of the previous data.
 
-    The user then specifies the sampling duration, delay, and frequency. The power is calculated by adding many
-    user specified noise realisations to both the base and alternative concentration time series and running
-    a paired t test or wilcoxon signed rank test to determine if the null hypothesis
-    (The scenarios are the same) can be rejected.
+    The user then specifies the sampling duration, delay, and frequency. The power is calculated by adding many user specified noise realisations to both the base and alternative concentration time series and running a paired t test or wilcoxon signed rank test to determine if the null hypothesis (The scenarios are the same) can be rejected.
 
     The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.
 
     :param significance_mode: str, one of:
-                                'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
-                                'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric),
-                                                             scipy.stats.wilcoxon
-    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000,
-                  power= number of detected changes/1000 noise simulations)
-    :param p_value: minimum p value (see also alternative), if
-                       p >= p_value the null hypothesis will not be rejected (base and alt are the same)
-                       p < p_value the null hypothesis will be rejected (base and alt are different)
+
+                                * 'paired-t-test': paired t test (parametric), scipy.stats.ttest_rel
+                                * 'wilcoxon-signed-rank-test': wilcoxon signed rank test (non-parametric), scipy.stats.wilcoxon
+
+    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)
+    :param p_value: minimum p value (see also alternative), if p >= p_value the null hypothesis will not be rejected (base and alt are the same) p < p_value the null hypothesis will be rejected (base and alt are different)
     :param min_samples: minimum number of samples required, less than this number of samples will raise an exception
     :param alternative: str, one of:
-                            'alt!=base': two sided test (default),
-                            'alt<base': one sided test ~
-                            'alt>base'
+
+                            * 'alt!=base': two sided test (default),
+                            * 'alt<base': one sided test ~
+                            * 'alt>base'
+
     :param wx_zero_method: str, one of:
-                                “wilcox”: Discards all zero-differences (default); see [4].
-                                “pratt”: Includes zero-differences in the ranking process, but drops the ranks
-                                         of the zeros (more conservative); see [3]. In this case, the normal
-                                         approximation is adjusted as in [5].
-                                “zsplit”: Includes zero-differences in the ranking process and splits the zero
-                                          rank between positive and negative ones.
-                            for more info see:
-                              https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
-    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by
-                            0.5 towards the mean value when computing the z-statistic. Default is False.
+
+                               * “wilcox”: Discards all zero-differences (default); see [4].
+                               * “pratt”: Includes zero-differences in the ranking process, but drops the ranks of the zeros (more conservative); see [3]. In this case, the normal approximation is adjusted as in [5].
+                               * “zsplit”: Includes zero-differences in the ranking process and splits the zero rank between positive and negative ones.
+
+                            for more info see: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html
+
+    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.
     :param wx_method: str, see scipy.stats.wilcoxon for more info
     :param ncores: number of cores to use for multiprocessing, None will use all available cores
     :param log_level: logging level for multiprocessing subprocesses
-    :param return_true_conc: return the true concentration time series for each simulation with power calcs
-                             (not supported with multiprocessing power calcs)
-    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return
-                                     if 0 then no noisy simulations are returned, not supported with multiprocessing
-                                        power calcs
-    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if
-                                   there are fewer noisy simulations with changes detected than return_noisy_conc_itters
-                                   all significant simulations will be returned. if there are no noisy simulations
-                                   with changes detected then and empty dataframe is returned
+    :param return_true_conc: return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)
+    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs
+    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
     """
     implemented_mrt_models = (
         'piston_flow',
@@ -456,6 +428,7 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
                            f_p2_per=2):
         """
         set calculator to condense the number of runs based by rounding the inputs to a specified precision
+
         :param target_conc_per: precision to round target_conc to (2 = 0.01)
         :param initial_conc_per: precision to round initial_conc to (2 = 0.01)
         :param error_per: precision to round error to (2 = 0.01)
@@ -525,10 +498,12 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
         :param idv: identifiers for the power calc sites, passed straight through to the output
         :param error_base: standard deviation of the noise to add to the base concentration time series
         :param mrt_model: the model to use for the mean residence time options:
+
                           * 'piston_flow': use the piston flow model (no mixing, default)
                           * 'binary_exponential_piston_flow': use the binary exponential piston flow model
-                          for unitary exponential_piston_flow model set frac_1 = 1 and mrt_p1 = mrt
-                          for no lag, set mrt=0, mrt_model='piston_flow'
+                          * For unitary exponential_piston_flow model set frac_1 = 1 and mrt_p1 = mrt
+                          * For no lag, set mrt=0, mrt_model='piston_flow'
+
         :param samp_years: number of years to sample
         :param samp_per_year: number of samples to collect each year
         :param implementation_time_alt: number of years over which the target concentration_alt is reached
@@ -536,41 +511,30 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
         :param target_conc_alt: target concentration for the alt scenario
         :param prev_slope: slope of the previous data (e.g. prior to the initial concentration)
         :param max_conc_lim: maximum concentration limit user specified or None (default)
-        :param min_conc_lim: minimum concentration limit for the source, only used for the
-                              binary_exponential_piston_flow model
+        :param min_conc_lim: minimum concentration limit for the source, only used for the binary_exponential_piston_flow model
         :param mrt: the mean residence time of the site
-        :param target_conc_base: the target concentration for the base scenario,
-                                 if None then target_conc_base = initial_conc
-        :param implementation_time_base: number of years over which the target concentration_base is reached,
-                                         if None then implementation_time_base = implementation_time_alt
-        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then
-                            error_alt = error_base
-        :param delay_years: number of years to delay the start of the monitoring, If the delay_years does not allow
-                            enough samples to be collected then an exception will be raised. If delay_years is 0 then
-                            the full length of the concentration time series will be used
+        :param target_conc_base: the target concentration for the base scenario, if None then target_conc_base = initial_conc
+        :param implementation_time_base: number of years over which the target concentration_base is reached, if None then implementation_time_base = implementation_time_alt
+        :param error_alt: standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base
+        :param delay_years: number of years to delay the start of the monitoring, If the delay_years does not allow enough samples to be collected then an exception will be raised. If delay_years is 0 then the full length of the concentration time series will be used
+
         Options for binary_exponential_piston_flow model:
-        :param mrt_p1: the mean residence time of the first piston flow model (only used for
-                        binary_exponential_piston_flow model)
-        :param frac_p1: the fraction of the first piston flow model (only used for
-                        binary_exponential_piston_flow model)
-        :param f_p1: the fraction of the first piston flow model (only used for
-                        binary_exponential_piston_flow model)
-        :param f_p2: the fraction of the first piston flow model (only used for
-                        binary_exponential_piston_flow model)
-        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will
-                            be generated and returned with the output
-        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will
-                            be generated and returned with the output
+
+        :param mrt_p1: the mean residence time of the first piston flow model (only used for binary_exponential_piston_flow model)
+        :param frac_p1: the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)
+        :param f_p1: the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)
+        :param f_p2: the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)
+        :param seed_base: seed for the random number generator for the base scenario, if None then a random seed will be generated and returned with the output
+        :param seed_alt: seed for the random number generator for the alt scenario, if None then a random seed will be generated and returned with the output
         :param testnitter: None (usually) or a different nitter then self.niter for testing run times
         :param kwargs: any other kwargs to pass directly to the output Series
         :return: pd.Series with the power calc results note power is percent 0-100
-                Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0
-                in which case a dictionary will be returned:
-                    [
-                    'power': power_df, # always
-                    'true_conc': true_conc_ts, if self.return_true_conc is True
-                    'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
-                    ]
+
+        Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters > 0 in which case a dictionary will be returned:
+        {'power': power_df, # always
+        'true_conc': true_conc_ts, if self.return_true_conc is True
+        'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
+        }
         """
 
         if target_conc_base is None:
@@ -729,6 +693,7 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
                                  ):
         """
         multiprocessing wrapper for power_calc, see power_calc for details
+
         :param outpath: path to save results to or None (no save)
         :param idv_vals: id values for each simulation
         :param error_base_vals: standard deviation of noise to add to the base time series for each simulation
@@ -742,16 +707,10 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
         :param min_conc_lim_vals: minimum concentration limit for the source for each simulation
         :param mrt_model_vals: mrt model for each simulation
         :param mrt_vals: mean residence time for each simulation
-        :param target_conc_base_vals: target concentration for the base scenario for each simulation, if None then
-                                    target_conc_base = initial_conc
-        :param implementation_time_base_vals: implementation time for the base scenario for each simulation, if None then
-                                            implementation_time_base = implementation_time_alt
-        :param error_alt_vals: standard deviation of the noise to add to the alt concentration time series, if None then
-                            error_alt = error_base
-        :param delay_years_vals: number of years to delay the start of the monitoring for each simulation, If the
-                                delay_years does not allow enough samples to be collected then an exception will be
-                                raised. If delay_years is 0 then the full length of the concentration time series will
-                                be used
+        :param target_conc_base_vals: target concentration for the base scenario for each simulation, if None then target_conc_base = initial_conc
+        :param implementation_time_base_vals: implementation time for the base scenario for each simulation, if None then implementation_time_base = implementation_time_alt
+        :param error_alt_vals: standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base
+        :param delay_years_vals: number of years to delay the start of the monitoring for each simulation, If the delay_years does not allow enough samples to be collected then an exception will be raised. If delay_years is 0 then the full length of the concentration time series will be used
         :param mrt_p1_vals: mean residence time of the first piston flow model for each simulation
                             Only used for binary_exponential_piston_flow model
         :param frac_p1_vals: fraction of the first piston flow model for each simulation
@@ -762,14 +721,13 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
                             Only used for binary_exponential_piston_flow model
         :param seed_alt_vals:  random seed to generate the alternative noise for each simulation. One of:
                                     ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)
-        :param seed_base_vals: random seed to generate the base noise for each simulation. One of:
-                                        ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)
-                                        Note seed_base != seed_alt (the same noise will be added to both time series,
-                                                                    making the analysis useless)
+        :param seed_base_vals: random seed to generate the base noise for each simulation. One of:  ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)
+
+        Note seed_base != seed_alt (the same noise will be added to both time series, making the analysis useless)
+
         :param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
         :param debug_mode: if True run as single process to allow for easier debugging
-        :param kwargs: other kwargs to pass directly to the output dataframe must be either a single value or an array
-                        of values with the same shape as id_vals
+        :param kwargs: other kwargs to pass directly to the output dataframe must be either a single value or an array of values with the same shape as id_vals
         :return: pd.DataFrame with the power calc results note power is percent 0-100
         """
 

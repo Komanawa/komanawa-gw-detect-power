@@ -52,6 +52,9 @@ except ImportError:
 
 
 class BaseDetectionCalculator:
+    """
+    Base class for detection power calculations, provides some general methods for power calculations
+    """
     implemented_mrt_models = None  # override in subclass
     _power_from_max = False  # override in subclass
     _power_from_min = False  # override in subclass
@@ -65,6 +68,7 @@ class BaseDetectionCalculator:
     def _round_kwarg_value(self, val, key):
         """
         helper function to round a kwarg value to the precision of the kwarg
+
         :param val: value to round
         :param key: kwarg name
         :return:
@@ -297,9 +301,8 @@ class BaseDetectionCalculator:
                                            return_extras=False, low_mem=False,
                                            precision=2):
         """
-        create a true concentration time series using binary piston flow model for the mean residence time
-        note that this can be really slow for large runs and it may be better to create the source data first
-        and then pass it to the power calcs via pass_true_conc
+        create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc
+
         :param mrt: mean residence time years
         :param mrt_p1: mean residence time of the first pathway years
         :param frac_p1: fraction of the first pathway
@@ -308,18 +311,12 @@ class BaseDetectionCalculator:
         :param initial_conc: initial concentration
         :param target_conc: target concentration
         :param prev_slope: previous slope of the concentration data
-        :param max_conc: maximum concentration limit user specified or None
-                         here the maximum concentration is specified as the maximum concentration
-                         of the source (before temporal mixing)
+        :param max_conc: maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)
         :param min_conc: minimum concentration limit user specified, the lowest concentration for the source
         :param samp_per_year: samples per year
         :param samp_years: number of years to sample
         :param implementation_time: number of years to implement reductions
-        :param past_source_data: past source data, if None will use the initial concentration and the previous slope
-                                 to estimate the past source data, this is only set as an option to allow users to
-                                 preclude re-running the source data calculations if they have already been done
-                                 so.  Suggest that users only pass results from get_source_initial_conc_bepm with
-                                 age_step = 0.01
+        :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01
         :param return_extras: return extra variables for debugging
         :return: true timeseries, max_conc, max_conc_time, frac_p2
         """
@@ -404,7 +401,9 @@ class BaseDetectionCalculator:
     @staticmethod
     def truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years,
                                 implementation_time):
-        """ piston flow model for the mean residence time
+        """
+        piston flow model for the mean residence time
+
         :param mrt: mean residence time
         :param initial_conc: initial concentration
         :param target_conc: target concentration
@@ -452,6 +451,7 @@ class BaseDetectionCalculator:
     def time_test_power_calc_itter(self, testnitter=10, **kwargs):
         """
         run a test power calc iteration to check for errors
+
         :param testnitter: number of iterations to run
         :param kwargs: kwargs for power_calc
         :return: None

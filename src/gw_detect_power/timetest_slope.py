@@ -4,7 +4,7 @@ on: 3/10/23
 """
 import pandas as pd
 
-from change_detection_v2 import DetectionPowerSlope
+from change_detection_slope import DetectionPowerSlope
 from kendall_stats import make_example_data
 import numpy as np
 import itertools
