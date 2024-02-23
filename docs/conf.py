@@ -43,6 +43,6 @@ toc_object_entries_show_parents = 'hide'  # Hide the parent class in the TOC
 html_theme = 'alabaster'
 html_static_path = ['_static']
 html_sidebars = {'**': [
-    # 'globaltoc.html',
+    # 'globaltoc.html', # add global api
     'localtoc.html',
     'searchbox.html']}
