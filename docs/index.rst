@@ -15,11 +15,10 @@ and groundwater temporal dispersion (e.g. mixing of different aged waters via a 
 Python Package usage
 ==============================================================
 
-`Class and Method details <autoapi/gw-detect-power/index.html>`_
+`Class and Method details <autoapi/komanawa/gw_detect_power/index.html>`_
 
 In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at `https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples
- <https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples>`_.
+This repo is available at `https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples>`_.
 
 Supporting Documents
 =====================
