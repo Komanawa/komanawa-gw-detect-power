@@ -25,10 +25,11 @@ extensions = ['sphinx.ext.todo', 'sphinx.ext.viewcode', 'sphinx.ext.autodoc',
 extensions.append('autoapi.extension')
 
 # Auto API settings
+autoapi_implicit_namespaces = True  # Allow for implicit namespaces
 autoapi_keep_files = True  # Keep the generated files (for debugging)
 autoapi_ignore = ['*/lookup_table_inits.py', '*/create_lookup_tables.py']  # Ignore these files
 autoapi_python_class_content = 'both'  # Include both the class docstring and the __init__ docstring
-autoapi_dirs = ['../src/komanawa/gw_detect_power']  # The directory to scan for the API
+autoapi_dirs = ['../src']  # The directory to scan for the API
 autoapi_options = ['members', 'inherited-members', 'show-inheritance', 'show-module-summary', 'imported-members',
                    'show-inheritance-diagram']
 
