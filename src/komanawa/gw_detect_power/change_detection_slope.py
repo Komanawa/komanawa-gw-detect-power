@@ -10,7 +10,7 @@ import pandas as pd
 from scipy import stats
 import logging
 import warnings
-from gw_detect_power.base_detection_calculator import BaseDetectionCalculator
+from komanawa.gw_detect_power.base_detection_calculator import BaseDetectionCalculator
 
 # handle import of optional dependencies
 age_tools_imported = True
@@ -18,7 +18,7 @@ pyhomogeneity_imported = True
 kendal_imported = True
 
 try:
-    from gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
+    from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
 except ImportError:
     binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
     age_tools_imported = False
@@ -38,7 +38,7 @@ except ImportError:
     )
 
 try:
-    from kendall_stats import MannKendall, MultiPartKendall
+    from komanawa.kendall_stats import MannKendall, MultiPartKendall
 except ImportError:
     MannKendall, MultiPartKendall = None, None
     kendal_imported = False

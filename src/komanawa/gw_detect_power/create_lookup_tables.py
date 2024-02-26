@@ -9,8 +9,8 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import py7zr
-from gw_detect_power import AutoDetectionPowerSlope
-from gw_detect_power.lookup_table_inits import implementation_times, base_vars, base_outkeys, \
+from komanawa.gw_detect_power import AutoDetectionPowerSlope
+from komanawa.gw_detect_power.lookup_table_inits import implementation_times, base_vars, base_outkeys, \
     other_outkeys, pf_mrts, lookup_dir
 
 

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import itertools
-from gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
+from komanawa.gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
 
 
 def make_step_test_data(delta, length):
@@ -693,7 +693,7 @@ def test_condenced_non_condenced():
                                   check_exact=False)
 
 def compare_auto_manual():
-    from gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
+    from komanawa.gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
     import numpy as np
     import matplotlib.pyplot as plt
     import pandas as pd

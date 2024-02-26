@@ -15,10 +15,11 @@ and groundwater temporal dispersion (e.g. mixing of different aged waters via a 
 Python Package usage
 ==============================================================
 
-`Class and Method details <autoapi/gw_detect_power/index.html>`_
+`Class and Method details <autoapi/gw-detect-power/index.html>`_
 
 In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at `https://github.com/Komanawa-Solutions-Ltd/gw_detect_power-worked-examples <https://github.com/Komanawa-Solutions-Ltd/gw_detect_power-worked-examples>`_.
+This repo is available at `https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples
+ <https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples>`_.
 
 Supporting Documents
 =====================
@@ -36,6 +37,13 @@ but the intention is to make it available on PyPI in the future, It also sources
 github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
 all dependencies are installed.
 
+Install from PyPI
+----------------------
+
+.. todo
+
+This package is not yet available on PyPI, coming soon
+
 Install from Github
 ----------------------
 
@@ -45,9 +53,9 @@ Install from Github
     conda activate gw_detect
 
     pip install pyhomogeneity
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_detect_powe
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats.git
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-age-tools
+    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power
 
 
 Dependencies
@@ -63,8 +71,8 @@ Optional Dependencies
 ----------------------
 
 * pyhomogeneity (for the Pettitt test)
-* kendall_stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
-* gw_age_tools (for the binary piston flow lag)
+* komanawa-kendall-stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
+* komanawa-gw-age-tools (for the binary piston flow lag)
 
 Key definitions
 ==================
@@ -154,9 +162,9 @@ These are listed in the order of increasing computational cost.
 
 * Linear regression from the first point to the last point (detection is a significant slope in the expected direction)
 * Linear regression from the [max|min] point to the last point (detection is a significant slope in the expected direction)
-* Mann-Kendall test from the first point to the last point (requires kendall_stats optional dependency) (detection is a significant slope in the expected direction)
-* Mann-Kendall test from the [max|min] point to the last point (requires kendall_stats optional dependency) (detection is a significant slope in the expected direction)
-* MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires kendall_stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See `kendall_stats <https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall#multipartkendall>`_ for more details
+* Mann-Kendall test from the first point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)
+* Mann-Kendall test from the [max|min] point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)
+* MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires komanawa-kendall-stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See `komanawa-kendall-stats <https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats#multipartkendall>`_ for more details
 
 Pettitt test (requires pyhomogeneity optional dependency)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -217,7 +225,7 @@ For the MultiPart Mann-Kendall efficiency mode both calculates the trend detecti
 * the minimum number of breakpoints to test (mpmk_efficent_min)
 * or as a fraction of the length of the full time series (mpmk_window).
 
-Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `kendall_stats repo <https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall>`_. Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).
+Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `komanawa-kendall-stats repo <https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats>`_. Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).
 
 For the Pettitt test the efficiency mode is not yet implemented.
 
@@ -263,7 +271,7 @@ If you want a processing time table for a different machine run:
 .. code-block:: python
 
     from pathlib import Path
-    from gw_detect_power.timetest import timeit_test
+    from komanawa.gw_detect_power.timetest import timeit_test
     data = timeit_test()
     data.to_csv(Path.home().joinpath('Downloads', 'timeit_test_results.txt'))
 
