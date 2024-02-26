@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import itertools
-from komanawa.gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
+from gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
 
 
 def make_step_test_data(delta, length):
@@ -693,13 +693,13 @@ def test_condenced_non_condenced():
                                   check_exact=False)
 
 def compare_auto_manual():
-    from komanawa.gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
+    from gw_detect_power import DetectionPowerCounterFactual, AutoDetectionPowerCounterFactual
     import numpy as np
     import matplotlib.pyplot as plt
     import pandas as pd
-    from kendall_stats import MannKendall
+    from komanawa.kendall_stats import MannKendall
     import datetime
-    from gw_age_tools import check_age_inputs, predict_historical_source_conc, predict_future_conc_bepm
+    from komanawa.gw_age_tools import check_age_inputs, predict_historical_source_conc, predict_future_conc_bepm
     from scipy.interpolate import interp1d
 
     raw_n_vals = np.array([

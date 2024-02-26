@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from komanawa.gw_detect_power import DetectionPowerCalculator, AutoDetectionPowerSlope, DetectionPowerSlope
+from gw_detect_power import DetectionPowerCalculator, AutoDetectionPowerSlope, DetectionPowerSlope
 
 
 def print_myself():
@@ -477,7 +477,7 @@ def test_linear_from_max_vs_from_start(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_linear_from_max_vs_from_start.hdf')
     write_test_data = False
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     # increasing
     x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
@@ -576,7 +576,7 @@ def test_mann_kendall_power(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_kendall_from_max_vs_from_start.hdf')
     write_test_data = False
-    from kendall_stats import make_example_data, MannKendall
+    from komanawa.kendall_stats import make_example_data, MannKendall
     # increasing
     x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
@@ -636,7 +636,7 @@ def test_mann_kendall_power(show=False):
                     mk = MannKendall(data=t.iloc[np.argmax(true_conc):, n], alpha=use_dp.min_p_value)
                 else:
                     mk = MannKendall(data=t.iloc[:, n], alpha=use_dp.min_p_value)
-                fig, ax0 = mk.plot_data()
+                fig, ax0, (labels, handles) = mk.plot_data()
                 ax0.set_title(f'Noisy Conc {dp_name} {n}, power:{temp_out["power"]["power"]}')
                 axs[i, 1].scatter(t.index, t.iloc[:, n], marker='o', label=f'noisy_conc_{n}', color=c)
 
@@ -682,7 +682,7 @@ def test_multpart_mann_kendall_power(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_mp_kendall_from_max_vs_from_start.hdf')
     write_test_data = False
-    from kendall_stats import MultiPartKendall
+    from komanawa.kendall_stats import MultiPartKendall
 
     dp_3part = DetectionPowerSlope(
         significance_mode='n-section-mann-kendall',
@@ -763,7 +763,7 @@ def test_multpart_mann_kendall_power(show=False):
 def test_pettitt_power(show=False):
     print_myself()
     from pyhomogeneity import pettitt_test
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     power_data = []
     pd = DetectionPowerSlope(significance_mode='pettitt-test', nsims_pettit=1000, nsims=1000, efficent_mode=False)
     noises = [0, 0.25, 1, 2]
@@ -826,7 +826,7 @@ def test_pettitt_power(show=False):
 
 def test_iteration_plotting(show=False):
     print_myself()
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
@@ -1092,7 +1092,7 @@ def test_power_calc_and_mp():
 
 def test_efficient_mode_lr():
     print_myself()
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     # increasing
     x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
 
@@ -1162,7 +1162,7 @@ def test_efficient_mode_lr():
 
 def test_efficent_mode_mann_kendall():
     print_myself()
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     # increasing
     x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
 
@@ -1232,7 +1232,7 @@ def test_efficent_mode_mann_kendall():
 
 def test_efficient_mode_mpmk():
     print_myself()
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
 
     dp_2part = DetectionPowerSlope(
         significance_mode='n-section-mann-kendall', nsims=100,
@@ -1328,7 +1328,7 @@ def check_function_mpmk_check_step():
         return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
         mpmk_check_step=check_step_func, mpmk_efficent_min=10, mpmk_window=0.05, )
 
-    from kendall_stats import make_example_data
+    from komanawa.kendall_stats import make_example_data
     x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
