@@ -3,7 +3,7 @@ created matt_dumont
 on: 24/03/22
 """
 import os
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 BUILD_ID = os.environ.get("BUILD_BUILDID", "0")
 
@@ -13,7 +13,7 @@ setup(
     # Author details
     author="Matt Dumont",
     author_email="hansonmcoombs@gmail.com",
-    packages=find_packages("src"),
+    packages=find_namespace_packages(where='src/', include=['komanawa.gw_detect_power']),
     package_dir={"": "src"},
     setup_requires=[],
     tests_require=[],

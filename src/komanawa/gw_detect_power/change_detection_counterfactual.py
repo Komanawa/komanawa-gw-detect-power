@@ -8,7 +8,7 @@ import pandas as pd
 from scipy import stats
 import warnings
 import logging
-from base_detection_calculator import BaseDetectionCalculator
+from komanawa.gw_detect_power.base_detection_calculator import BaseDetectionCalculator
 
 # handle import of optional dependencies
 age_tools_imported = True
