@@ -3,7 +3,7 @@
 created matt_dumont
 on: 6/07/23
 """
-
-from change_detection_counterfactual import DetectionPowerCounterFactual, \
+# todo relative imports are not working...
+from gw_detect_power.change_detection_counterfactual import DetectionPowerCounterFactual, \
     AutoDetectionPowerCounterFactual
-from change_detection_slope import DetectionPowerSlope, AutoDetectionPowerSlope, DetectionPowerCalculator
+from gw_detect_power.change_detection_slope import DetectionPowerSlope, AutoDetectionPowerSlope, DetectionPowerCalculator
