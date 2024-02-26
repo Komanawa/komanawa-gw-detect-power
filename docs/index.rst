@@ -5,6 +5,13 @@ Komanawa Groundwater Detection Power Calculator
    :height: 400 px
    :align: center
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
+
+.. contents:: Page Contents
+   :depth: 3
+
 **NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
@@ -15,7 +22,7 @@ and groundwater temporal dispersion (e.g. mixing of different aged waters via a 
 Python Package usage
 ==============================================================
 
-`Class and Method details <autoapi/komanawa/gw_detect_power/index.html>`_
+`Class and Method details <autoapi/gw_detect_power/index.html>`_
 
 In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
 This repo is available at `https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples>`_.

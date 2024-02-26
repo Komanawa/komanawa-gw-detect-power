@@ -10,7 +10,9 @@ import sys
 
 sys.path.insert(0, os.path.abspath('..'))
 
-project = 'Komanawa.gw_detect_power'
+# todo autoapi isn't generating the module overview
+
+project = 'Komanawa-gw-detect-power'
 copyright = '2024, Matt Dumont'
 author = 'Matt Dumont'
 release = 'V2.0.0'
@@ -26,7 +28,7 @@ extensions.append('autoapi.extension')
 autoapi_keep_files = True  # Keep the generated files (for debugging)
 autoapi_ignore = ['*/lookup_table_inits.py', '*/create_lookup_tables.py']  # Ignore these files
 autoapi_python_class_content = 'both'  # Include both the class docstring and the __init__ docstring
-autoapi_dirs = ['../src']
+autoapi_dirs = ['../src/komanawa/gw_detect_power']  # The directory to scan for the API
 autoapi_options = ['members', 'inherited-members', 'show-inheritance', 'show-module-summary', 'imported-members',
                    'show-inheritance-diagram']
 
@@ -43,6 +45,6 @@ toc_object_entries_show_parents = 'hide'  # Hide the parent class in the TOC
 html_theme = 'alabaster'
 html_static_path = ['_static']
 html_sidebars = {'**': [
-    # 'globaltoc.html', # add global api
+    'globaltoc.html', # add global api
     'localtoc.html',
     'searchbox.html']}
