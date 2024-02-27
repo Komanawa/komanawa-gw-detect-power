@@ -4,7 +4,7 @@ on: 3/10/23
 """
 import pandas as pd
 
-from change_detection_slope import DetectionPowerSlope
+from komanawa.gw_detect_power.change_detection_slope import DetectionPowerSlope
 from komanawa.kendall_stats import make_example_data
 import numpy as np
 import itertools

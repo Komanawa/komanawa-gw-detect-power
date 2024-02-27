@@ -9,6 +9,8 @@ Komanawa Groundwater Detection Power Calculator
    :maxdepth: 2
    :hidden:
 
+   autoapi/komanawa/gw_detect_power/index
+
 **NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration

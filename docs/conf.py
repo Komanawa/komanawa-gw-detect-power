@@ -10,12 +10,11 @@ import sys
 
 sys.path.insert(0, os.path.abspath('..'))
 
-# todo autoapi isn't generating the module overview
 
 project = 'Komanawa-gw-detect-power'
 copyright = '2024, Matt Dumont'
 author = 'Matt Dumont'
-release = 'V2.0.0'
+release = 'v2.0.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -29,10 +28,11 @@ autoapi_implicit_namespaces = True  # Allow for implicit namespaces
 autoapi_keep_files = True  # Keep the generated files (for debugging)
 autoapi_ignore = ['*/lookup_table_inits.py', '*/create_lookup_tables.py']  # Ignore these files
 autoapi_python_class_content = 'both'  # Include both the class docstring and the __init__ docstring
-autoapi_dirs = ['../src']  # The directory to scan for the API
+autoapi_dirs = ['../src/komanawa/']  # The directory to process
 autoapi_options = ['members', 'inherited-members', 'show-inheritance', 'show-module-summary', 'imported-members',
                    'show-inheritance-diagram']
 
+autoapi_python_use_implicit_namespaces = True
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
