@@ -4,8 +4,8 @@ on: 3/10/23
 """
 import pandas as pd
 
-from change_detection_v2 import DetectionPowerCalculator
-from kendall_stats import make_example_data
+from komanawa.gw_detect_power.change_detection_slope import DetectionPowerSlope
+from komanawa.kendall_stats import make_example_data
 import numpy as np
 import itertools
 from pathlib import Path
@@ -21,7 +21,7 @@ mpmk_window = 0.05
 nsims_pettit = 2000
 
 # iterables
-methods = DetectionPowerCalculator.implemented_significance_modes
+methods = DetectionPowerSlope.implemented_significance_modes
 ndata = [50, 100, 500, 1000, 5000]
 efficency_modes = [True, False]
 
@@ -85,7 +85,7 @@ def run_model(method, ndata, emode):
     if method == 'n-section-mann-kendall':
         expect_slope = (1, -1)
 
-    dpc = DetectionPowerCalculator(significance_mode=method,
+    dpc = DetectionPowerSlope(significance_mode=method,
                                    nsims=nsims, min_p_value=0.05, min_samples=10,
                                    expect_slope=expect_slope, efficent_mode=emode, nparts=2, min_part_size=10,
                                    no_trend_alpha=0.50,

@@ -1,0 +1,40 @@
+:py:mod:`komanawa.gw_detect_power.create_lookup_tables`
+=======================================================
+
+.. py:module:: komanawa.gw_detect_power.create_lookup_tables
+
+.. autoapi-nested-parse::
+
+   created matt_dumont 
+   on: 25/08/23
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   komanawa.gw_detect_power.create_lookup_tables.no_lag_table
+   komanawa.gw_detect_power.create_lookup_tables.piston_flow_lag_table
+
+
+
+.. py:function:: no_lag_table(test_size=False)
+
+   generate the no lag table.  This table is hosted in the github repo
+   :param test_size: bool if true just write dummy data to assess the table size
+   :return:
+
+
+.. py:function:: piston_flow_lag_table(test_size=False)
+
+   generate the piston flow lag table.  This table is hosted in the github repo
+   :param test_size: bool if true just write dummy data to assess the table size
+   :return:
+
+

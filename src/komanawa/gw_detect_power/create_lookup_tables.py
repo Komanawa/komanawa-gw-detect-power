@@ -9,11 +9,11 @@ import numpy as np
 from pathlib import Path
 import pandas as pd
 import py7zr
-from gw_detect_power import DetectionPowerCalculator
-from gw_detect_power.lookup_table_inits import implementation_times, base_vars, base_outkeys, \
+from change_detection_slope import AutoDetectionPowerSlope
+from lookup_table_inits import implementation_times, base_vars, base_outkeys, \
     other_outkeys, pf_mrts, lookup_dir
 
-
+# todo problems here..
 def _save_compressed_file(outdata, outpath, ziplib=None):
     # save and compress
     if ziplib is None:
@@ -56,10 +56,10 @@ def no_lag_table(test_size=False):
         outdata['power'] = np.random.random(len(outdata)) * 100
 
     else:
-        dpc = DetectionPowerCalculator(min_samples=5)
+        dpc = AutoDetectionPowerSlope(min_samples=5)
         outdata = dpc.mulitprocess_power_calcs(
             outpath=None,
-            id_vals=indata.index.values,
+            idv_vals=indata.index.values,
             error_vals=indata.n_noise.values,
             samp_years_vals=indata.samp_t.values,
             samp_per_year_vals=indata.nsamp.values,
@@ -112,10 +112,10 @@ def piston_flow_lag_table(test_size=False):
             outdata['power'] = np.random.random(len(outdata)) * 100
 
         else:
-            dpc = DetectionPowerCalculator(min_samples=5)
+            dpc = AutoDetectionPowerSlope(min_samples=5)
             outdata = dpc.mulitprocess_power_calcs(
                 outpath=None,
-                id_vals=indata.index.values,
+                idv_vals=indata.index.values,
                 error_vals=indata.n_noise.values,
                 samp_years_vals=indata.samp_t.values,
                 samp_per_year_vals=indata.nsamp.values,
@@ -143,7 +143,7 @@ def piston_flow_lag_table(test_size=False):
 
 
 if __name__ == '__main__':
-    run_model = True  # a flag it True will run the model if false will just setup and check inputs
+    run_model = False  # a flag it True will run the model if false will just setup and check inputs
     test_size = False
     # epfm_lag_table(test_size) # just too big
     no_lag_table(test_size)

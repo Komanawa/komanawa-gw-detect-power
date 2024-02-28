@@ -5,7 +5,7 @@ on: 25/09/23
 import matplotlib.pyplot as plt
 import pandas as pd
 from pyhomogeneity import pettitt_test
-from kendall_stats import make_example_data
+from komanawa.kendall_stats import make_example_data
 import numpy as np
 
 y_test = []

@@ -1,0 +1,1532 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>komanawa.gw_detect_power &#8212; Komanawa-gw-detect-power v2.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=aa039f9c"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/komanawa/gw_detect_power/index';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="komanawa.gw_detect_power.base_detection_calculator" href="base_detection_calculator/index.html" />
+    <link rel="prev" title="Komanawa Groundwater Detection Power Calculator" href="../../../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/ksl_for_latex.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">Groundwater Detection Power Overview</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Code documentation
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power" title="View on GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">View on GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/company/k%C5%8Dmanawa-solutions-ltd/" title="Follow us on LinkedIn" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Follow us on LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Code documentation
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power" title="View on GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">View on GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/company/k%C5%8Dmanawa-solutions-ltd/" title="Follow us on LinkedIn" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Follow us on LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><code...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-komanawa.gw_detect_power">
+<span id="komanawa-gw-detect-power"></span><h1><a class="reference internal" href="#module-komanawa.gw_detect_power" title="komanawa.gw_detect_power"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power</span></code></a><a class="headerlink" href="#module-komanawa.gw_detect_power" title="Link to this heading">#</a></h1>
+<p>created matt_dumont
+on: 6/07/23</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="base_detection_calculator/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.base_detection_calculator</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="change_detection_counterfactual/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.change_detection_counterfactual</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="change_detection_slope/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.change_detection_slope</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="create_lookup_tables/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.create_lookup_tables</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="lookup_table_inits/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.lookup_table_inits</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="timetest_slope/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.timetest_slope</span></code></a></li>
+</ul>
+</div>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">#</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h3>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual" title="komanawa.gw_detect_power.DetectionPowerCounterFactual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerCounterFactual</span></code></a></p></td>
+<td><p>This class is used to calculate the counterfactual detection power of a pair of concentration time series The user specifies the true concentration time series for the base and alt scenarios and the noise level for both scenarios.  The power is calculated by adding many noise realisations to the true concentration time series and running a paired t test or wilcoxon signed rank test to determine if the null hypothesis (The scenarios are the same) can be rejected.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual" title="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoDetectionPowerCounterFactual</span></code></a></p></td>
+<td><p>This class is used to calculate the counterfactual detection power of a pair of auto created concentration time series. The user specifies an initial concentration, and a target concentration for both a base and alternative scenario. Other parameters include groundwater age distribution models and parameters, implementation time and the slope of the previous data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.DetectionPowerSlope" title="komanawa.gw_detect_power.DetectionPowerSlope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerSlope</span></code></a></p></td>
+<td><p>The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope" title="komanawa.gw_detect_power.AutoDetectionPowerSlope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoDetectionPowerSlope</span></code></a></p></td>
+<td><p>This class is used to calculate the slope detection power of an auto created concentration</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.DetectionPowerCalculator" title="komanawa.gw_detect_power.DetectionPowerCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerCalculator</span></code></a></p></td>
+<td><p>The DetectionPowerCalculator has been depreciated in version v2.0.0. To retain the old capability use v1.0.0.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DetectionPowerCounterFactual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">significance_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alt!=base'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_zero_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wilcox'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_true_conc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_noisy_conc_itters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_significant_noisy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" title="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator</span></code></a></p>
+<p>This class is used to calculate the counterfactual detection power of a pair of concentration time series The user specifies the true concentration time series for the base and alt scenarios and the noise level for both scenarios.  The power is calculated by adding many noise realisations to the true concentration time series and running a paired t test or wilcoxon signed rank test to determine if the null hypothesis (The scenarios are the same) can be rejected.</p>
+<p>The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>significance_mode</strong> – <p>str, one of:</p>
+<ul>
+<li><p>’paired-t-test’: paired t test (parametric), scipy.stats.ttest_rel</p></li>
+<li><p>’wilcoxon-signed-rank-test’: wilcoxon signed rank test (non-parametric), scipy.stats.wilcoxon</p></li>
+</ul>
+</p></li>
+<li><p><strong>nsims</strong> – number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</p></li>
+<li><p><strong>p_value</strong> – <p>minimum p value (see also alternative), if:</p>
+<ul>
+<li><p>p &gt;= p_value the null hypothesis will not be rejected (base and alt are the same)</p></li>
+<li><p>p &lt; p_value the null hypothesis will be rejected (base and alt are different)</p></li>
+</ul>
+</p></li>
+<li><p><strong>min_samples</strong> – minimum number of samples required, less than this number of samples will raise an exception</p></li>
+<li><p><strong>alternative</strong> – <p>str, one of:</p>
+<ul>
+<li><p>’alt!=base’: two sided test (default),</p></li>
+<li><p>’alt&lt;base’: one sided test ~</p></li>
+<li><p>’alt&gt;base’</p></li>
+</ul>
+</p></li>
+<li><p><strong>wx_zero_method</strong> – <p>str, one of:</p>
+<blockquote>
+<div><ul>
+<li><p>“wilcox”: Discards all zero-differences (default); see [4].</p></li>
+<li><p>“pratt”: Includes zero-differences in the ranking process, but drops the ranks of the zeros (more conservative); see [3]. In this case, the normal approximation is adjusted as in [5].</p></li>
+<li><p>“zsplit”: Includes zero-differences in the ranking process and splits the zero rank between positive and negative ones.</p></li>
+</ul>
+</div></blockquote>
+<p>for more info see: <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html</a></p>
+</p></li>
+<li><p><strong>wx_correction</strong> – bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.</p></li>
+<li><p><strong>wx_method</strong> – str, see scipy.stats.wilcoxon for more info</p></li>
+<li><p><strong>ncores</strong> – number of cores to use for multiprocessing, None will use all available cores</p></li>
+<li><p><strong>log_level</strong> – logging level for multiprocessing subprocesses</p></li>
+<li><p><strong>return_true_conc</strong> – return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</p></li>
+<li><p><strong>return_noisy_conc_itters</strong> – int &lt;= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</p></li>
+<li><p><strong>only_significant_noisy</strong> – bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.plot_iteration">
+<span class="sig-name descname"><span class="pre">plot_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0_alt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_alt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.plot_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.plot_iteration" title="Link to this definition">#</a></dt>
+<dd><p>plot the concentration data itteration and the true concentration data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0_base</strong> – noisy concentration data for the base scenario</p></li>
+<li><p><strong>y0_alt</strong> – noisy concentration data for the alt scenario</p></li>
+<li><p><strong>true_conc_base</strong> – True concentration data for the base scenario</p></li>
+<li><p><strong>true_conc_alt</strong> – True concentration data for the alt scenario</p></li>
+<li><p><strong>ax</strong> – matplotlib axis to plot to, if None then a new figure and axis will be created</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.power_calc">
+<span class="sig-name descname"><span class="pre">power_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.power_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.power_calc" title="Link to this definition">#</a></dt>
+<dd><p>calculate the counterfactual detection power of a pair of concentration time series note the power is calculated using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling frequency then you should resample the true_conc_base/alt before passing it to this function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idv</strong> – identifiers for the power calc sites, passed straight through to the output</p></li>
+<li><p><strong>error_base</strong> – standard deviation of the noise to add to the base concentration time series</p></li>
+<li><p><strong>true_conc_base</strong> – the true concentration timeseries for the base scenario</p></li>
+<li><p><strong>true_conc_alt</strong> – the true concentration timeseries for the alt scenario</p></li>
+<li><p><strong>error_alt</strong> – standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base</p></li>
+<li><p><strong>seed_base</strong> – seed for the random number generator for the base scenario, if None then a random seed will be generated and returned with the output</p></li>
+<li><p><strong>seed_alt</strong> – seed for the random number generator for the alt scenario, if None then a random seed will be generated and returned with the output</p></li>
+<li><p><strong>testnitter</strong> – None (usually) or a different nitter then self.niter for testing run times</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output Series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series with the power calc results note power is percent 0-100</p>
+</dd>
+</dl>
+<p>Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters &gt; 0 in which case a dictionary will be returned:
+{‘power’: power_df, # always
+‘true_conc’: true_conc_ts, if self.return_true_conc is True
+‘noisy_conc’ : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0
+}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.mulitprocess_power_calcs">
+<span class="sig-name descname"><span class="pre">mulitprocess_power_calcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{Path,</span> <span class="pre">None,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idv_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">list}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">list}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">None,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">None,</span> <span class="pre">float}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_alt_vals_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_base_vals_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.mulitprocess_power_calcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.mulitprocess_power_calcs" title="Link to this definition">#</a></dt>
+<dd><p>multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column ‘python_error’ if ‘python_error’ is None then the run was successful to change the number of cores used pass n_cores to the constructor init</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outpath</strong> – path to save results to or None (no save)</p></li>
+<li><p><strong>idv_vals</strong> – id values for each simulation</p></li>
+</ul>
+</dd>
+</dl>
+<p>All values from here on out should be either a single value or an array of values with the same shape as id_vals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>true_conc_base_vals</strong> – time series concentration dta for the ‘base’ scenario.  Note sampling frequency is assumed to be correct.</p></li>
+<li><p><strong>true_conc_alt_vals</strong> – time series concentration dta for the ‘alt’ scenario.  Note sampling frequency is assumed to be correct.</p></li>
+<li><p><strong>error_base_vals</strong> – standard deviation of noise to add to the base time series for each simulation</p></li>
+<li><p><strong>error_alt_vals</strong> – standard deviation of noise to add to the alt time series for each simulation</p></li>
+<li><p><strong>seed_alt_vals_vals</strong> – <p>random seed to generate the alternative noise. One of:</p>
+<ul>
+<li><p>ndarray (integer seeds),</p></li>
+<li><p>None (no seeds passed, but will record the seed used)</p></li>
+<li><p>int (1 seed for all simulations)</p></li>
+</ul>
+</p></li>
+<li><p><strong>seed_base_vals_vals</strong> – <p>random seed to generate the base noise. One of:</p>
+<ul>
+<li><p>ndarray (integer seeds),</p></li>
+<li><p>None (no seeds passed, but will record the seed used)</p></li>
+<li><p>int (1 seed for all simulations)</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p>Note seed_base != seed_alt (the same noise will be added to both time series, making the analysis useless)
+:param run: if True run the simulations, if False just build  the run_dict and print the number of simulations
+:param debug_mode: if True run as single process to allow for easier debugging
+:param kwargs: any other kwargs to pass directly to the output dataframe
+:return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_binary_exp_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">past_source_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_extras</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_mem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time years</p></li>
+<li><p><strong>mrt_p1</strong> – mean residence time of the first pathway years</p></li>
+<li><p><strong>frac_p1</strong> – fraction of the first pathway</p></li>
+<li><p><strong>f_p1</strong> – ratio of the exponential volume to the total volume pathway 1</p></li>
+<li><p><strong>f_p2</strong> – ratio of the exponential volume to the total volume pathway 2</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)</p></li>
+<li><p><strong>min_conc</strong> – minimum concentration limit user specified, the lowest concentration for the source</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+<li><p><strong>past_source_data</strong> – past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</p></li>
+<li><p><strong>return_extras</strong> – return extra variables for debugging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.truets_from_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>piston flow model for the mean residence time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data mg/l/yr</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCounterFactual.time_test_power_calc_itter">
+<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#DetectionPowerCounterFactual.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
+<dd><p>run a test power calc iteration to check for errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
+<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AutoDetectionPowerCounterFactual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">significance_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alternative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alt!=base'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_zero_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wilcox'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_correction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wx_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_true_conc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_noisy_conc_itters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_significant_noisy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual" title="komanawa.gw_detect_power.DetectionPowerCounterFactual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerCounterFactual</span></code></a></p>
+<p>This class is used to calculate the counterfactual detection power of a pair of auto created concentration time series. The user specifies an initial concentration, and a target concentration for both a base and alternative scenario. Other parameters include groundwater age distribution models and parameters, implementation time and the slope of the previous data.</p>
+<p>The user then specifies the sampling duration, delay, and frequency. The power is calculated by adding many user specified noise realisations to both the base and alternative concentration time series and running a paired t test or wilcoxon signed rank test to determine if the null hypothesis (The scenarios are the same) can be rejected.</p>
+<p>The Power is calculated as the percentage (0-100) of simulations which reject the null hypothesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>significance_mode</strong> – <p>str, one of:</p>
+<ul>
+<li><p>’paired-t-test’: paired t test (parametric), scipy.stats.ttest_rel</p></li>
+<li><p>’wilcoxon-signed-rank-test’: wilcoxon signed rank test (non-parametric), scipy.stats.wilcoxon</p></li>
+</ul>
+</p></li>
+<li><p><strong>nsims</strong> – number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</p></li>
+<li><p><strong>p_value</strong> – minimum p value (see also alternative), if p &gt;= p_value the null hypothesis will not be rejected (base and alt are the same) p &lt; p_value the null hypothesis will be rejected (base and alt are different)</p></li>
+<li><p><strong>min_samples</strong> – minimum number of samples required, less than this number of samples will raise an exception</p></li>
+<li><p><strong>alternative</strong> – <p>str, one of:</p>
+<ul>
+<li><p>’alt!=base’: two sided test (default),</p></li>
+<li><p>’alt&lt;base’: one sided test ~</p></li>
+<li><p>’alt&gt;base’</p></li>
+</ul>
+</p></li>
+<li><p><strong>wx_zero_method</strong> – <p>str, one of:</p>
+<blockquote>
+<div><ul>
+<li><p>“wilcox”: Discards all zero-differences (default); see [4].</p></li>
+<li><p>“pratt”: Includes zero-differences in the ranking process, but drops the ranks of the zeros (more conservative); see [3]. In this case, the normal approximation is adjusted as in [5].</p></li>
+<li><p>“zsplit”: Includes zero-differences in the ranking process and splits the zero rank between positive and negative ones.</p></li>
+</ul>
+</div></blockquote>
+<p>for more info see: <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html">https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html</a></p>
+</p></li>
+<li><p><strong>wx_correction</strong> – bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.</p></li>
+<li><p><strong>wx_method</strong> – str, see scipy.stats.wilcoxon for more info</p></li>
+<li><p><strong>ncores</strong> – number of cores to use for multiprocessing, None will use all available cores</p></li>
+<li><p><strong>log_level</strong> – logging level for multiprocessing subprocesses</p></li>
+<li><p><strong>return_true_conc</strong> – return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</p></li>
+<li><p><strong>return_noisy_conc_itters</strong> – int &lt;= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</p></li>
+<li><p><strong>only_significant_noisy</strong> – bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.set_condensed_mode">
+<span class="sig-name descname"><span class="pre">set_condensed_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_conc_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.set_condensed_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.set_condensed_mode" title="Link to this definition">#</a></dt>
+<dd><p>set calculator to condense the number of runs based by rounding the inputs to a specified precision</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_conc_per</strong> – precision to round target_conc to (2 = 0.01)</p></li>
+<li><p><strong>initial_conc_per</strong> – precision to round initial_conc to (2 = 0.01)</p></li>
+<li><p><strong>error_per</strong> – precision to round error to (2 = 0.01)</p></li>
+<li><p><strong>prev_slope_per</strong> – precision to round previous_slope to (2 = 0.01)</p></li>
+<li><p><strong>max_conc_lim_per</strong> – precision to round max_conc_lim to (2 = 0.01)</p></li>
+<li><p><strong>min_conc_lim_per</strong> – precision to round min_conc_lim to (2 = 0.01)</p></li>
+<li><p><strong>mrt_per</strong> – precision to round mrt to</p></li>
+<li><p><strong>mrt_p1_per</strong> – precision to round mrt_p1 to</p></li>
+<li><p><strong>frac_p1_per</strong> – precision to round frac_p1 to</p></li>
+<li><p><strong>f_p1_per</strong> – precision to round f_p1 to</p></li>
+<li><p><strong>f_p2_per</strong> – precision to round f_p2 to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.power_calc">
+<span class="sig-name descname"><span class="pre">power_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_alt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.power_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.power_calc" title="Link to this definition">#</a></dt>
+<dd><p>calculate the counterfactual detection power of auto created concentration time series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idv</strong> – identifiers for the power calc sites, passed straight through to the output</p></li>
+<li><p><strong>error_base</strong> – standard deviation of the noise to add to the base concentration time series</p></li>
+<li><p><strong>mrt_model</strong> – <p>the model to use for the mean residence time options:</p>
+<ul>
+<li><p>’piston_flow’: use the piston flow model (no mixing, default)</p></li>
+<li><p>’binary_exponential_piston_flow’: use the binary exponential piston flow model</p></li>
+<li><p>For unitary exponential_piston_flow model set frac_1 = 1 and mrt_p1 = mrt</p></li>
+<li><p>For no lag, set mrt=0, mrt_model=’piston_flow’</p></li>
+</ul>
+</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>samp_per_year</strong> – number of samples to collect each year</p></li>
+<li><p><strong>implementation_time_alt</strong> – number of years over which the target concentration_alt is reached</p></li>
+<li><p><strong>initial_conc</strong> – initial median value of the concentration</p></li>
+<li><p><strong>target_conc_alt</strong> – target concentration for the alt scenario</p></li>
+<li><p><strong>prev_slope</strong> – slope of the previous data (e.g. prior to the initial concentration)</p></li>
+<li><p><strong>max_conc_lim</strong> – maximum concentration limit user specified or None (default)</p></li>
+<li><p><strong>min_conc_lim</strong> – minimum concentration limit for the source, only used for the binary_exponential_piston_flow model</p></li>
+<li><p><strong>mrt</strong> – the mean residence time of the site</p></li>
+<li><p><strong>target_conc_base</strong> – the target concentration for the base scenario, if None then target_conc_base = initial_conc</p></li>
+<li><p><strong>implementation_time_base</strong> – number of years over which the target concentration_base is reached, if None then implementation_time_base = implementation_time_alt</p></li>
+<li><p><strong>error_alt</strong> – standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base</p></li>
+<li><p><strong>delay_years</strong> – number of years to delay the start of the monitoring, If the delay_years does not allow enough samples to be collected then an exception will be raised. If delay_years is 0 then the full length of the concentration time series will be used</p></li>
+</ul>
+</dd>
+</dl>
+<p>Options for binary_exponential_piston_flow model:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt_p1</strong> – the mean residence time of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>frac_p1</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>f_p1</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>f_p2</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>seed_base</strong> – seed for the random number generator for the base scenario, if None then a random seed will be generated and returned with the output</p></li>
+<li><p><strong>seed_alt</strong> – seed for the random number generator for the alt scenario, if None then a random seed will be generated and returned with the output</p></li>
+<li><p><strong>testnitter</strong> – None (usually) or a different nitter then self.niter for testing run times</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output Series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series with the power calc results note power is percent 0-100</p>
+</dd>
+</dl>
+<p>Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters &gt; 0 in which case a dictionary will be returned:
+{‘power’: power_df, # always
+‘true_conc’: true_conc_ts, if self.return_true_conc is True
+‘noisy_conc’ : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0
+}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.mulitprocess_power_calcs">
+<span class="sig-name descname"><span class="pre">mulitprocess_power_calcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{Path,</span> <span class="pre">None,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idv_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_model_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay_years_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_alt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_base_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.mulitprocess_power_calcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.mulitprocess_power_calcs" title="Link to this definition">#</a></dt>
+<dd><p>multiprocessing wrapper for power_calc, see power_calc for details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outpath</strong> – path to save results to or None (no save)</p></li>
+<li><p><strong>idv_vals</strong> – id values for each simulation</p></li>
+<li><p><strong>error_base_vals</strong> – standard deviation of noise to add to the base time series for each simulation</p></li>
+<li><p><strong>samp_years_vals</strong> – sampling years for each simulation</p></li>
+<li><p><strong>samp_per_year_vals</strong> – sampling per year for each simulation</p></li>
+<li><p><strong>implementation_time_alt_vals</strong> – implementation time for the alternative scenario for each simulation</p></li>
+<li><p><strong>initial_conc_vals</strong> – initial concentration for each simulation</p></li>
+<li><p><strong>target_conc_alt_vals</strong> – target concentration for the alternative scenario for each simulation</p></li>
+<li><p><strong>prev_slope_vals</strong> – previous slope for each simulation</p></li>
+<li><p><strong>max_conc_lim_vals</strong> – maximum concentration limit for each simulation</p></li>
+<li><p><strong>min_conc_lim_vals</strong> – minimum concentration limit for the source for each simulation</p></li>
+<li><p><strong>mrt_model_vals</strong> – mrt model for each simulation</p></li>
+<li><p><strong>mrt_vals</strong> – mean residence time for each simulation</p></li>
+<li><p><strong>target_conc_base_vals</strong> – target concentration for the base scenario for each simulation, if None then target_conc_base = initial_conc</p></li>
+<li><p><strong>implementation_time_base_vals</strong> – implementation time for the base scenario for each simulation, if None then implementation_time_base = implementation_time_alt</p></li>
+<li><p><strong>error_alt_vals</strong> – standard deviation of the noise to add to the alt concentration time series, if None then error_alt = error_base</p></li>
+<li><p><strong>delay_years_vals</strong> – number of years to delay the start of the monitoring for each simulation, If the delay_years does not allow enough samples to be collected then an exception will be raised. If delay_years is 0 then the full length of the concentration time series will be used</p></li>
+<li><p><strong>mrt_p1_vals</strong> – mean residence time of the first piston flow model for each simulation
+Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>frac_p1_vals</strong> – fraction of the first piston flow model for each simulation
+Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>f_p1_vals</strong> – the exponential fraction of the first piston flow model for each simulation
+Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>f_p2_vals</strong> – the exponential fraction of the second piston flow model for each simulation
+Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>seed_alt_vals</strong> – random seed to generate the alternative noise for each simulation. One of:
+ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)</p></li>
+<li><p><strong>seed_base_vals</strong> – random seed to generate the base noise for each simulation. One of:  ndarray (integer seeds), int, None (no seeds passed, but will record the seed used)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Note seed_base != seed_alt (the same noise will be added to both time series, making the analysis useless)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run</strong> – if True run the simulations, if False just build  the run_dict and print the number of simulations</p></li>
+<li><p><strong>debug_mode</strong> – if True run as single process to allow for easier debugging</p></li>
+<li><p><strong>kwargs</strong> – other kwargs to pass directly to the output dataframe must be either a single value or an array of values with the same shape as id_vals</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame with the power calc results note power is percent 0-100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.plot_iteration">
+<span class="sig-name descname"><span class="pre">plot_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0_alt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_alt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.plot_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.plot_iteration" title="Link to this definition">#</a></dt>
+<dd><p>plot the concentration data itteration and the true concentration data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0_base</strong> – noisy concentration data for the base scenario</p></li>
+<li><p><strong>y0_alt</strong> – noisy concentration data for the alt scenario</p></li>
+<li><p><strong>true_conc_base</strong> – True concentration data for the base scenario</p></li>
+<li><p><strong>true_conc_alt</strong> – True concentration data for the alt scenario</p></li>
+<li><p><strong>ax</strong> – matplotlib axis to plot to, if None then a new figure and axis will be created</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_binary_exp_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">past_source_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_extras</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_mem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time years</p></li>
+<li><p><strong>mrt_p1</strong> – mean residence time of the first pathway years</p></li>
+<li><p><strong>frac_p1</strong> – fraction of the first pathway</p></li>
+<li><p><strong>f_p1</strong> – ratio of the exponential volume to the total volume pathway 1</p></li>
+<li><p><strong>f_p2</strong> – ratio of the exponential volume to the total volume pathway 2</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)</p></li>
+<li><p><strong>min_conc</strong> – minimum concentration limit user specified, the lowest concentration for the source</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+<li><p><strong>past_source_data</strong> – past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</p></li>
+<li><p><strong>return_extras</strong> – return extra variables for debugging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.truets_from_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>piston flow model for the mean residence time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data mg/l/yr</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.time_test_power_calc_itter">
+<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_counterfactual.html#AutoDetectionPowerCounterFactual.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
+<dd><p>run a test power calc iteration to check for errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
+<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DetectionPowerSlope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">significance_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear-regression'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expect_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficent_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nparts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_part_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_trend_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_check_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_efficent_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims_pettit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_true_conc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_noisy_conc_itters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_significant_noisy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" title="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator</span></code></a></p>
+<p>The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing
+a slope in the concentration data. The user passes a True concentration time series and the power is calculated
+by adding many noise realisations to the concentration data and then running one of multiple change detection tests on the noisy
+data.</p>
+<p>The Power is calculated as the percentage (0-100) of simulations which detect a slope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>significance_mode</strong> – <p>significance mode to use, options:</p>
+<ul>
+<li><p>linear-regression: linear regression of the concentration data from time 0 to the end change detected if p &lt; min_p_value</p></li>
+<li><p>linear-regression-from-[max|min]: linear regression of the concentration data from the maximum concentration of the noise free concentration data to the end change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall: mann-kendall test of the concentration data from time 0 to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum of the noise free concentration data to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are detected then a change is detected</p></li>
+<li><p>pettitt-test: pettitt test to identify change points. if change points are detected then a change is detected</p></li>
+</ul>
+</p></li>
+<li><p><strong>nsims</strong> – number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</p></li>
+<li><p><strong>min_p_value</strong> – minimum p value to consider a change detected</p></li>
+<li><p><strong>min_samples</strong> – minimum number of samples required, less than this number of samples will raise an exception</p></li>
+<li><p><strong>expect_slope</strong> – <p>expected slope of the concentration data, use depends on significance mode:</p>
+<ul>
+<li><p>linear-regression, linear-regression-from-max, mann-kendall, or mann-kendall-from-max:
+* one of 1 (increasing), -1 (decreasing), or ‘auto’ will match the slope of the concentration data before noise is added</p></li>
+<li><p>n-section-mann-kendall: expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)</p></li>
+<li><p>pettitt-test: not used.</p></li>
+</ul>
+</p></li>
+<li><p><strong>efficent_mode</strong> – <p>bool, default = True, if True then</p>
+<ul>
+<li><p>For linear regression and MannKendall based tests:  run the test on the noise free data to see if any change can be detected, if no change is detected then the test will not be on the noisy data</p></li>
+<li><p>For MultiPartMannKendall test: the test will be run on the noise free data to detect best change points and then the test will be run on the noisy data for a smaller window centered on the True change point see: * mpmk_efficent_min, * mpmk_window</p></li>
+<li><p>For Pettitt Test:  Not implemented, will be ignored and a waring passed</p></li>
+</ul>
+</p></li>
+<li><p><strong>nparts</strong> – number of parts to use for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>min_part_size</strong> – minimum number of samples in each part for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>no_trend_alpha</strong> – alpha value to use for the no trend sections in the n-section-mann-kendall test trendless sections are only accepted if p &gt; no_trend_alpha (not used for other tests)</p></li>
+<li><p><strong>mpmk_check_step</strong> – int or function, default = 1, number of samples to check for a change point in the MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False if mpmk is a function it must take a single argument (n, number of samples) and return an integer check step</p></li>
+<li><p><strong>mpmk_efficent_min</strong> – int, default = 10, minimum number of possible change points to assess only used if efficent_mode = True  The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step). You can specify the exact number of breakpoints to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0</p></li>
+<li><p><strong>mpmk_window</strong> – float, default = 0.05, define the window around the true detected change point to run the MultiPartMannKendall.  The detction window is defined as: (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change <cite>point and n is the number of samples in the time series Whe`re both a mpmk_window and a check_step&gt;1 is passed the mpmk_window will be used to de`fine the window size and the check_step</cite> will be used to define the step size within the window.`</p></li>
+<li><p><strong>nsims_pettit</strong> – number of simulations to run for calc`ulating the pvalue of the pettitt test (not used for other tests)</p></li>
+<li><p><strong>ncores</strong> – number of cores to use for multiprocessing, None will use all available cores</p></li>
+<li><p><strong>log_level</strong> – logging level for multiprocessing subprocesses</p></li>
+<li><p><strong>return_true_conc</strong> – return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</p></li>
+<li><p><strong>return_noisy_conc_itters</strong> – int &lt;= nsims, default = 0 Number of noisy simulations to return. if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</p></li>
+<li><p><strong>only_significant_noisy</strong> – bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</p></li>
+<li><p><strong>print_freq</strong> – None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.plot_iteration">
+<span class="sig-name descname"><span class="pre">plot_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.plot_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.plot_iteration" title="Link to this definition">#</a></dt>
+<dd><p>plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> – noisy concentration data</p></li>
+<li><p><strong>true_conc</strong> – true concentration data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.power_calc">
+<span class="sig-name descname"><span class="pre">power_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_ts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.power_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.power_calc" title="Link to this definition">#</a></dt>
+<dd><p>calculate the slope detection power of a given concentration time series, note the power is calculated using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling frequency then you should resample the true_conc_ts before passing it to this function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idv</strong> – identifiers for the power calc sites, passed straight through to the output</p></li>
+<li><p><strong>error</strong> – standard deviation of the noise</p></li>
+<li><p><strong>true_conc_ts</strong> – the true concentration timeseries for the power calc</p></li>
+<li><p><strong>seed</strong> – int or None for random seed</p></li>
+<li><p><strong>testnitter</strong> – None (usually) or a different nitter then self.niter for testing run times</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output Series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series with the power calc results note power is percent 0-100</p>
+</dd>
+</dl>
+<p>Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters &gt; 0 in which case a dictionary will be returned:</p>
+<p>{‘power’: power_df, # always
+‘true_conc’: true_conc_ts, if self.return_true_conc is True
+‘noisy_conc’ : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0
+}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.mulitprocess_power_calcs">
+<span class="sig-name descname"><span class="pre">mulitprocess_power_calcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{Path,</span> <span class="pre">None,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idv_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_ts_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">list}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.mulitprocess_power_calcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.mulitprocess_power_calcs" title="Link to this definition">#</a></dt>
+<dd><p>multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column ‘python_error’ if ‘python_error’ is None then the run was successful to change the number of cores used pass n_cores to the constructor init</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outpath</strong> – path to save results to or None (no save)</p></li>
+<li><p><strong>idv_vals</strong> – id values for each simulation</p></li>
+</ul>
+</dd>
+</dl>
+<p>All values from here on out should be either a single value or an array of values with the same shape as id_vals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error_vals</strong> – standard deviation of noise to add for each simulation</p></li>
+<li><p><strong>true_conc_ts_vals</strong> – the true concentration time series for each simulation, note that this can be a list of arrays of different lengths for each simulation, as Numpy does not support jagged arrays</p></li>
+<li><p><strong>seed</strong> – ndarray (integer seeds), None (no seeds), or int (1 seed for all simulations)</p></li>
+<li><p><strong>run</strong> – if True run the simulations, if False just build  the run_dict and print the number of simulations</p></li>
+<li><p><strong>debug_mode</strong> – if True run as single process to allow for easier debugging</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output dataframe</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe with input data and the results of all of the power calcs. note power is percent 0-100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.truets_from_binary_exp_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_binary_exp_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">past_source_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_extras</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_mem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.truets_from_binary_exp_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_binary_exp_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time years</p></li>
+<li><p><strong>mrt_p1</strong> – mean residence time of the first pathway years</p></li>
+<li><p><strong>frac_p1</strong> – fraction of the first pathway</p></li>
+<li><p><strong>f_p1</strong> – ratio of the exponential volume to the total volume pathway 1</p></li>
+<li><p><strong>f_p2</strong> – ratio of the exponential volume to the total volume pathway 2</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)</p></li>
+<li><p><strong>min_conc</strong> – minimum concentration limit user specified, the lowest concentration for the source</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+<li><p><strong>past_source_data</strong> – past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</p></li>
+<li><p><strong>return_extras</strong> – return extra variables for debugging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.truets_from_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.truets_from_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>piston flow model for the mean residence time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data mg/l/yr</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerSlope.time_test_power_calc_itter">
+<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerSlope.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
+<dd><p>run a test power calc iteration to check for errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
+<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AutoDetectionPowerSlope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">significance_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear-regression'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expect_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficent_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nparts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_part_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_trend_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_check_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_efficent_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims_pettit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_true_conc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_noisy_conc_itters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_significant_noisy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#komanawa.gw_detect_power.DetectionPowerSlope" title="komanawa.gw_detect_power.DetectionPowerSlope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerSlope</span></code></a></p>
+<p>This class is used to calculate the slope detection power of an auto created concentration
+time series. The user specifies an initial concentration, a target concentration. Other parameters
+include groundwater age distribution models and parameters, implementation time and the slope of
+the previous data. The user then specifies the sampling duration, and frequency.
+The power is calculated by adding many noise realisations to the concentration data and then running one of
+multiple change detection tests on the noisy data.</p>
+<p>The Power is calculated as the percentage (0-100) of simulations which detect a slope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>significance_mode</strong> – <p>significance mode to use, options:</p>
+<ul>
+<li><p>linear-regression: linear regression of the concentration data from time 0 to the end change detected if p &lt; min_p_value</p></li>
+<li><p>linear-regression-from-[max|min]: linear regression of the concentration data from the maximum concentration of the noise free concentration data to the end change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall: mann-kendall test of the concentration data from time 0 to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum of the noisefree concentration data to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are detected then a change is detected</p></li>
+<li><p>pettitt-test: pettitt test to identify change points. if change points are detected then a change is detected</p></li>
+</ul>
+</p></li>
+<li><p><strong>nsims</strong> – number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</p></li>
+<li><p><strong>min_p_value</strong> – minimum p value to consider a change detected</p></li>
+<li><p><strong>min_samples</strong> – minimum number of samples required, less than this number of samples will raise an exception</p></li>
+<li><p><strong>expect_slope</strong> – <p>expected slope of the concentration data, use depends on significance mode:</p>
+<ul>
+<li><p>linear-regression, linear-regression-from-max, mann-kendall, mann-kendall-from-max: one of 1 (increasing), -1 (decreasing), or ‘auto’ will match the slope of the concentration data before noise is added</p></li>
+<li><p>n-section-mann-kendall: expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)</p></li>
+<li><p>pettitt-test: not used.</p></li>
+</ul>
+</p></li>
+<li><p><strong>efficent_mode</strong> – <p>bool, default = True, if True then</p>
+<ul>
+<li><p>For linear regression and MannKendall based tests:  run the test on the noise free data to see if any change can be detected, if no change is detected then the test will not be on the noisy data</p></li>
+<li><p>For MultiPartMannKendall test: the test will be run on the noise free data to detect best change points and then the test will be run on the noisy data for a smaller window centered on the True change point see: “mpmk_efficent_min” and “mpmk_window”</p></li>
+<li><p>For Pettitt Test:  Not implemented, will be ignored and a waring passed</p></li>
+</ul>
+</p></li>
+<li><p><strong>nparts</strong> – number of parts to use for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>min_part_size</strong> – minimum number of samples in each part for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>no_trend_alpha</strong> – alpha value to use for the no trend sections in the n-section-mann-kendall test trend less sections are only accepted if p &gt; no_trend_alpha (not used for other tests)</p></li>
+<li><p><strong>mpmk_check_step</strong> – int or function, default = 1, number of samples to check for a change point in the MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False if mpmk is a function it must take a single argument (n, number of samples) and return an integer check step</p></li>
+<li><p><strong>mpmk_efficent_min</strong> – int, default = 10, minimum number of possible change points to assess only used if efficent_mode = True  The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step). You can specify the exact number of breakpoints to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0</p></li>
+<li><p><strong>mpmk_window</strong> – float, default = 0.05, define the window around the true detected change point to run the MultiPartMannKendall.  The detction window is defined as: (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change point and n is the number of samples in the time series Where both a mpmk_window and a check_step&gt;1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window.</p></li>
+<li><p><strong>nsims_pettit</strong> – number of simulations to run for calculating the pvalue of the pettitt test (not used for other tests)</p></li>
+<li><p><strong>ncores</strong> – number of cores to use for multiprocessing, None will use all available cores</p></li>
+<li><p><strong>log_level</strong> – logging level for multiprocessing subprocesses</p></li>
+<li><p><strong>return_true_conc</strong> – return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</p></li>
+<li><p><strong>return_noisy_conc_itters</strong> – int &lt;= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</p></li>
+<li><p><strong>only_significant_noisy</strong> – bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</p></li>
+<li><p><strong>print_freq</strong> – None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.set_condensed_mode">
+<span class="sig-name descname"><span class="pre">set_condensed_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_conc_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2_per</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.set_condensed_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.set_condensed_mode" title="Link to this definition">#</a></dt>
+<dd><p>set calculator to condense the number of runs based by rounding the inputs to a specified precision</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_conc_per</strong> – precision to round target_conc to (2 = 0.01)</p></li>
+<li><p><strong>initial_conc_per</strong> – precision to round initial_conc to (2 = 0.01)</p></li>
+<li><p><strong>error_per</strong> – precision to round error to (2 = 0.01)</p></li>
+<li><p><strong>prev_slope_per</strong> – precision to round previous_slope to (2 = 0.01)</p></li>
+<li><p><strong>max_conc_lim_per</strong> – precision to round max_conc_lim to (2 = 0.01)</p></li>
+<li><p><strong>min_conc_lim_per</strong> – precision to round min_conc_lim to (2 = 0.01)</p></li>
+<li><p><strong>mrt_per</strong> – precision to round mrt to</p></li>
+<li><p><strong>mrt_p1_per</strong> – precision to round mrt_p1 to</p></li>
+<li><p><strong>frac_p1_per</strong> – precision to round frac_p1 to</p></li>
+<li><p><strong>f_p1_per</strong> – precision to round f_p1 to</p></li>
+<li><p><strong>f_p2_per</strong> – precision to round f_p2 to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.power_calc">
+<span class="sig-name descname"><span class="pre">power_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.power_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.power_calc" title="Link to this definition">#</a></dt>
+<dd><p>calculate the detection power for a given set of parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idv</strong> – identifiers for the power calc sites, passed straight through to the output</p></li>
+<li><p><strong>error</strong> – standard deviation of the noise</p></li>
+<li><p><strong>mrt_model</strong> – <p>the model to use for the mean residence time options:</p>
+<ul>
+<li><p>’piston_flow’: use the piston flow model (no mixing, default)</p></li>
+<li><p>’binary_exponential_piston_flow’: use the binary exponential piston flow model for unitary exponential_piston_flow model set frac_1 = 1 and mrt_p1 = mrt for no lag, set mrt=0, mrt_model=’piston_flow’</p></li>
+</ul>
+</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>samp_per_year</strong> – number of samples to collect each year</p></li>
+<li><p><strong>implementation_time</strong> – number of years over which reductions are implemented</p></li>
+<li><p><strong>initial_conc</strong> – initial median value of the concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration to reduce to</p></li>
+<li><p><strong>prev_slope</strong> – slope of the previous data (e.g. prior to the initial concentration)</p></li>
+<li><p><strong>max_conc_lim</strong> – maximum concentration limit user specified or None (default)</p></li>
+<li><p><strong>min_conc_lim</strong> – minimum concentration limit for the source, only used for the binary_exponential_piston_flow model)</p></li>
+<li><p><strong>mrt</strong> – the mean residence time of the site</p></li>
+</ul>
+</dd>
+</dl>
+<p>Options for binary_exponential_piston_flow model:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt_p1</strong> – the mean residence time of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>frac_p1</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>f_p1</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+<li><p><strong>f_p2</strong> – the fraction of the first piston flow model (only used for binary_exponential_piston_flow model)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Model run options:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – int or None for random seed</p></li>
+<li><p><strong>testnitter</strong> – None (usually) or a different nitter then self.niter for testing run times</p></li>
+<li><p><strong>kwargs</strong> – kwargs passed to the output series (e.g. region=’temp’ will yield a ‘region’ index with a value of ‘temp’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Seris with the power calc results note power is percent 0-100 Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters &gt; 0 in which case a dictionary will be returned:</p>
+</dd>
+</dl>
+<p>{‘power’: power_df, # always
+‘true_conc’: true_conc_ts, if self.return_true_conc is True
+‘noisy_conc’ : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0
+}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.mulitprocess_power_calcs">
+<span class="sig-name descname"><span class="pre">mulitprocess_power_calcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{Path,</span> <span class="pre">None,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idv_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc_lim_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc_lim_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_model_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.mulitprocess_power_calcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.mulitprocess_power_calcs" title="Link to this definition">#</a></dt>
+<dd><p>multiprocessing wrapper for power_calc, see power_calc for details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outpath</strong> – a path to save the results to or None (no save), df is returned regardless</p></li>
+<li><p><strong>idv_vals</strong> – an array of identifiers for each simulation</p></li>
+<li><p><strong>error_vals</strong> – The standard deviation of the noise for each simulation</p></li>
+<li><p><strong>samp_years_vals</strong> – the number of years to sample</p></li>
+<li><p><strong>samp_per_year_vals</strong> – The number of samples to collect each year</p></li>
+<li><p><strong>implementation_time_vals</strong> – The number of years over which reductions are implemented</p></li>
+<li><p><strong>initial_conc_vals</strong> – The initial concentration for each simulation</p></li>
+<li><p><strong>target_conc_vals</strong> – target concentration for the simulation</p></li>
+<li><p><strong>prev_slope_vals</strong> – previous slope for each simulation</p></li>
+<li><p><strong>max_conc_lim_vals</strong> – maximum concentration limit for each simulation</p></li>
+<li><p><strong>min_conc_lim_vals</strong> – minimum concentration limit for the source for each simulation</p></li>
+<li><p><strong>mrt_model_vals</strong> – mrt model for each simulation</p></li>
+<li><p><strong>mrt_vals</strong> – mean residence time for each simulation</p></li>
+<li><p><strong>mrt_p1_vals</strong> – mean residence time of the first piston flow model for each simulation Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>frac_p1_vals</strong> – fraction of the first piston flow model for each simulation Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>f_p1_vals</strong> – the exponential fraction of the first piston flow model for each simulation Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>f_p2_vals</strong> – the exponential fraction of the second piston flow model for each simulation Only used for binary_exponential_piston_flow model</p></li>
+<li><p><strong>seed</strong> – <p>the random seed for each simulation, one of the following:</p>
+<ul>
+<li><p>None: no seed, random seed will be generated for each simulation (but it will be recorded in the output dataframe)</p></li>
+<li><p>int: a single seed for all simulations</p></li>
+<li><p>np.ndarray: an array of seeds, one for each simulation</p></li>
+</ul>
+</p></li>
+<li><p><strong>run</strong> – if True run the simulations, if False just build  the run_dict and print the number of simulations</p></li>
+<li><p><strong>debug_mode</strong> – if True run as single process to allow for easier debugging</p></li>
+<li><p><strong>kwargs</strong> – other kwargs to pass directly to the output dataframe must be either a single value or an array of values with the same shape as id_vals</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe with input data and the results of all of the power calcs. note power is percent 0-100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.plot_iteration">
+<span class="sig-name descname"><span class="pre">plot_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.plot_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.plot_iteration" title="Link to this definition">#</a></dt>
+<dd><p>plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> – noisy concentration data</p></li>
+<li><p><strong>true_conc</strong> – true concentration data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_binary_exp_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">past_source_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_extras</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_mem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time years</p></li>
+<li><p><strong>mrt_p1</strong> – mean residence time of the first pathway years</p></li>
+<li><p><strong>frac_p1</strong> – fraction of the first pathway</p></li>
+<li><p><strong>f_p1</strong> – ratio of the exponential volume to the total volume pathway 1</p></li>
+<li><p><strong>f_p2</strong> – ratio of the exponential volume to the total volume pathway 2</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)</p></li>
+<li><p><strong>min_conc</strong> – minimum concentration limit user specified, the lowest concentration for the source</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+<li><p><strong>past_source_data</strong> – past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</p></li>
+<li><p><strong>return_extras</strong> – return extra variables for debugging</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_piston_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.truets_from_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_piston_flow" title="Link to this definition">#</a></dt>
+<dd><p>piston flow model for the mean residence time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mrt</strong> – mean residence time</p></li>
+<li><p><strong>initial_conc</strong> – initial concentration</p></li>
+<li><p><strong>target_conc</strong> – target concentration</p></li>
+<li><p><strong>prev_slope</strong> – previous slope of the concentration data mg/l/yr</p></li>
+<li><p><strong>max_conc</strong> – maximum concentration limit user specified or None</p></li>
+<li><p><strong>samp_per_year</strong> – samples per year</p></li>
+<li><p><strong>samp_years</strong> – number of years to sample</p></li>
+<li><p><strong>implementation_time</strong> – number of years to implement reductions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.AutoDetectionPowerSlope.time_test_power_calc_itter">
+<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#AutoDetectionPowerSlope.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
+<dd><p>run a test power calc iteration to check for errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
+<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.DetectionPowerCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DetectionPowerCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.DetectionPowerCalculator" title="Link to this definition">#</a></dt>
+<dd><p>The DetectionPowerCalculator has been depreciated in version v2.0.0. To retain the old capability use v1.0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – dummy</p></li>
+<li><p><strong>kwargs</strong> – dummy</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Komanawa Groundwater Detection Power Calculator</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="base_detection_calculator/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.base_detection_calculator</span></code></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#package-contents">Package Contents</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual"><code class="docutils literal notranslate"><span class="pre">DetectionPowerCounterFactual</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.plot_iteration"><code class="docutils literal notranslate"><span class="pre">plot_iteration()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.power_calc"><code class="docutils literal notranslate"><span class="pre">power_calc()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.mulitprocess_power_calcs"><code class="docutils literal notranslate"><span class="pre">mulitprocess_power_calcs()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_binary_exp_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCounterFactual.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual"><code class="docutils literal notranslate"><span class="pre">AutoDetectionPowerCounterFactual</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.set_condensed_mode"><code class="docutils literal notranslate"><span class="pre">set_condensed_mode()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.power_calc"><code class="docutils literal notranslate"><span class="pre">power_calc()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.mulitprocess_power_calcs"><code class="docutils literal notranslate"><span class="pre">mulitprocess_power_calcs()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.plot_iteration"><code class="docutils literal notranslate"><span class="pre">plot_iteration()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_binary_exp_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope"><code class="docutils literal notranslate"><span class="pre">DetectionPowerSlope</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.plot_iteration"><code class="docutils literal notranslate"><span class="pre">plot_iteration()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.power_calc"><code class="docutils literal notranslate"><span class="pre">power_calc()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.mulitprocess_power_calcs"><code class="docutils literal notranslate"><span class="pre">mulitprocess_power_calcs()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_binary_exp_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_binary_exp_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerSlope.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope"><code class="docutils literal notranslate"><span class="pre">AutoDetectionPowerSlope</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.set_condensed_mode"><code class="docutils literal notranslate"><span class="pre">set_condensed_mode()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.power_calc"><code class="docutils literal notranslate"><span class="pre">power_calc()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.mulitprocess_power_calcs"><code class="docutils literal notranslate"><span class="pre">mulitprocess_power_calcs()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.plot_iteration"><code class="docutils literal notranslate"><span class="pre">plot_iteration()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_binary_exp_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_piston_flow()</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.AutoDetectionPowerSlope.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.DetectionPowerCalculator"><code class="docutils literal notranslate"><span class="pre">DetectionPowerCalculator</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Matt Dumont.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

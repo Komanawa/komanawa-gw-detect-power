@@ -1,0 +1,38 @@
+:py:mod:`komanawa.gw_detect_power.timetest_slope`
+=================================================
+
+.. py:module:: komanawa.gw_detect_power.timetest_slope
+
+.. autoapi-nested-parse::
+
+   created matt_dumont 
+   on: 3/10/23
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   komanawa.gw_detect_power.timetest_slope.timeit_test
+
+
+
+.. py:function:: timeit_test(methods=methods, ndata=ndata, efficency_modes=efficency_modes, n=1)
+
+   run an automated timeit test, must be outside of the function definition, prints results in scientific notation
+   units are seconds
+
+   :param py_file_path: path to the python file that holds the functions,
+                       if the functions are in the same script as call then  __file__ is sufficient.
+                       in this case the function call should be protected by: if __name__ == '__main__':
+   :param function_names: the names of the functions to test (iterable), functions must not have arguments
+   :param n: number of times to test
+   :return:
+
+
