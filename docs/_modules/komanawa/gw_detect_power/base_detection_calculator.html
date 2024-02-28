@@ -1,0 +1,1063 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" data-theme="light">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>komanawa.gw_detect_power.base_detection_calculator &#8212; Komanawa-gw-detect-power v2.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=aa039f9c"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/komanawa/gw_detect_power/base_detection_calculator';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class=" navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+    
+    <img src="../../../_static/ksl_for_latex.png" class="logo__image only-light" alt=""/>
+    <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
+  
+  
+    <p class="title logo__title">Groundwater Detection Power Overview</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class=" navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../autoapi/komanawa/gw_detect_power/index.html">
+                        Code documentation
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power" title="View on GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">View on GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/company/k%C5%8Dmanawa-solutions-ltd/" title="Follow us on LinkedIn" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Follow us on LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../autoapi/komanawa/gw_detect_power/index.html">
+                        Code documentation
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power" title="View on GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">View on GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/company/k%C5%8Dmanawa-solutions-ltd/" title="Follow us on LinkedIn" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Follow us on LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">komanawa.gw_...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for komanawa.gw_detect_power.base_detection_calculator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">created matt_dumont </span>
+<span class="sd">on: 25/01/24</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="c1"># handle import of optional dependencies</span>
+<span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> <span class="n">check_age_inputs</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">get_source_initial_conc_bepm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s1">&#39;age_tools not installed, age distribution related functions will be unavailable, to install run &#39;</span>
+        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span>
+    <span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">pyhomogeneity</span> <span class="kn">import</span> <span class="n">pettitt_test</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">pettitt_test</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s1">&#39;pyhomogeneity not installed, pettitt_test will be unavailable, to install run &#39;</span>
+        <span class="s1">&#39;pip install pyhomogeneity&#39;</span>
+    <span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">komanawa.kendall_stats</span> <span class="kn">import</span> <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s1">&#39;kendall_stats not installed, mann_kendall will be unavailable, to install run &#39;</span>
+        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="BaseDetectionCalculator">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator">[docs]</a>
+<span class="k">class</span> <span class="nc">BaseDetectionCalculator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for detection power calculations, provides some general methods for power calculations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">implemented_mrt_models</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># override in subclass</span>
+    <span class="n">_power_from_max</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># override in subclass</span>
+    <span class="n">_power_from_min</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># override in subclass</span>
+    <span class="n">implemented_significance_modes</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_auto_mode</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_counterfactual</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;must be implemented in subclass&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_round_kwarg_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        helper function to round a kwarg value to the precision of the kwarg</span>
+
+<span class="sd">        :param val: value to round</span>
+<span class="sd">        :param key: kwarg name</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">use_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">use_key</span><span class="si">}</span><span class="s1">_per&#39;</span><span class="p">):</span>
+            <span class="n">float_percision</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">use_key</span><span class="si">}</span><span class="s1">_per&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">float_percision</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">float_percision</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">_get_id_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        helper function to get a string for an idv used to reduce the number of runs for multiprocessing workload</span>
+<span class="sd">        :param val:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param float_percision:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_per&#39;</span><span class="p">):</span>
+            <span class="n">float_percision</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">_per&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">float_percision</span> <span class="o">=</span> <span class="mi">9</span>
+
+        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">=None&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s1">.</span><span class="si">{</span><span class="n">float_percision</span><span class="si">}</span><span class="s1">f</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_get_key_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+
+        <span class="n">base_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">error_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">error_base_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">error_alt_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">seed_alt_vals_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">seed_base_vals_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">seed</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">auto_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">samp_years_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">samp_per_year_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">implementation_time_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">initial_conc_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">target_conc_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">prev_slope_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">max_conc_lim_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">min_conc_lim_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">mrt_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">mrt_p1_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">frac_p1_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">f_p1_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="n">f_p2_vals</span><span class="o">=</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_mode</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">base_data</span><span class="p">,</span> <span class="o">**</span><span class="n">auto_data</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">base_data</span>
+
+        <span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="p">,</span> <span class="n">is_any</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="p">,</span> <span class="n">is_any</span>
+
+    <span class="k">def</span> <span class="nf">_run_multiprocess_pass_conc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">debug_mode</span><span class="p">,</span> <span class="n">use_kwargs</span><span class="p">):</span>
+        <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">use_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiprocess_checks</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">use_kwargs</span><span class="p">)</span>
+
+        <span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idv_vals</span><span class="p">):</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">use_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;idv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idv</span>
+            <span class="n">runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;running </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">runs</span><span class="p">)</span><span class="si">}</span><span class="s1"> runs&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;stopping as </span><span class="si">{</span><span class="n">run</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">debug_mode</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">run_kwargs</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;running power calc for: </span><span class="si">{</span><span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;idv&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> with debug_mode=True (single process)&#39;</span><span class="p">)</span>
+                <span class="n">result_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_calc</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="n">_run_multiprocess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_power_calc_mp</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">num_cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ncores</span><span class="p">,</span>
+                                            <span class="n">logging_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
+        <span class="n">result_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;idv&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saving results to: </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">outpath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">result_data</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result_data</span>
+
+    <span class="k">def</span> <span class="nf">_run_multiprocess_auto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">debug_mode</span><span class="p">,</span> <span class="n">use_kwargs</span><span class="p">):</span>
+        <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">use_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiprocess_checks</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">use_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># make runs</span>
+        <span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_mode</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counterfactual</span><span class="p">:</span>
+                <span class="n">identifiers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;error_base&#39;</span><span class="p">,</span> <span class="s1">&#39;error_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;samp_years&#39;</span><span class="p">,</span> <span class="s1">&#39;samp_per_year&#39;</span><span class="p">,</span> <span class="s1">&#39;implementation_time_base&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;implementation_time_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;delay_years&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;initial_conc&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;target_conc_base&#39;</span><span class="p">,</span> <span class="s1">&#39;target_conc_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;prev_slope&#39;</span><span class="p">,</span> <span class="s1">&#39;max_conc_lim&#39;</span><span class="p">,</span> <span class="s1">&#39;min_conc_lim&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;mrt_model&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;mrt&#39;</span><span class="p">,</span> <span class="s1">&#39;mrt_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;frac_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p2&#39;</span><span class="p">,</span> <span class="s1">&#39;seed_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;seed_base&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">identifiers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;samp_years&#39;</span><span class="p">,</span> <span class="s1">&#39;samp_per_year&#39;</span><span class="p">,</span> <span class="s1">&#39;implementation_time&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_conc&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;target_conc&#39;</span><span class="p">,</span> <span class="s1">&#39;prev_slope&#39;</span><span class="p">,</span> <span class="s1">&#39;max_conc_lim&#39;</span><span class="p">,</span> <span class="s1">&#39;min_conc_lim&#39;</span><span class="p">,</span> <span class="s1">&#39;mrt_model&#39;</span><span class="p">,</span>
+                               <span class="s1">&#39;mrt&#39;</span><span class="p">,</span> <span class="s1">&#39;mrt_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;frac_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p2&#39;</span><span class="p">,</span> <span class="s1">&#39;seed&#39;</span><span class="p">]</span>
+
+            <span class="n">all_use_idv</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">run_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;creating and condensing runs&#39;</span><span class="p">)</span>
+            <span class="n">use_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_round_kwarg_value</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">use_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idv_vals</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;forming/condesing run </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idv_vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+                <span class="n">use_idv</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_id_str</span><span class="p">(</span><span class="n">use_kwargs</span><span class="p">[</span><span class="n">e</span> <span class="o">+</span> <span class="s1">&#39;_vals&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">identifiers</span><span class="p">])</span>
+                <span class="n">all_use_idv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">use_idv</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">use_idv</span> <span class="ow">in</span> <span class="n">run_list</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">run_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">use_idv</span><span class="p">)</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">use_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;idv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_idv</span>
+                <span class="n">runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">all_use_idv</span> <span class="o">=</span> <span class="n">idv_vals</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idv</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idv_vals</span><span class="p">):</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">):</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">use_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;idv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idv</span>
+                <span class="n">runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_mode</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;running </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">runs</span><span class="p">)</span><span class="si">}</span><span class="s1"> runs, simplified from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idv_vals</span><span class="p">)</span><span class="si">}</span><span class="s1"> runs&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;running </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">runs</span><span class="p">)</span><span class="si">}</span><span class="s1"> runs&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;stopping as </span><span class="si">{</span><span class="n">run</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">debug_mode</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">run_kwargs</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;running power calc for: </span><span class="si">{</span><span class="n">run_kwargs</span><span class="p">[</span><span class="s2">&quot;idv&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> with debug_mode=True (single process)&#39;</span><span class="p">)</span>
+                <span class="n">result_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_calc</span><span class="p">(</span><span class="o">**</span><span class="n">run_kwargs</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="n">_run_multiprocess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_power_calc_mp</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">num_cores</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ncores</span><span class="p">,</span>
+                                            <span class="n">logging_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
+        <span class="n">result_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;idv&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">outdata</span> <span class="o">=</span> <span class="n">result_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">all_use_idv</span><span class="p">]</span>
+        <span class="n">outdata</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s1">&#39;idv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idv_vals</span>
+        <span class="n">outdata</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;idv&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">outpath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">outdata</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">outdata</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_adjust_shape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="p">,</span> <span class="n">idv</span><span class="p">,</span> <span class="n">any_val</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        helper function to adjust the shape of an input variable</span>
+<span class="sd">        :param x: input variable</span>
+<span class="sd">        :param shape: shape needed</span>
+<span class="sd">        :param none_allowed: Is None allowed as a value</span>
+<span class="sd">        :param is_int: is it an integer</span>
+<span class="sd">        :param idv: str name of the input variable for error messages</span>
+<span class="sd">        :param any_val: if True then any value is allowed</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">any_val</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wrong_shape for </span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> must have shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s1"> or not be iterable &#39;</span>
+                                            <span class="sa">f</span><span class="s1">&#39;got: shp </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1"> dtype </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">none_allowed</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="n">is_int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_integer</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wrong_shape for </span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> must have shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s1"> &#39;</span>
+                                          <span class="sa">f</span><span class="s1">&#39;got: shp </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1"> dtype </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">not_bad</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_integer</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">not_bad</span><span class="p">),</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> must be an integer or None got </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">not_bad</span><span class="p">)]</span><span class="si">}</span><span class="s1"> &#39;</span>
+                                      <span class="sa">f</span><span class="s1">&#39;at indices </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">not_bad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_number</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">shape</span><span class="p">,</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;wrong_shape for </span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> must be a float or have shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s1"> &#39;</span>
+                                          <span class="sa">f</span><span class="s1">&#39;got: shp </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1"> dtype </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">not_bad</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_number</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">not_bad</span><span class="p">),</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> must be an number or None got </span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">not_bad</span><span class="p">)]</span><span class="si">}</span><span class="s1"> &#39;</span>
+                                      <span class="sa">f</span><span class="s1">&#39;at indices </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">not_bad</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="BaseDetectionCalculator.truets_from_binary_exp_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">[docs]</a>
+    <span class="k">def</span> <span class="nf">truets_from_binary_exp_piston_flow</span><span class="p">(</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="p">,</span> <span class="n">frac_p1</span><span class="p">,</span> <span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="p">,</span>
+                                           <span class="n">initial_conc</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">,</span> <span class="n">min_conc</span><span class="p">,</span>
+                                           <span class="n">samp_per_year</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">,</span> <span class="n">implementation_time</span><span class="p">,</span> <span class="n">past_source_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                           <span class="n">return_extras</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">low_mem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                           <span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</span>
+
+<span class="sd">        :param mrt: mean residence time years</span>
+<span class="sd">        :param mrt_p1: mean residence time of the first pathway years</span>
+<span class="sd">        :param frac_p1: fraction of the first pathway</span>
+<span class="sd">        :param f_p1:  ratio of the exponential volume to the total volume pathway 1</span>
+<span class="sd">        :param f_p2:  ratio of the exponential volume to the total volume pathway 2</span>
+<span class="sd">        :param initial_conc: initial concentration</span>
+<span class="sd">        :param target_conc: target concentration</span>
+<span class="sd">        :param prev_slope: previous slope of the concentration data</span>
+<span class="sd">        :param max_conc: maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)</span>
+<span class="sd">        :param min_conc: minimum concentration limit user specified, the lowest concentration for the source</span>
+<span class="sd">        :param samp_per_year: samples per year</span>
+<span class="sd">        :param samp_years: number of years to sample</span>
+<span class="sd">        :param implementation_time: number of years to implement reductions</span>
+<span class="sd">        :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</span>
+<span class="sd">        :param return_extras: return extra variables for debugging</span>
+<span class="sd">        :return: true timeseries, max_conc, max_conc_time, frac_p2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p2</span> <span class="o">=</span> <span class="n">check_age_inputs</span><span class="p">(</span><span class="n">mrt</span><span class="o">=</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="o">=</span><span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frac_p1</span><span class="o">=</span><span class="n">frac_p1</span><span class="p">,</span>
+                                       <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span> <span class="n">f_p1</span><span class="o">=</span><span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="o">=</span><span class="n">f_p2</span><span class="p">)</span>
+        <span class="c1"># make cdf of age</span>
+        <span class="n">age_step</span><span class="p">,</span> <span class="n">ages</span><span class="p">,</span> <span class="n">age_fractions</span> <span class="o">=</span> <span class="n">make_age_dist</span><span class="p">(</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="p">,</span> <span class="n">frac_p1</span><span class="p">,</span> <span class="n">precision</span><span class="p">,</span> <span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="n">ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">([</span><span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="p">])</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">age_step</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>  <span class="c1"># approximately monthly steps</span>
+        <span class="n">age_cdf</span> <span class="o">=</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">(</span><span class="n">ages</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="p">,</span> <span class="n">frac_p1</span><span class="p">,</span> <span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="p">)</span>
+        <span class="n">age_fractions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">age_cdf</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># make historical source concentrations from prev_slope, initial_conc, max_conc</span>
+        <span class="k">if</span> <span class="n">past_source_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">source_conc_past</span> <span class="o">=</span> <span class="n">past_source_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="n">use_max_conc</span> <span class="o">=</span> <span class="n">source_conc_past</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prev_slope</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">hist_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">([</span><span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="p">])</span> <span class="o">*</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">age_step</span><span class="p">,</span> <span class="n">age_step</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+                <span class="n">source_conc_past</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">hist_ages</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hist_ages</span><span class="p">))</span> <span class="o">*</span> <span class="n">initial_conc</span><span class="p">)</span>
+                <span class="n">use_max_conc</span> <span class="o">=</span> <span class="n">initial_conc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># make a historical source timeseries from preivous slope, inital conc age pdf and max conc</span>
+                <span class="n">source_conc_past</span> <span class="o">=</span> <span class="n">predict_historical_source_conc</span><span class="p">(</span><span class="n">init_conc</span><span class="o">=</span><span class="n">initial_conc</span><span class="p">,</span>
+                                                                  <span class="n">mrt</span><span class="o">=</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="o">=</span><span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="o">=</span><span class="n">mrt_p2</span><span class="p">,</span>
+                                                                  <span class="n">frac_p1</span><span class="o">=</span><span class="n">frac_p1</span><span class="p">,</span> <span class="n">f_p1</span><span class="o">=</span><span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="o">=</span><span class="n">f_p2</span><span class="p">,</span>
+                                                                  <span class="n">prev_slope</span><span class="o">=</span><span class="n">prev_slope</span><span class="p">,</span> <span class="n">max_conc</span><span class="o">=</span><span class="n">max_conc</span><span class="p">,</span>
+                                                                  <span class="n">min_conc</span><span class="o">=</span><span class="n">min_conc</span><span class="p">,</span> <span class="n">start_age</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                                                                  <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span>
+
+                <span class="n">source_conc_past</span> <span class="o">=</span> <span class="n">source_conc_past</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+                <span class="n">use_max_conc</span> <span class="o">=</span> <span class="n">source_conc_past</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># make a future source timeseries from target_conc and implementation_time</span>
+
+        <span class="k">if</span> <span class="n">low_mem</span><span class="p">:</span>
+            <span class="n">fut_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">implementation_time</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fut_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">implementation_time</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">)</span> <span class="o">+</span> <span class="n">age_step</span><span class="p">,</span> <span class="n">age_step</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+
+        <span class="n">future_conc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">fut_idx</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="p">)</span>
+        <span class="n">future_conc</span><span class="p">[</span><span class="n">future_conc</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="n">implementation_time</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_conc</span>
+        <span class="n">future_conc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_max_conc</span>
+        <span class="n">future_conc</span> <span class="o">=</span> <span class="n">future_conc</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="n">future_conc</span> <span class="o">=</span> <span class="n">future_conc</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="n">total_source_conc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">source_conc_past</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">future_conc</span><span class="p">])</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+
+        <span class="c1"># sample the source concentration onto the age pdf to return the true timeseries</span>
+        <span class="n">out_years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">samp_per_year</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+        <span class="n">out_conc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">out_years</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">low_mem</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">out_years</span><span class="p">):</span>
+                <span class="n">use_ages</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
+                <span class="n">temp_out</span> <span class="o">=</span> <span class="n">total_source_conc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">use_ages</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">use_ages</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                <span class="n">temp_out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">temp_out</span><span class="p">,</span>
+                                      <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">use_ages</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">use_ages</span><span class="p">,</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">index</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)))</span>
+                <span class="n">temp_out</span> <span class="o">=</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+                <span class="n">temp_out</span> <span class="o">=</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+                <span class="n">out_conc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp_out</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)]</span> <span class="o">*</span> <span class="n">age_fractions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_ages</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">ages</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_years</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ags_shp</span> <span class="o">=</span> <span class="n">use_ages</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">use_ages</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_years</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">-</span> <span class="n">use_ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">out_conc</span> <span class="o">=</span> <span class="n">total_source_conc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">use_ages</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ags_shp</span><span class="p">)</span> <span class="o">*</span> <span class="n">age_fractions</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="n">out_conc</span> <span class="o">=</span> <span class="n">out_conc</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">max_conc_time</span> <span class="o">=</span> <span class="n">out_years</span><span class="p">[</span><span class="n">out_conc</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span>
+        <span class="n">conc_max</span> <span class="o">=</span> <span class="n">out_conc</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">return_extras</span><span class="p">:</span>
+            <span class="n">past_years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ages</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">samp_per_year</span><span class="p">)</span>
+            <span class="n">past_conc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">past_years</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">past_years</span><span class="p">):</span>
+                <span class="n">past_conc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_source_conc</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)]</span> <span class="o">*</span> <span class="n">age_fractions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">past_conc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">past_years</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">past_conc</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">out_conc</span><span class="p">,</span> <span class="n">conc_max</span><span class="p">,</span> <span class="n">max_conc_time</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="p">,</span> <span class="n">total_source_conc</span><span class="p">,</span> <span class="n">age_fractions</span><span class="p">,</span> <span class="n">out_years</span><span class="p">,</span> <span class="n">ages</span><span class="p">,</span> <span class="n">past_conc</span>
+        <span class="k">return</span> <span class="n">out_conc</span><span class="p">,</span> <span class="n">conc_max</span><span class="p">,</span> <span class="n">max_conc_time</span><span class="p">,</span> <span class="n">mrt_p2</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="BaseDetectionCalculator.truets_from_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_piston_flow">[docs]</a>
+    <span class="k">def</span> <span class="nf">truets_from_piston_flow</span><span class="p">(</span><span class="n">mrt</span><span class="p">,</span> <span class="n">initial_conc</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">,</span> <span class="n">samp_per_year</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">,</span>
+                                <span class="n">implementation_time</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        piston flow model for the mean residence time</span>
+
+<span class="sd">        :param mrt: mean residence time</span>
+<span class="sd">        :param initial_conc: initial concentration</span>
+<span class="sd">        :param target_conc: target concentration</span>
+<span class="sd">        :param prev_slope: previous slope of the concentration data mg/l/yr</span>
+<span class="sd">        :param max_conc: maximum concentration limit user specified or None</span>
+<span class="sd">        :param samp_per_year: samples per year</span>
+<span class="sd">        :param samp_years: number of years to sample</span>
+<span class="sd">        :param implementation_time: number of years to implement reductions</span>
+<span class="sd">        :return: true timeseries, max_conc, max_conc_time, frac_p2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># expand from</span>
+        <span class="n">nsamples_imp</span> <span class="o">=</span> <span class="n">samp_per_year</span> <span class="o">*</span> <span class="n">implementation_time</span>
+        <span class="n">nsamples_total</span> <span class="o">=</span> <span class="n">samp_per_year</span> <span class="o">*</span> <span class="n">samp_years</span>
+
+        <span class="n">true_conc_ts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># lag period</span>
+        <span class="k">if</span> <span class="n">mrt</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nsamples_lag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">mrt</span> <span class="o">*</span> <span class="n">samp_per_year</span><span class="p">))</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples_lag</span><span class="p">),</span>
+                             <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">nsamples_lag</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                             <span class="p">[</span><span class="n">initial_conc</span><span class="p">,</span> <span class="n">initial_conc</span> <span class="o">+</span> <span class="n">prev_slope</span> <span class="o">*</span> <span class="n">mrt</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">max_conc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">temp</span><span class="p">[</span><span class="n">temp</span> <span class="o">&gt;</span> <span class="n">max_conc</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_conc</span>
+            <span class="n">max_conc_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span> <span class="o">/</span> <span class="n">samp_per_year</span>
+            <span class="n">max_conc</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">true_conc_ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_conc</span> <span class="o">=</span> <span class="n">initial_conc</span>
+            <span class="n">max_conc_time</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">nsamples_lag</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># reduction_period</span>
+        <span class="n">true_conc_ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nsamples_imp</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">nsamples_imp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">max_conc</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">nsamples_total</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">nsamples_lag</span> <span class="o">+</span> <span class="n">nsamples_imp</span><span class="p">):</span>
+            <span class="n">true_conc_ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nsamples_total</span> <span class="o">-</span> <span class="p">(</span><span class="n">nsamples_lag</span> <span class="o">+</span> <span class="n">nsamples_imp</span><span class="p">))</span> <span class="o">*</span> <span class="n">target_conc</span><span class="p">)</span>
+        <span class="n">true_conc_ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">true_conc_ts</span><span class="p">)</span>
+        <span class="n">true_conc_ts</span> <span class="o">=</span> <span class="n">true_conc_ts</span><span class="p">[:</span><span class="n">nsamples_total</span><span class="p">]</span>
+
+        <span class="n">frac_p2</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># dummy value</span>
+        <span class="k">return</span> <span class="n">true_conc_ts</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">,</span> <span class="n">max_conc_time</span><span class="p">,</span> <span class="n">frac_p2</span></div>
+
+
+<div class="viewcode-block" id="BaseDetectionCalculator.time_test_power_calc_itter">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">[docs]</a>
+    <span class="k">def</span> <span class="nf">time_test_power_calc_itter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testnitter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        run a test power calc iteration to check for errors</span>
+
+<span class="sd">        :param testnitter: number of iterations to run</span>
+<span class="sd">        :param kwargs: kwargs for power_calc</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">use_action</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+        <span class="k">for</span> <span class="n">wv</span> <span class="ow">in</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">wv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+                <span class="n">use_action</span> <span class="o">=</span> <span class="n">wv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">break</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">testnitter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">power_calc</span><span class="p">(</span><span class="n">testnitter</span><span class="o">=</span><span class="n">testnitter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">use_action</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">)</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="n">testnitter</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;time per iteration: </span><span class="si">{</span><span class="n">temp</span><span class="si">}</span><span class="s1"> s. based on </span><span class="si">{</span><span class="n">testnitter</span><span class="si">}</span><span class="s1"> iterations</span><span class="se">\n</span><span class="s1">&#39;</span>
+              <span class="sa">f</span><span class="s1">&#39;with set number of iterations: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nsims</span><span class="si">}</span><span class="s1"> it will take </span><span class="si">{</span><span class="n">temp</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">nsims</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="si">}</span><span class="s1"> s to run the power calc&#39;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_power_calc_mp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        multiprocessing wrapper for power_calc</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power_calc</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_true_conc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_noisy_conc_itters</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s1">&#39;power&#39;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># capture kwargs to make debugging easier</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;idv&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;idv&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;python_error&#39;</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;true_conc_ts&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_base&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;idv&#39;</span><span class="p">]:</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_propogate_truets</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">len_x</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">len_x</span> <span class="o">==</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="sa">f</span><span class="s1">&#39;wrong_shape for true_conc_ts_vals must have len </span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> got: shp </span><span class="si">{</span><span class="n">len_x</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">_multiprocess_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">id_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_true_conc</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_noisy_conc_itters</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;return_true_conc and return_noisy_conc_itters are not supported for mulitprocess_power_calcs&#39;</span>
+                          <span class="s1">&#39;only power results will be returned&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">outpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outpath</span><span class="p">)</span>
+        <span class="n">id_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">id_vals</span><span class="p">)</span>
+        <span class="n">expect_shape</span> <span class="o">=</span> <span class="n">id_vals</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># check other inputs</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mrt_model_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_ts_vals&#39;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+            <span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="p">,</span> <span class="n">is_any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_info</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_shape</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">expect_shape</span><span class="p">,</span> <span class="n">none_allowed</span><span class="o">=</span><span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="n">is_int</span><span class="p">,</span> <span class="n">idv</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                                      <span class="n">any_val</span><span class="o">=</span><span class="n">is_any</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_mode</span><span class="p">:</span>
+            <span class="n">mrt_model_vals</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mrt_model_vals&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">mrt_model_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mrt_model_vals</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_vals</span><span class="p">))</span>
+            <span class="n">mrt_model_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">mrt_model_vals</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">id_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;mrt_model_vals and mrt_vals must have the same shape&#39;</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;mrt_model_vals must be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="si">}</span><span class="s1"> &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mrt_model_vals</span> <span class="o">==</span> <span class="s1">&#39;binary_exponential_piston_flow&#39;</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">age_tools_imported</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s1">&#39;cannot run binary_exponential_piston_flow model, age_tools not installed&#39;</span>
+                    <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span><span class="p">)</span>
+
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mrt_model_vals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mrt_model_vals</span>
+
+            <span class="c1"># check min/max values</span>
+            <span class="k">assert</span> <span class="s1">&#39;initial_conc_vals&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">,</span> <span class="s1">&#39;if max_conc_lim_vals is passed initial_conc_vals must be passed&#39;</span>
+            <span class="n">not_na_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;initial_conc_vals&#39;</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;initial_conc_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+                <span class="s1">&#39;max_conc_lim must be greater than or equal to initial_conc&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counterfactual</span><span class="p">:</span>
+                <span class="n">not_na_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_base_vals&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_base_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+                    <span class="s1">&#39;max_conc_lim must be greater than or equal to target_conc_base&#39;</span><span class="p">)</span>
+                <span class="n">not_na_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_alt_vals&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_alt_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+                    <span class="s1">&#39;max_conc_lim must be greater than or equal to target_conc_alt&#39;</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">not_na_idx</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_vals&#39;</span><span class="p">])</span>
+                <span class="k">assert</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;max_conc_lim_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;target_conc_vals&#39;</span><span class="p">][</span><span class="n">not_na_idx</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+                    <span class="s1">&#39;max_conc_lim must be greater than or equal to target_conc&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counterfactual</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_base_vals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_propogate_truets</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_base_vals&#39;</span><span class="p">],</span> <span class="n">expect_shape</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_alt_vals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_propogate_truets</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_alt_vals&#39;</span><span class="p">],</span> <span class="n">expect_shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_ts_vals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_propogate_truets</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;true_conc_ts_vals&#39;</span><span class="p">],</span> <span class="n">expect_shape</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">id_vals</span><span class="p">,</span> <span class="n">kwargs</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_run_multiprocess</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">runs</span><span class="p">,</span> <span class="n">logical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_cores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logging_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    count the number of processors and then instiute the runs of a function to</span>
+<span class="sd">    :param func: function with one argument kwargs.</span>
+<span class="sd">    :param runs: a list of runs to pass to the function the function is called via func(kwargs)</span>
+<span class="sd">    :param num_cores: int or None, if None then use all cores (+-logical) if int, set pool size to number of cores</span>
+<span class="sd">    :param logical: bool if True then add the logical processors to the count</span>
+<span class="sd">    :param logging_level: logging level to use one of: logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR,</span>
+<span class="sd">                          logging.CRITICAL more info https://docs.python.org/3/howto/logging.html</span>
+<span class="sd">                          default is logging.INFO</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_cores</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">num_cores</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">log_to_stderr</span><span class="p">(</span><span class="n">logging_level</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_cores</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pool_size</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(</span><span class="n">logical</span><span class="o">=</span><span class="n">logical</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pool_size</span> <span class="o">=</span> <span class="n">num_cores</span>
+
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">pool_size</span><span class="p">,</span>
+                                <span class="n">initializer</span><span class="o">=</span><span class="n">_start_process</span><span class="p">,</span>
+                                <span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map_async</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">runs</span><span class="p">)</span>
+    <span class="n">pool_outputs</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># no more tasks</span>
+    <span class="n">pool</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">pool_outputs</span>
+
+
+<span class="k">def</span> <span class="nf">_start_process</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    function to run at the start of each multiprocess sets the priority lower</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting&#39;</span><span class="p">,</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">())</span>
+    <span class="c1"># set to lowest priority, this is windows only, on Unix use ps.nice(19)</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;linux&quot;</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">nice</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+        <span class="c1"># linux</span>
+    <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;darwin&quot;</span><span class="p">:</span>
+        <span class="c1"># OS X</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">nice</span><span class="p">(</span><span class="mi">19</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="c1"># Windows...</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">nice</span><span class="p">(</span><span class="n">psutil</span><span class="o">.</span><span class="n">BELOW_NORMAL_PRIORITY_CLASS</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unexpected platform: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2024, Matt Dumont.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
