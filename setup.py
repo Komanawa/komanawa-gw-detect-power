@@ -13,7 +13,7 @@ setup(
     # Author details
     author="Matt Dumont",
     author_email="hansonmcoombs@gmail.com",
-    packages=find_namespace_packages(where='src/', include=['komanawa.gw_detect_power']),
+    packages=find_namespace_packages(where='src/'),
     package_dir={"": "src"},
     setup_requires=[],
     tests_require=[],
