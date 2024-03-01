@@ -45,9 +45,9 @@ all dependencies are installed.
 Install from PyPI
 ----------------------
 
-.. todo
+.. code-block:: bash
 
-This package is not yet available on PyPI, coming soon
+    pip install komanawa-gw-detect-power
 
 Install from Github
 ----------------------
