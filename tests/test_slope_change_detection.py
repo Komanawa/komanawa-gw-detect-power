@@ -477,13 +477,13 @@ def test_linear_from_max_vs_from_start(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_linear_from_max_vs_from_start.hdf')
     write_test_data = False
-    from komanawa.kendall_stats import make_example_data
+    from komanawa.kendall_stats import example_data
     # increasing
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
 
-    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+    x_dec, y_dec = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[1],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     idx = np.arange(0, len(x_inc), 5)
@@ -576,13 +576,13 @@ def test_mann_kendall_power(show=False):
     print_myself()
     save_path = Path(__file__).parent.joinpath('test_data', 'test_kendall_from_max_vs_from_start.hdf')
     write_test_data = False
-    from komanawa.kendall_stats import make_example_data, MannKendall
+    from komanawa.kendall_stats import example_data, MannKendall
     # increasing
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
 
-    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+    x_dec, y_dec = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[1],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     idx = np.arange(0, len(x_inc), 5)
@@ -763,7 +763,7 @@ def test_multpart_mann_kendall_power(show=False):
 def test_pettitt_power(show=False):
     print_myself()
     from pyhomogeneity import pettitt_test
-    from komanawa.kendall_stats import make_example_data
+    from komanawa.kendall_stats import example_data
     power_data = []
     pd = DetectionPowerSlope(significance_mode='pettitt-test', nsims_pettit=1000, nsims=1000, efficent_mode=False)
     noises = [0, 0.25, 1, 2]
@@ -771,7 +771,7 @@ def test_pettitt_power(show=False):
     for noise, ax in zip(noises, axs[:, 0]):
         print(f'pettitt Noise: {noise}, v change')
         # increasing
-        x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+        x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                           noise=noise,
                                                                           na_data=False, unsort=False)
 
@@ -826,12 +826,12 @@ def test_pettitt_power(show=False):
 
 def test_iteration_plotting(show=False):
     print_myself()
-    from komanawa.kendall_stats import make_example_data
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    from komanawa.kendall_stats import example_data
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
 
-    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+    x_dec, y_dec = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[1],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     idx = np.arange(0, len(x_inc), 2)
@@ -1092,15 +1092,15 @@ def test_power_calc_and_mp():
 
 def test_efficient_mode_lr():
     print_myself()
-    from komanawa.kendall_stats import make_example_data
+    from komanawa.kendall_stats import example_data
     # increasing
-    x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
+    x, y = example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
 
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
 
-    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+    x_dec, y_dec = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[1],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     idx = np.arange(0, len(x_inc), 5)
@@ -1162,15 +1162,15 @@ def test_efficient_mode_lr():
 
 def test_efficent_mode_mann_kendall():
     print_myself()
-    from komanawa.kendall_stats import make_example_data
+    from komanawa.kendall_stats import example_data
     # increasing
-    x, y = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
+    x, y = example_data.make_increasing_decreasing_data(slope=0.1, noise=0)
 
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
 
-    x_dec, y_dec = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[1],
+    x_dec, y_dec = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[1],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     idx = np.arange(0, len(x_inc), 5)
@@ -1232,7 +1232,7 @@ def test_efficent_mode_mann_kendall():
 
 def test_efficient_mode_mpmk():
     print_myself()
-    from komanawa.kendall_stats import make_example_data
+    from komanawa.kendall_stats import example_data
 
     dp_2part = DetectionPowerSlope(
         significance_mode='n-section-mann-kendall', nsims=100,
@@ -1262,7 +1262,7 @@ def test_efficient_mode_mpmk():
         return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=True,
         mpmk_check_step=2, mpmk_efficent_min=2, mpmk_window=0.05)
 
-    x, y_para = make_example_data.make_multipart_parabolic_data(make_example_data.multipart_parabolic_slopes[0],
+    x, y_para = example_data.make_multipart_parabolic_data(example_data.multipart_parabolic_slopes[0],
                                                                 noise=0,
                                                                 na_data=False, unsort=False, step=2)
     noises = [1, 7.5, 10, 50]
@@ -1278,7 +1278,7 @@ def test_efficient_mode_mpmk():
         assert np.isclose(out_eff['power'], out['power'], rtol=allow_dif)
 
     # test sharp
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     noises = [1, 2.5, 5]
@@ -1328,8 +1328,8 @@ def check_function_mpmk_check_step():
         return_true_conc=False, return_noisy_conc_itters=0, efficent_mode=False,
         mpmk_check_step=check_step_func, mpmk_efficent_min=10, mpmk_window=0.05, )
 
-    from komanawa.kendall_stats import make_example_data
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    from komanawa.kendall_stats import example_data
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=0,
                                                                       na_data=False, unsort=False)
     assert len(x_inc) <= 130
