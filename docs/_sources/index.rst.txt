@@ -31,7 +31,13 @@ Supporting Documents
 
 We have included a number of supporting documents:
 
-`Water Quality Monitoring for Management of Diffuse Nitrate Pollution <supporting_documents/Water_quality_monitoring_for_management_of_diffuse_nitrate_pollution_Final.pdf>`_: This document provides guidance on the design of water quality monitoring programs for the management of diffuse nitrate pollution.  It includes a section on statistical power and the use of the detection power calculator as well as other factors that should be considered when designing a water quality monitoring program.
+`Water Quality Monitoring for Management of Diffuse Nitrate Pollution <_static/Water_quality_monitoring_for_management_of_diffuse_nitrate_pollution_Final.pdf>`_: This document provides guidance on the design of water quality monitoring programs for the management of diffuse nitrate pollution.  It includes a section on statistical power and the use of the detection power calculator as well as other factors that should be considered when designing a water quality monitoring program.
+
+Webinar (2024-02-19)
+----------------------
+
+On the 19th of February 2024 we held a webinar on the detection power calculator.  `The slides from the webinar are available in this repo <_static/OLW_extension_webinar_for_publication.pdf>`_ and a `condensed version of the talk is available on youtube <https://www.youtube.com/watch?v=qqJ-AFL4AoA>`_.
+
 
 
 Installation
