@@ -514,7 +514,7 @@ class BaseDetectionCalculator:
 
         # check other inputs
         for key, value in kwargs.items():
-            if key in ['mrt_model_vals', 'true_conc_ts_vals']:
+            if key in ['mrt_model_vals', 'true_conc_ts_vals', 'true_conc_base_vals', 'true_conc_alt_vals']:  # todo ensure test passes!
                 continue
             none_allowed, is_int, is_any = self._get_key_info(key)
             temp = self._adjust_shape(value, expect_shape, none_allowed=none_allowed, is_int=is_int, idv=key,
