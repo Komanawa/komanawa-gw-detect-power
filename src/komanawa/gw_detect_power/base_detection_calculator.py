@@ -20,7 +20,8 @@ pyhomogeneity_imported = True
 kendal_imported = True
 
 try:
-    from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
+    from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, \
+        check_age_inputs
 except ImportError:
     binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
     age_tools_imported = False
@@ -514,7 +515,8 @@ class BaseDetectionCalculator:
 
         # check other inputs
         for key, value in kwargs.items():
-            if key in ['mrt_model_vals', 'true_conc_ts_vals', 'true_conc_base_vals', 'true_conc_alt_vals']:  # todo ensure test passes!
+            if key in ['mrt_model_vals', 'true_conc_ts_vals', 'true_conc_base_vals',
+                       'true_conc_alt_vals']:  # todo ensure test passes!
                 continue
             none_allowed, is_int, is_any = self._get_key_info(key)
             temp = self._adjust_shape(value, expect_shape, none_allowed=none_allowed, is_int=is_int, idv=key,
@@ -601,7 +603,9 @@ def _start_process():
     function to run at the start of each multiprocess sets the priority lower
     :return:
     """
-    print('Starting', multiprocessing.current_process().name)
+    logger = multiprocessing.get_logger()
+    if logger.level <= logging.INFO:
+        print('Starting', multiprocessing.current_process().name)
     p = psutil.Process(os.getpid())
     # set to lowest priority, this is windows only, on Unix use ps.nice(19)
     if sys.platform == "linux":
