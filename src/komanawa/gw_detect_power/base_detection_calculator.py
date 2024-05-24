@@ -61,6 +61,7 @@ class BaseDetectionCalculator:
     implemented_significance_modes = None
     _auto_mode = False
     _counterfactual = False
+    log_level = logging.INFO
 
     def __init__(self):
         raise NotImplementedError('must be implemented in subclass')
@@ -150,7 +151,8 @@ class BaseDetectionCalculator:
             kwargs['idv'] = idv
             runs.append(kwargs)
 
-        print(f'running {len(runs)} runs')
+        if self.log_level <= logging.INFO:
+            print(f'running {len(runs)} runs')
         if not run:
             print(f'stopping as {run=}')
             return
