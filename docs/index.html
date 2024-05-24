@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Komanawa Groundwater Detection Power Calculator &#8212; Komanawa-gw-detect-power v2.0.0 documentation</title>
+    <title>Komanawa Groundwater Detection Power Calculator &#8212; komanawa-gw-detect-power v2.0.1 documentation</title>
   
   
   
@@ -29,15 +29,15 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="_static/documentation_options.js?v=aa039f9c"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/documentation_options.js?v=0e7b1b85"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -121,7 +121,7 @@
     <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
   
   
-    <p class="title logo__title">Groundwater Detection Power Overview</p>
+    <p class="title logo__title">Gw-Detect-Power v2.0.1 Overview</p>
   
 </a></div>
     
@@ -336,8 +336,23 @@
   <section id="komanawa-groundwater-detection-power-calculator">
 <h1>Komanawa Groundwater Detection Power Calculator<a class="headerlink" href="#komanawa-groundwater-detection-power-calculator" title="Link to this heading">#</a></h1>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/high_vs_low_detection_power.png"><img alt="_images/high_vs_low_detection_power.png" src="_images/high_vs_low_detection_power.png" style="height: 400px;" /></a>
+<a class="reference internal image-reference" href="_images/high_vs_low_detection_power.png"><img alt="_images/high_vs_low_detection_power.png" src="_images/high_vs_low_detection_power.png" style="height: 400px;" />
+</a>
 </figure>
+<dl class="field-list simple">
+<dt class="field-odd">Author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matt Dumont</p>
+</dd>
+<dt class="field-even">copyright<span class="colon">:</span></dt>
+<dd class="field-even"><p>2024, Komanawa Solutions Ltd.</p>
+</dd>
+<dt class="field-odd">Version<span class="colon">:</span></dt>
+<dd class="field-odd"><p>v2.0.1</p>
+</dd>
+<dt class="field-even">Date<span class="colon">:</span></dt>
+<dd class="field-even"><p>May 24, 2024</p>
+</dd>
+</dl>
 <div class="toctree-wrapper compound">
 </div>
 <p><strong>NOTE</strong>: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.</p>
@@ -510,7 +525,8 @@ b. If the historical concentration data does not have a statistically robust tre
 This can cause unexpected behaviour as compared to the other change detection tests. As an example see the
 figure below:</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/pettitt_test.png"><img alt="_images/pettitt_test.png" src="_images/pettitt_test.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/pettitt_test.png"><img alt="_images/pettitt_test.png" src="_images/pettitt_test.png" style="height: 500px;" />
+</a>
 </figure>
 <p>Based on this we do not suggest using the Pettitt test in conjunction with the lag models, which are designed to
 identify slow decreases in concentration.  However, the Pettitt test is included for completeness.</p>
@@ -524,7 +540,8 @@ identify slow decreases in concentration.  However, the Pettitt test is included
 </ul>
 <p>the effect on the pvalue is shown in the figure below:</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/pettitt_test_nitter.png"><img alt="_images/pettitt_test_nitter.png" src="_images/pettitt_test_nitter.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/pettitt_test_nitter.png"><img alt="_images/pettitt_test_nitter.png" src="_images/pettitt_test_nitter.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 </section>
@@ -747,43 +764,51 @@ identify slow decreases in concentration.  However, the Pettitt test is included
 <section id="linear-regression-from-first-point-to-last-point">
 <h3>Linear Regression from first point to last point<a class="headerlink" href="#linear-regression-from-first-point-to-last-point" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/linear-regression_iteration.png"><img alt="_images/linear-regression_iteration.png" src="_images/linear-regression_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/linear-regression_iteration.png"><img alt="_images/linear-regression_iteration.png" src="_images/linear-regression_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 <section id="linear-regression-from-max-min-point-to-last-point">
 <h3>Linear Regression from [max|min] point to last point<a class="headerlink" href="#linear-regression-from-max-min-point-to-last-point" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/linear-regression-from-min_iteration.png"><img alt="_images/linear-regression-from-min_iteration.png" src="_images/linear-regression-from-min_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/linear-regression-from-min_iteration.png"><img alt="_images/linear-regression-from-min_iteration.png" src="_images/linear-regression-from-min_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/linear-regression-from-max_iteration.png"><img alt="_images/linear-regression-from-max_iteration.png" src="_images/linear-regression-from-max_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/linear-regression-from-max_iteration.png"><img alt="_images/linear-regression-from-max_iteration.png" src="_images/linear-regression-from-max_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 <section id="mann-kendall-test-from-first-point-to-last-point">
 <h3>Mann-Kendall test from first point to last point<a class="headerlink" href="#mann-kendall-test-from-first-point-to-last-point" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/mann-kendall_iteration.png"><img alt="_images/mann-kendall_iteration.png" src="_images/mann-kendall_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/mann-kendall_iteration.png"><img alt="_images/mann-kendall_iteration.png" src="_images/mann-kendall_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 <section id="mann-kendall-test-from-max-min-point-to-last-point">
 <h3>Mann-Kendall test from [max|min] point to last point<a class="headerlink" href="#mann-kendall-test-from-max-min-point-to-last-point" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/mann-kendall-from-min_iteration.png"><img alt="_images/mann-kendall-from-min_iteration.png" src="_images/mann-kendall-from-min_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/mann-kendall-from-min_iteration.png"><img alt="_images/mann-kendall-from-min_iteration.png" src="_images/mann-kendall-from-min_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/mann-kendall-from-max_iteration.png"><img alt="_images/mann-kendall-from-max_iteration.png" src="_images/mann-kendall-from-max_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/mann-kendall-from-max_iteration.png"><img alt="_images/mann-kendall-from-max_iteration.png" src="_images/mann-kendall-from-max_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 <section id="multipart-mann-kendall-test">
 <h3>MultiPart Mann Kendall test<a class="headerlink" href="#multipart-mann-kendall-test" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/n-section-mann-kendall_iteration.png"><img alt="_images/n-section-mann-kendall_iteration.png" src="_images/n-section-mann-kendall_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/n-section-mann-kendall_iteration.png"><img alt="_images/n-section-mann-kendall_iteration.png" src="_images/n-section-mann-kendall_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 <section id="pettitt-test">
 <h3>Pettitt test<a class="headerlink" href="#pettitt-test" title="Link to this heading">#</a></h3>
 <figure class="align-center">
-<a class="reference internal image-reference" href="_images/pettitt-test_iteration.png"><img alt="_images/pettitt-test_iteration.png" src="_images/pettitt-test_iteration.png" style="height: 500px;" /></a>
+<a class="reference internal image-reference" href="_images/pettitt-test_iteration.png"><img alt="_images/pettitt-test_iteration.png" src="_images/pettitt-test_iteration.png" style="height: 500px;" />
+</a>
 </figure>
 </section>
 </section>
@@ -903,7 +928,7 @@ identify slow decreases in concentration.  However, the Pettitt test is included
 
   <p class="copyright">
     
-      © Copyright 2024, Matt Dumont.
+      © Copyright 2024, Komanawa Solutions Ltd..
       <br/>
     
   </p>
@@ -912,7 +937,7 @@ identify slow decreases in concentration.  However, the Pettitt test is included
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
     <br/>
   </p>
 </div>

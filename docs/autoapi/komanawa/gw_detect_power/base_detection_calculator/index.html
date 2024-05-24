@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>komanawa.gw_detect_power.base_detection_calculator &#8212; Komanawa-gw-detect-power v2.0.0 documentation</title>
+    <title>komanawa.gw_detect_power.base_detection_calculator &#8212; komanawa-gw-detect-power v2.0.1 documentation</title>
   
   
   
@@ -29,15 +29,15 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../_static/documentation_options.js?v=aa039f9c"></script>
-    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/documentation_options.js?v=0e7b1b85"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'autoapi/komanawa/gw_detect_power/base_detection_calculator/index';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -122,7 +122,7 @@
     <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
   
   
-    <p class="title logo__title">Groundwater Detection Power Overview</p>
+    <p class="title logo__title">Gw-Detect-Power v2.0.1 Overview</p>
   
 </a></div>
     
@@ -381,6 +381,23 @@ on: 25/01/24</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BaseDetectionCalculator</span></span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/base_detection_calculator.html#BaseDetectionCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" title="Link to this definition">#</a></dt>
 <dd><p>Base class for detection power calculations, provides some general methods for power calculations</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">
+<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/base_detection_calculator.html#BaseDetectionCalculator.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
+<dd><p>run a test power calc iteration to check for errors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
+<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">truets_from_binary_exp_piston_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mrt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mrt_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_p2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_slope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_per_year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp_years</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">implementation_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">past_source_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_extras</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_mem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/base_detection_calculator.html#BaseDetectionCalculator.truets_from_binary_exp_piston_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow" title="Link to this definition">#</a></dt>
 <dd><p>create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</p>
@@ -429,23 +446,6 @@ on: 25/01/24</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>true timeseries, max_conc, max_conc_time, frac_p2</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">
-<span class="sig-name descname"><span class="pre">time_test_power_calc_itter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/base_detection_calculator.html#BaseDetectionCalculator.time_test_power_calc_itter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter" title="Link to this definition">#</a></dt>
-<dd><p>run a test power calc iteration to check for errors</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>testnitter</strong> – number of iterations to run</p></li>
-<li><p><strong>kwargs</strong> – kwargs for power_calc</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -505,9 +505,9 @@ on: 25/01/24</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator"><code class="docutils literal notranslate"><span class="pre">BaseDetectionCalculator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_binary_exp_piston_flow()</span></code></a></li>
 <li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_piston_flow"><code class="docutils literal notranslate"><span class="pre">truets_from_piston_flow()</span></code></a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter"><code class="docutils literal notranslate"><span class="pre">time_test_power_calc_itter()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -542,7 +542,7 @@ on: 25/01/24</p>
 
   <p class="copyright">
     
-      © Copyright 2024, Matt Dumont.
+      © Copyright 2024, Komanawa Solutions Ltd..
       <br/>
     
   </p>
@@ -551,7 +551,7 @@ on: 25/01/24</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
     <br/>
   </p>
 </div>

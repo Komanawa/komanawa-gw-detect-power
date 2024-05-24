@@ -1,0 +1,12 @@
+:py:mod:`komanawa.gw_detect_power.version`
+==========================================
+
+.. py:module:: komanawa.gw_detect_power.version
+
+.. autoapi-nested-parse::
+
+   created matt_dumont 
+   on: 24/05/24
+
+
+

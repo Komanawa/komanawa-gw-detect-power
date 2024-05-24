@@ -1,0 +1,5 @@
+<map id="inheritance4363349633" name="inheritance4363349633">
+<area shape="rect" id="node1" href="change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope" target="_top" title="This class is used to calculate the slope detection power of an auto created concentration" alt="" coords="445,5,636,31"/>
+<area shape="rect" id="node2" href="change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope" target="_top" title="The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing" alt="" coords="236,5,397,31"/>
+<area shape="rect" id="node3" href="base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" target="_top" title="Base class for detection power calculations, provides some general methods for power calculations" alt="" coords="5,5,188,31"/>
+</map>
