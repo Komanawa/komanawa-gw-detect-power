@@ -369,21 +369,6 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">komanawa.gw_detect_power.base_detection_calculator</span> <span class="kn">import</span> <span class="n">BaseDetectionCalculator</span>
 
-<span class="c1"># handle import of optional dependencies</span>
-<span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> <span class="n">check_age_inputs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">get_source_initial_conc_bepm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-    <span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;age_tools not installed, age distribution related functions will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span>
-    <span class="p">)</span>
-
 
 <div class="viewcode-block" id="DetectionPowerCounterFactual">
 <a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual">[docs]</a>
@@ -648,6 +633,10 @@
                    <span class="o">**</span><span class="n">kwargs</span>
                    <span class="p">):</span>
 
+<div class="viewcode-block" id="DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[docs]</a>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        calculate the counterfactual detection power of a pair of concentration time series note the power is calculated using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling frequency then you should resample the true_conc_base/alt before passing it to this function</span>
 
@@ -666,10 +655,6 @@
 <span class="sd">        {&#39;power&#39;: power_df, # always</span>
 <span class="sd">        &#39;true_conc&#39;: true_conc_ts, if self.return_true_conc is True</span>
 <span class="sd">        &#39;noisy_conc&#39; : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0</span>
-<div class="viewcode-block" id="DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[docs]</a>
 <span class="sd">        }</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_power_calc</span><span class="p">(</span>
@@ -760,9 +745,15 @@
 
 <span class="sd">                                * &#39;paired-t-test&#39;: paired t test (parametric), scipy.stats.ttest_rel</span>
 <span class="sd">                                * &#39;wilcoxon-signed-rank-test&#39;: wilcoxon signed rank test (non-parametric), scipy.stats.wilcoxon</span>
+</div>
+</div>
 
 <span class="sd">    :param nsims: number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</span>
 <span class="sd">    :param p_value: minimum p value (see also alternative), if p &gt;= p_value the null hypothesis will not be rejected (base and alt are the same) p &lt; p_value the null hypothesis will be rejected (base and alt are different)</span>
+<div class="viewcode-block" id="DetectionPowerCounterFactual.truets_from_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_piston_flow">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.truets_from_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_piston_flow">[docs]</a>
 <span class="sd">    :param min_samples: minimum number of samples required, less than this number of samples will raise an exception</span>
 <span class="sd">    :param alternative: str, one of:</span>
 
@@ -778,15 +769,9 @@
 
 <span class="sd">                            for more info see: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.wilcoxon.html</span>
 
-<span class="sd">    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.</span></div>
-</div>
-
+<span class="sd">    :param wx_correction: bool, If True, apply continuity correction by adjusting the Wilcoxon rank statistic by 0.5 towards the mean value when computing the z-statistic. Default is False.</span>
 <span class="sd">    :param wx_method: str, see scipy.stats.wilcoxon for more info</span>
 <span class="sd">    :param ncores: number of cores to use for multiprocessing, None will use all available cores</span>
-<div class="viewcode-block" id="DetectionPowerCounterFactual.truets_from_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_piston_flow">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.truets_from_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_piston_flow">[docs]</a>
 <span class="sd">    :param log_level: logging level for multiprocessing subprocesses</span>
 <span class="sd">    :param return_true_conc: return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</span>
 <span class="sd">    :param return_noisy_conc_itters: int &lt;= nsims, default = 0 Number of noisy simulations to return if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</span>
@@ -818,8 +803,14 @@
 <span class="sd">        set calculator to condense the number of runs based by rounding the inputs to a specified precision</span>
 
 <span class="sd">        :param target_conc_per: precision to round target_conc to (2 = 0.01)</span>
-<span class="sd">        :param initial_conc_per: precision to round initial_conc to (2 = 0.01)</span>
+<span class="sd">        :param initial_conc_per: precision to round initial_conc to (2 = 0.01)</span></div>
+</div>
+
 <span class="sd">        :param error_per: precision to round error to (2 = 0.01)</span>
+<div class="viewcode-block" id="DetectionPowerCounterFactual.time_test_power_calc_itter">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.time_test_power_calc_itter">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.time_test_power_calc_itter">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.time_test_power_calc_itter">[docs]</a>
 <span class="sd">        :param prev_slope_per: precision to round previous_slope to (2 = 0.01)</span>
 <span class="sd">        :param max_conc_lim_per: precision to round max_conc_lim to (2 = 0.01)</span>
 <span class="sd">        :param min_conc_lim_per: precision to round min_conc_lim to (2 = 0.01)</span>
@@ -836,19 +827,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target_conc_base_per</span> <span class="o">=</span> <span class="n">target_conc_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_conc_alt_per</span> <span class="o">=</span> <span class="n">target_conc_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial_conc_per</span> <span class="o">=</span> <span class="n">initial_conc_per</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">error_base_per</span> <span class="o">=</span> <span class="n">error_per</span></div>
-</div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_base_per</span> <span class="o">=</span> <span class="n">error_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_alt_per</span> <span class="o">=</span> <span class="n">error_per</span>
-<div class="viewcode-block" id="DetectionPowerCounterFactual.time_test_power_calc_itter">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.time_test_power_calc_itter">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerCounterFactual.time_test_power_calc_itter">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.time_test_power_calc_itter">[docs]</a>
         <span class="bp">self</span><span class="o">.</span><span class="n">prev_slope_per</span> <span class="o">=</span> <span class="n">prev_slope_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_conc_lim_per</span> <span class="o">=</span> <span class="n">max_conc_lim_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_conc_lim_per</span> <span class="o">=</span> <span class="n">min_conc_lim_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mrt_per</span> <span class="o">=</span> <span class="n">mrt_per</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mrt_p1_per</span> <span class="o">=</span> <span class="n">mrt_p1_per</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mrt_p1_per</span> <span class="o">=</span> <span class="n">mrt_p1_per</span></div>
+</div>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">frac_p1_per</span> <span class="o">=</span> <span class="n">frac_p1_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f_p1_per</span> <span class="o">=</span> <span class="n">f_p1_per</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f_p2_per</span> <span class="o">=</span> <span class="n">f_p2_per</span></div>
@@ -869,9 +856,7 @@
             <span class="n">prev_slope</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
             <span class="n">max_conc_lim</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
             <span class="n">min_conc_lim</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-            <span class="n">mrt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span></div>
-</div>
-
+            <span class="n">mrt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 
             <span class="n">target_conc_base</span><span class="p">:</span> <span class="p">{</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">}</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">implementation_time_base</span><span class="p">:</span> <span class="p">{</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">}</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -983,10 +968,6 @@
                                                     <span class="n">implementation_time_alt</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">mrt_model</span> <span class="o">==</span> <span class="s1">&#39;binary_exponential_piston_flow&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">age_tools_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run binary_exponential_piston_flow model, age_tools not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span><span class="p">)</span>
             <span class="n">tvs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mrt_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;frac_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p2&#39;</span><span class="p">,</span> <span class="s1">&#39;min_conc_lim&#39;</span><span class="p">]</span>
             <span class="n">bad</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tvs</span><span class="p">:</span>

@@ -531,3 +531,6 @@ class TestAutoCounterFactual(unittest.TestCase):
                 print('idv', 'manual', 'auto')
                 print(k, out_data.loc[k].power, auto_outdata.loc[k].power)
             raise ValueError('The power values are different')
+
+if __name__ == '__main__':
+    unittest.main()

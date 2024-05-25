@@ -370,41 +370,8 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">komanawa.gw_detect_power.base_detection_calculator</span> <span class="kn">import</span> <span class="n">BaseDetectionCalculator</span>
-
-<span class="c1"># handle import of optional dependencies</span>
-<span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> <span class="n">check_age_inputs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">get_source_initial_conc_bepm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-    <span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;age_tools not installed, age distribution related functions will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span>
-    <span class="p">)</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyhomogeneity</span> <span class="kn">import</span> <span class="n">pettitt_test</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">pettitt_test</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;pyhomogeneity not installed, pettitt_test will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install pyhomogeneity&#39;</span>
-    <span class="p">)</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">komanawa.kendall_stats</span> <span class="kn">import</span> <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-    <span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;kendall_stats not installed, mann_kendall will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span>
-    <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyhomogeneity</span> <span class="kn">import</span> <span class="n">pettitt_test</span>
+<span class="kn">from</span> <span class="nn">komanawa.kendall_stats</span> <span class="kn">import</span> <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span>
 
 
 <div class="viewcode-block" id="DetectionPowerCalculator">
@@ -526,30 +493,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_power_from_min</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_lr</span>
         <span class="k">elif</span> <span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;mann-kendall&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">kendal_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run mann-kendall test, kendall_stats not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_mann_kendall</span>
         <span class="k">elif</span> <span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;mann-kendall-from-max&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_power_from_max</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">assert</span> <span class="n">kendal_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run mann-kendall test, kendall_stats not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_mann_kendall</span>
         <span class="k">elif</span> <span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;mann-kendall-from-min&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_power_from_min</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">assert</span> <span class="n">kendal_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run mann-kendall test, kendall_stats not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_mann_kendall</span>
         <span class="k">elif</span> <span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;n-section-mann-kendall&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">kendal_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run mann-kendall test, kendall_stats not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nparts</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;nparts must be an integer&#39;</span>
             <span class="k">assert</span> <span class="n">nparts</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;nparts must be greater than 1&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_nparts</span> <span class="o">=</span> <span class="n">nparts</span>
@@ -584,10 +535,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">mpmk_window</span> <span class="o">=</span> <span class="n">mpmk_window</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_mp_kendall</span>
         <span class="k">elif</span> <span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;pettitt-test&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">pyhomogeneity_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run pettitt test, pyhomogeneity not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install pyhomogeneity&#39;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nsims_pettit</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;nsims_pettit must be an integer&#39;</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">efficent_mode</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> <span class="s1">&#39;efficent_mode must be a boolean&#39;</span>
             <span class="k">if</span> <span class="n">efficent_mode</span><span class="p">:</span>
@@ -665,10 +612,6 @@
                                            <span class="n">sim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nsims_pettitt</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">cp</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;change_point, </span><span class="si">{</span><span class="n">p</span><span class="si">=}</span><span class="s1">&#39;</span><span class="p">)</span>
-<div class="viewcode-block" id="DetectionPowerSlope.truets_from_binary_exp_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_binary_exp_piston_flow">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">[docs]</a>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;unknown significance_mode </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">significance_mode</span><span class="si">}</span><span class="s1">, should not get here&#39;</span><span class="p">)</span>
 
@@ -691,6 +634,10 @@
 <span class="sd">        :param return_slope: return the slope of the concentration data used to calculate expect slope</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="DetectionPowerSlope.truets_from_binary_exp_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_binary_exp_piston_flow">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">[docs]</a>
         <span class="n">n_samples0</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_from_max</span><span class="p">:</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">imax</span><span class="p">:]</span>
@@ -772,15 +719,9 @@
         <span class="n">slopes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y0</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span></div>
-</div>
-
+                <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="n">n_sims</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">mk</span> <span class="o">=</span> <span class="n">MannKendall</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_p_value</span><span class="p">)</span>
-<div class="viewcode-block" id="DetectionPowerSlope.truets_from_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_piston_flow">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerSlope.truets_from_piston_flow">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_piston_flow">[docs]</a>
             <span class="n">slopes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mk</span><span class="o">.</span><span class="n">trend</span><span class="p">)</span>
             <span class="n">p_val</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mk</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
         <span class="n">p_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p_val</span><span class="p">)</span>
@@ -798,9 +739,15 @@
 
     <span class="k">def</span> <span class="nf">_power_test_pettitt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idv</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">expected_slope</span><span class="p">,</span> <span class="n">imax</span><span class="p">,</span> <span class="n">imin</span><span class="p">,</span> <span class="n">true_data</span><span class="p">,</span> <span class="n">return_slope</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</div>
+</div>
 
 <span class="sd">        :param y:data</span>
 <span class="sd">        :param expected_slope: not used</span>
+<div class="viewcode-block" id="DetectionPowerSlope.truets_from_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_piston_flow">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerSlope.truets_from_piston_flow">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_piston_flow">[docs]</a>
 <span class="sd">        :param imax: not used</span>
 <span class="sd">        :param imin: not used</span>
 <span class="sd">        :param return_slope: not really used, dummy</span>
@@ -828,14 +775,8 @@
                                <span class="n">return_slope</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param y: data</span>
-<span class="sd">        :param expected_slope: expected slope values</span></div>
-</div>
-
+<span class="sd">        :param expected_slope: expected slope values</span>
 <span class="sd">        :param imax: not used</span>
-<div class="viewcode-block" id="DetectionPowerSlope.time_test_power_calc_itter">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.time_test_power_calc_itter">[docs]</a>
-<div class="viewcode-block" id="AutoDetectionPowerSlope.time_test_power_calc_itter">
-<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.time_test_power_calc_itter">[docs]</a>
 <span class="sd">        :param imin: not used</span>
 <span class="sd">        :param return_slope: dummy</span>
 <span class="sd">        :return:</span>
@@ -854,13 +795,17 @@
         <span class="n">window</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficent_mode</span><span class="p">:</span>
             <span class="n">mpmk</span> <span class="o">=</span> <span class="n">MultiPartKendall</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">true_data</span><span class="p">,</span> <span class="n">nparts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_nparts</span><span class="p">,</span>
-                                    <span class="n">expect_part</span><span class="o">=</span><span class="n">expected_slope</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_min_part_size</span><span class="p">,</span>
-                                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_p_value</span><span class="p">,</span> <span class="n">no_trend_alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_no_trend_alpha</span><span class="p">,</span>
-                                    <span class="n">check_step</span><span class="o">=</span><span class="n">use_check_step</span><span class="p">,</span> <span class="n">check_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="n">best</span> <span class="o">=</span> <span class="n">mpmk</span><span class="o">.</span><span class="n">get_maxz_breakpoints</span><span class="p">(</span><span class="n">raise_on_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># no matches on the True data not worth running the power calc</span></div>
+                                    <span class="n">expect_part</span><span class="o">=</span><span class="n">expected_slope</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_min_part_size</span><span class="p">,</span></div>
 </div>
 
+                                    <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_p_value</span><span class="p">,</span> <span class="n">no_trend_alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kendall_mp_no_trend_alpha</span><span class="p">,</span>
+<div class="viewcode-block" id="DetectionPowerSlope.time_test_power_calc_itter">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.time_test_power_calc_itter">[docs]</a>
+<div class="viewcode-block" id="AutoDetectionPowerSlope.time_test_power_calc_itter">
+<a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.time_test_power_calc_itter">[docs]</a>
+                                    <span class="n">check_step</span><span class="o">=</span><span class="n">use_check_step</span><span class="p">,</span> <span class="n">check_window</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="n">mpmk</span><span class="o">.</span><span class="n">get_maxz_breakpoints</span><span class="p">(</span><span class="n">raise_on_none</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># no matches on the True data not worth running the power calc</span>
                 <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">best</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -880,7 +825,9 @@
                                <span class="n">bp</span> <span class="o">+</span> <span class="n">delta</span><span class="p">)</span>
                     <span class="n">window</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">wmin</span><span class="p">,</span> <span class="n">wmax</span><span class="p">))</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y0</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">y0</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">y</span><span class="p">):</span></div>
+</div>
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">idv</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="n">n_sims</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1236,10 +1183,6 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">significance_mode</span> <span class="o">==</span> <span class="s1">&#39;pettitt-test&#39;</span> <span class="ow">and</span> <span class="n">mrt</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;using the Pettitt test with lagged data can cause some weird results, we do&#39;</span>
                               <span class="s1">&#39;not recommend using this combination&#39;</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">age_tools_imported</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s1">&#39;cannot run binary_exponential_piston_flow model, age_tools not installed&#39;</span>
-                <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span><span class="p">)</span>
             <span class="n">tvs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mrt_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;frac_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p1&#39;</span><span class="p">,</span> <span class="s1">&#39;f_p2&#39;</span><span class="p">,</span> <span class="s1">&#39;min_conc_lim&#39;</span><span class="p">]</span>
             <span class="n">bad</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tvs</span><span class="p">:</span>

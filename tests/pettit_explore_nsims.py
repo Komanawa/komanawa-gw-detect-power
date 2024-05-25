@@ -5,13 +5,13 @@ on: 25/09/23
 import matplotlib.pyplot as plt
 import pandas as pd
 from pyhomogeneity import pettitt_test
-from komanawa.kendall_stats import make_example_data
+from komanawa.kendall_stats import example_data
 import numpy as np
 
 y_test = []
 for noise in [0, 2, 5]:
     # increasing
-    x_inc, y_inc = make_example_data.make_multipart_sharp_change_data(make_example_data.multipart_sharp_slopes[0],
+    x_inc, y_inc = example_data.make_multipart_sharp_change_data(example_data.multipart_sharp_slopes[0],
                                                                       noise=noise,
                                                                       na_data=False, unsort=False)
 

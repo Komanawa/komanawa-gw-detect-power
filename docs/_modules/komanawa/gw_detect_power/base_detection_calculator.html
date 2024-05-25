@@ -373,41 +373,8 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="c1"># handle import of optional dependencies</span>
-<span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> \
+<span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> \
         <span class="n">check_age_inputs</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">get_source_initial_conc_bepm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-    <span class="n">age_tools_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;age_tools not installed, age distribution related functions will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span>
-    <span class="p">)</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pyhomogeneity</span> <span class="kn">import</span> <span class="n">pettitt_test</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">pettitt_test</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">pyhomogeneity_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;pyhomogeneity not installed, pettitt_test will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install pyhomogeneity&#39;</span>
-    <span class="p">)</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">komanawa.kendall_stats</span> <span class="kn">import</span> <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">MannKendall</span><span class="p">,</span> <span class="n">MultiPartKendall</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-    <span class="n">kendal_imported</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s1">&#39;kendall_stats not installed, mann_kendall will be unavailable, to install run &#39;</span>
-        <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git&#39;</span>
-    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="BaseDetectionCalculator">
@@ -888,7 +855,7 @@
         <span class="c1"># check other inputs</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mrt_model_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_ts_vals&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_base_vals&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;true_conc_alt_vals&#39;</span><span class="p">]:</span>  <span class="c1"># todo ensure test passes!</span>
+                       <span class="s1">&#39;true_conc_alt_vals&#39;</span><span class="p">]:</span>
                 <span class="k">continue</span>
             <span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="p">,</span> <span class="n">is_any</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_key_info</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adjust_shape</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">expect_shape</span><span class="p">,</span> <span class="n">none_allowed</span><span class="o">=</span><span class="n">none_allowed</span><span class="p">,</span> <span class="n">is_int</span><span class="o">=</span><span class="n">is_int</span><span class="p">,</span> <span class="n">idv</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
@@ -904,11 +871,6 @@
             <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;mrt_model_vals must be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="si">}</span><span class="s1"> &#39;</span>
                 <span class="sa">f</span><span class="s1">&#39;got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mrt_model_vals</span> <span class="o">==</span> <span class="s1">&#39;binary_exponential_piston_flow&#39;</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="n">age_tools_imported</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s1">&#39;cannot run binary_exponential_piston_flow model, age_tools not installed&#39;</span>
-                    <span class="s1">&#39;to install run:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                    <span class="s1">&#39;pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools&#39;</span><span class="p">)</span>
 
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;mrt_model_vals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mrt_model_vals</span>
 

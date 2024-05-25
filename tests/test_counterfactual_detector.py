@@ -348,3 +348,6 @@ class TestDetectionPowerCounterFactual(unittest.TestCase):
         pd.testing.assert_frame_equal(out, got, check_dtype=False, check_like=True, check_exact=False)
         self.assertTrue(all(out['single_kwarg'] == 'test_single_kwarg'))
         self.assertEqual(set(out['mult_kwargs']), set(unique_kwargs))
+
+if __name__ == '__main__':
+    unittest.main()

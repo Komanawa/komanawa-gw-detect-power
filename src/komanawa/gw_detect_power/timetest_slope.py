@@ -5,7 +5,7 @@ on: 3/10/23
 import pandas as pd
 
 from komanawa.gw_detect_power.change_detection_slope import DetectionPowerSlope
-from komanawa.kendall_stats import make_example_data
+from komanawa.kendall_stats import example_data
 import numpy as np
 import itertools
 from pathlib import Path
@@ -22,18 +22,18 @@ nsims_pettit = 2000
 
 # iterables
 methods = DetectionPowerSlope.implemented_significance_modes
-ndata = [50, 100, 500, 1000, 5000]
-efficency_modes = [True, False]
+ndata = (50, 100, 500, 1000, 5000)
+efficency_modes = (True, False)
+
 
 def timeit_test(methods=methods, ndata=ndata, efficency_modes=efficency_modes, n=1):
     """
     run an automated timeit test, must be outside of the function definition, prints results in scientific notation
     units are seconds
 
-    :param py_file_path: path to the python file that holds the functions,
-                        if the functions are in the same script as call then  __file__ is sufficient.
-                        in this case the function call should be protected by: if __name__ == '__main__':
-    :param function_names: the names of the functions to test (iterable), functions must not have arguments
+    :param methods: list of methods to test
+    :param ndata: list of data sizes to test
+    :param efficency_modes: list of efficency modes to test
     :param n: number of times to test
     :return:
     """
@@ -60,19 +60,19 @@ def timeit_test(methods=methods, ndata=ndata, efficency_modes=efficency_modes, n
 
 def run_model(method, ndata, emode):
     if method in ['linear-regression', 'mann-kendall', ]:
-        x, data = make_example_data.make_increasing_decreasing_data(slope=0.1, noise=0, step=100 / ndata)
+        x, data = example_data.make_increasing_decreasing_data(slope=0.1, noise=0, step=100 / ndata)
         use_noise = 5
     elif method in ['linear-regression-from-max', 'mann-kendall-from-max', 'n-section-mann-kendall']:
-        x, data = make_example_data.make_multipart_sharp_change_data(slope=make_example_data.multipart_sharp_slopes[0],
-                                                                     noise=0,
-                                                                     unsort=False, na_data=False, step=100 / ndata)
-        use_noise = make_example_data.multipart_sharp_noises[1]
+        x, data = example_data.make_multipart_sharp_change_data(slope=example_data.multipart_sharp_slopes[0],
+                                                                noise=0,
+                                                                unsort=False, na_data=False, step=100 / ndata)
+        use_noise = example_data.multipart_sharp_noises[1]
 
     elif method in ['linear-regression-from-min', 'mann-kendall-from-min', ]:
-        x, data = make_example_data.make_multipart_sharp_change_data(slope=make_example_data.multipart_sharp_slopes[1],
-                                                                     noise=0,
-                                                                     unsort=False, na_data=False, step=100 / ndata)
-        use_noise = make_example_data.multipart_sharp_noises[1]
+        x, data = example_data.make_multipart_sharp_change_data(slope=example_data.multipart_sharp_slopes[1],
+                                                                noise=0,
+                                                                unsort=False, na_data=False, step=100 / ndata)
+        use_noise = example_data.multipart_sharp_noises[1]
 
     elif method == 'pettitt-test':
         data = np.zeros((ndata)) + 10
@@ -86,12 +86,12 @@ def run_model(method, ndata, emode):
         expect_slope = (1, -1)
 
     dpc = DetectionPowerSlope(significance_mode=method,
-                                   nsims=nsims, min_p_value=0.05, min_samples=10,
-                                   expect_slope=expect_slope, efficent_mode=emode, nparts=2, min_part_size=10,
-                                   no_trend_alpha=0.50,
-                                   mpmk_check_step=mpmk_check_step, mpmk_efficent_min=mpmk_efficent_min,
-                                   mpmk_window=mpmk_window,
-                                   nsims_pettit=nsims_pettit, )
+                              nsims=nsims, min_p_value=0.05, min_samples=10,
+                              expect_slope=expect_slope, efficent_mode=emode, nparts=2, min_part_size=10,
+                              no_trend_alpha=0.50,
+                              mpmk_check_step=mpmk_check_step, mpmk_efficent_min=mpmk_efficent_min,
+                              mpmk_window=mpmk_window,
+                              nsims_pettit=nsims_pettit, )
 
     out = dpc.power_calc(idv='test',
                          error=use_noise,

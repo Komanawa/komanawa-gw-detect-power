@@ -13,7 +13,7 @@ from change_detection_slope import AutoDetectionPowerSlope
 from lookup_table_inits import implementation_times, base_vars, base_outkeys, \
     other_outkeys, pf_mrts, lookup_dir
 
-# todo problems here..
+
 def _save_compressed_file(outdata, outpath, ziplib=None):
     # save and compress
     if ziplib is None:

@@ -384,10 +384,9 @@ units are seconds</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>py_file_path</strong> – path to the python file that holds the functions,
-if the functions are in the same script as call then  __file__ is sufficient.
-in this case the function call should be protected by: if __name__ == ‘__main__’:</p></li>
-<li><p><strong>function_names</strong> – the names of the functions to test (iterable), functions must not have arguments</p></li>
+<li><p><strong>methods</strong> – list of methods to test</p></li>
+<li><p><strong>ndata</strong> – list of data sizes to test</p></li>
+<li><p><strong>efficency_modes</strong> – list of efficency modes to test</p></li>
 <li><p><strong>n</strong> – number of times to test</p></li>
 </ul>
 </dd>
