@@ -28,6 +28,15 @@ Classes
 
    Base class for detection power calculations, provides some general methods for power calculations
 
+   .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
+
+      run a test power calc iteration to check for errors
+
+      :param testnitter: number of iterations to run
+      :param kwargs: kwargs for power_calc
+      :return: None
+
+
    .. py:method:: truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2, initial_conc, target_conc, prev_slope, max_conc, min_conc, samp_per_year, samp_years, implementation_time, past_source_data=None, return_extras=False, low_mem=False, precision=2)
       :staticmethod:
 
@@ -65,15 +74,6 @@ Classes
       :param samp_years: number of years to sample
       :param implementation_time: number of years to implement reductions
       :return: true timeseries, max_conc, max_conc_time, frac_p2
-
-
-   .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
-
-      run a test power calc iteration to check for errors
-
-      :param testnitter: number of iterations to run
-      :param kwargs: kwargs for power_calc
-      :return: None
 
 
 

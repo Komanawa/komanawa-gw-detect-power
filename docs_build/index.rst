@@ -5,6 +5,11 @@ Komanawa Groundwater Detection Power Calculator
    :height: 400 px
    :align: center
 
+:Author: |author|
+:copyright: |copyright|
+:Version: |release|
+:Date: |today|
+
 .. toctree::
    :maxdepth: 2
    :hidden:

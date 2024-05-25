@@ -11,41 +11,8 @@ from scipy import stats
 import logging
 import warnings
 from komanawa.gw_detect_power.base_detection_calculator import BaseDetectionCalculator
-
-# handle import of optional dependencies
-age_tools_imported = True
-pyhomogeneity_imported = True
-kendal_imported = True
-
-try:
-    from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
-except ImportError:
-    binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
-    age_tools_imported = False
-    warnings.warn(
-        'age_tools not installed, age distribution related functions will be unavailable, to install run '
-        'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools'
-    )
-
-try:
-    from pyhomogeneity import pettitt_test
-except ImportError:
-    pettitt_test = None
-    pyhomogeneity_imported = False
-    warnings.warn(
-        'pyhomogeneity not installed, pettitt_test will be unavailable, to install run '
-        'pip install pyhomogeneity'
-    )
-
-try:
-    from komanawa.kendall_stats import MannKendall, MultiPartKendall
-except ImportError:
-    MannKendall, MultiPartKendall = None, None
-    kendal_imported = False
-    warnings.warn(
-        'kendall_stats not installed, mann_kendall will be unavailable, to install run '
-        'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git'
-    )
+from pyhomogeneity import pettitt_test
+from komanawa.kendall_stats import MannKendall, MultiPartKendall
 
 
 class DetectionPowerCalculator:
@@ -162,30 +129,14 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             self._power_from_min = True
             self.power_test = self._power_test_lr
         elif significance_mode == 'mann-kendall':
-            assert kendal_imported, (
-                'cannot run mann-kendall test, kendall_stats not installed'
-                'to install run:\n'
-                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
             self.power_test = self._power_test_mann_kendall
         elif significance_mode == 'mann-kendall-from-max':
             self._power_from_max = True
-            assert kendal_imported, (
-                'cannot run mann-kendall test, kendall_stats not installed'
-                'to install run:\n'
-                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
             self.power_test = self._power_test_mann_kendall
         elif significance_mode == 'mann-kendall-from-min':
             self._power_from_min = True
-            assert kendal_imported, (
-                'cannot run mann-kendall test, kendall_stats not installed'
-                'to install run:\n'
-                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
             self.power_test = self._power_test_mann_kendall
         elif significance_mode == 'n-section-mann-kendall':
-            assert kendal_imported, (
-                'cannot run mann-kendall test, kendall_stats not installed'
-                'to install run:\n'
-                'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git')
             assert isinstance(nparts, int), 'nparts must be an integer'
             assert nparts > 1, 'nparts must be greater than 1'
             self.kendall_mp_nparts = nparts
@@ -220,10 +171,6 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             self.mpmk_window = mpmk_window
             self.power_test = self._power_test_mp_kendall
         elif significance_mode == 'pettitt-test':
-            assert pyhomogeneity_imported, (
-                'cannot run pettitt test, pyhomogeneity not installed'
-                'to install run:\n'
-                'pip install pyhomogeneity')
             assert isinstance(nsims_pettit, int), 'nsims_pettit must be an integer'
             assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
             if efficent_mode:
@@ -834,10 +781,6 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
             if self.significance_mode == 'pettitt-test' and mrt != 0:
                 warnings.warn('using the Pettitt test with lagged data can cause some weird results, we do'
                               'not recommend using this combination')
-            assert age_tools_imported, (
-                'cannot run binary_exponential_piston_flow model, age_tools not installed'
-                'to install run:\n'
-                'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
             tvs = ['mrt_p1', 'frac_p1', 'f_p1', 'f_p2', 'min_conc_lim']
             bad = []
             for t in tvs:

@@ -14,40 +14,8 @@ import psutil
 import sys
 import warnings
 
-# handle import of optional dependencies
-age_tools_imported = True
-pyhomogeneity_imported = True
-kendal_imported = True
-
-try:
-    from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, check_age_inputs
-except ImportError:
-    binary_exp_piston_flow_cdf, get_source_initial_conc_bepm = None, None
-    age_tools_imported = False
-    warnings.warn(
-        'age_tools not installed, age distribution related functions will be unavailable, to install run '
-        'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools'
-    )
-
-try:
-    from pyhomogeneity import pettitt_test
-except ImportError:
-    pettitt_test = None
-    pyhomogeneity_imported = False
-    warnings.warn(
-        'pyhomogeneity not installed, pettitt_test will be unavailable, to install run '
-        'pip install pyhomogeneity'
-    )
-
-try:
-    from komanawa.kendall_stats import MannKendall, MultiPartKendall
-except ImportError:
-    MannKendall, MultiPartKendall = None, None
-    kendal_imported = False
-    warnings.warn(
-        'kendall_stats not installed, mann_kendall will be unavailable, to install run '
-        'pip install git+https://github.com/Komanawa-Solutions-Ltd/kendall_multipart_kendall.git'
-    )
+from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, \
+        check_age_inputs
 
 
 class BaseDetectionCalculator:
@@ -60,6 +28,7 @@ class BaseDetectionCalculator:
     implemented_significance_modes = None
     _auto_mode = False
     _counterfactual = False
+    log_level = logging.INFO
 
     def __init__(self):
         raise NotImplementedError('must be implemented in subclass')
@@ -149,7 +118,8 @@ class BaseDetectionCalculator:
             kwargs['idv'] = idv
             runs.append(kwargs)
 
-        print(f'running {len(runs)} runs')
+        if self.log_level <= logging.INFO:
+            print(f'running {len(runs)} runs')
         if not run:
             print(f'stopping as {run=}')
             return
@@ -514,7 +484,8 @@ class BaseDetectionCalculator:
 
         # check other inputs
         for key, value in kwargs.items():
-            if key in ['mrt_model_vals', 'true_conc_ts_vals']:
+            if key in ['mrt_model_vals', 'true_conc_ts_vals', 'true_conc_base_vals',
+                       'true_conc_alt_vals']:
                 continue
             none_allowed, is_int, is_any = self._get_key_info(key)
             temp = self._adjust_shape(value, expect_shape, none_allowed=none_allowed, is_int=is_int, idv=key,
@@ -530,11 +501,6 @@ class BaseDetectionCalculator:
             assert np.in1d(mrt_model_vals, self.implemented_mrt_models).all(), (
                 f'mrt_model_vals must be one of {self.implemented_mrt_models} '
                 f'got {np.unique(mrt_model_vals)}')
-            if any(mrt_model_vals == 'binary_exponential_piston_flow'):
-                assert age_tools_imported, (
-                    'cannot run binary_exponential_piston_flow model, age_tools not installed'
-                    'to install run:\n'
-                    'pip install git+https://github.com/Komanawa-Solutions-Ltd/gw_age_tools')
 
             kwargs['mrt_model_vals'] = mrt_model_vals
 
@@ -601,7 +567,9 @@ def _start_process():
     function to run at the start of each multiprocess sets the priority lower
     :return:
     """
-    print('Starting', multiprocessing.current_process().name)
+    logger = multiprocessing.get_logger()
+    if logger.level <= logging.INFO:
+        print('Starting', multiprocessing.current_process().name)
     p = psutil.Process(os.getpid())
     # set to lowest priority, this is windows only, on Unix use ps.nice(19)
     if sys.platform == "linux":
