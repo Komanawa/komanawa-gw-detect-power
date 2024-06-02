@@ -1,5 +1,5 @@
-:py:mod:`komanawa.gw_detect_power.change_detection_slope`
-=========================================================
+komanawa.gw_detect_power.change_detection_slope
+===============================================
 
 .. py:module:: komanawa.gw_detect_power.change_detection_slope
 
@@ -12,28 +12,27 @@
 
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope
+   komanawa.gw_detect_power.change_detection_slope.BaseDetectionCalculator
    komanawa.gw_detect_power.change_detection_slope.DetectionPowerCalculator
    komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope
 
 
-
+Module Contents
+---------------
 
 .. py:class:: AutoDetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None)
-
 
    Bases: :py:obj:`DetectionPowerSlope`
 
    .. autoapi-inheritance-diagram:: komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope
       :parts: 1
+
 
    This class is used to calculate the slope detection power of an auto created concentration
    time series. The user specifies an initial concentration, a target concentration. Other parameters
@@ -82,6 +81,7 @@ Classes
    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)
 
+
    .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, samp_years_vals: {np.ndarray, int}, samp_per_year_vals: {np.ndarray, int}, implementation_time_vals: {np.ndarray, int}, initial_conc_vals: {np.ndarray, float}, target_conc_vals: {np.ndarray, float}, prev_slope_vals: {np.ndarray, float}, max_conc_lim_vals: {np.ndarray, float}, min_conc_lim_vals: {np.ndarray, float}, mrt_model_vals: {np.ndarray, str}, mrt_vals: {np.ndarray, float}, mrt_p1_vals: {np.ndarray, float, None} = None, frac_p1_vals: {np.ndarray, float, None} = None, f_p1_vals: {np.ndarray, float, None} = None, f_p2_vals: {np.ndarray, float, None} = None, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)
 
       multiprocessing wrapper for power_calc, see power_calc for details
@@ -115,6 +115,7 @@ Classes
       :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
 
 
+
    .. py:method:: plot_iteration(y0, true_conc, ax=None)
 
       plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
@@ -122,6 +123,7 @@ Classes
       :param y0: noisy concentration data
       :param true_conc: true concentration data
       :return: fig, ax
+
 
 
    .. py:method:: power_calc(idv, error: float, mrt_model: str, samp_years: int, samp_per_year: int, implementation_time: int, initial_conc: float, target_conc: float, prev_slope: float, max_conc_lim: float, min_conc_lim: float, mrt: float = 0, mrt_p1: {float, None} = None, frac_p1: {float, None} = None, f_p1: {float, None} = None, f_p2: {float, None} = None, seed: {int, None} = None, testnitter=None, **kwargs)
@@ -165,6 +167,7 @@ Classes
       }
 
 
+
    .. py:method:: set_condensed_mode(target_conc_per=1, initial_conc_per=1, error_per=2, prev_slope_per=2, max_conc_lim_per=1, min_conc_lim_per=1, mrt_per=0, mrt_p1_per=2, frac_p1_per=2, f_p1_per=2, f_p2_per=2)
 
       set calculator to condense the number of runs based by rounding the inputs to a specified precision
@@ -183,6 +186,12 @@ Classes
       :return:
 
 
+
+.. py:class:: BaseDetectionCalculator
+
+   Base class for detection power calculations, provides some general methods for power calculations
+
+
    .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
 
       run a test power calc iteration to check for errors
@@ -192,8 +201,10 @@ Classes
       :return: None
 
 
+
    .. py:method:: truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2, initial_conc, target_conc, prev_slope, max_conc, min_conc, samp_per_year, samp_years, implementation_time, past_source_data=None, return_extras=False, low_mem=False, precision=2)
       :staticmethod:
+
 
       create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc
 
@@ -215,8 +226,10 @@ Classes
       :return: true timeseries, max_conc, max_conc_time, frac_p2
 
 
+
    .. py:method:: truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years, implementation_time)
       :staticmethod:
+
 
       piston flow model for the mean residence time
 
@@ -234,7 +247,6 @@ Classes
 
 .. py:class:: DetectionPowerCalculator(*args, **kwargs)
 
-
    
    The DetectionPowerCalculator has been depreciated in version v2.0.0. To retain the old capability use v1.0.0.
 
@@ -244,11 +256,11 @@ Classes
 
 .. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None)
 
-
    Bases: :py:obj:`komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator`
 
    .. autoapi-inheritance-diagram:: komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope
       :parts: 1
+
 
    The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing
    a slope in the concentration data. The user passes a True concentration time series and the power is calculated
@@ -297,6 +309,7 @@ Classes
    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)
 
+
    .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, true_conc_ts_vals: {np.ndarray, list}, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)
 
       multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
@@ -315,6 +328,7 @@ Classes
       :return: dataframe with input data and the results of all of the power calcs. note power is percent 0-100
 
 
+
    .. py:method:: plot_iteration(y0, true_conc, ax=None)
 
       plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
@@ -322,6 +336,7 @@ Classes
       :param y0: noisy concentration data
       :param true_conc: true concentration data
       :return: fig, ax
+
 
 
    .. py:method:: power_calc(idv, error: float, true_conc_ts: numpy.ndarray, seed: {int, None} = None, testnitter=None, **kwargs)
@@ -342,54 +357,6 @@ Classes
       'true_conc': true_conc_ts, if self.return_true_conc is True
       'noisy_conc' : noisy_conc_ts, if self.return_noisy_conc_itters > 0
       }
-
-
-   .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
-
-      run a test power calc iteration to check for errors
-
-      :param testnitter: number of iterations to run
-      :param kwargs: kwargs for power_calc
-      :return: None
-
-
-   .. py:method:: truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2, initial_conc, target_conc, prev_slope, max_conc, min_conc, samp_per_year, samp_years, implementation_time, past_source_data=None, return_extras=False, low_mem=False, precision=2)
-      :staticmethod:
-
-      create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc
-
-      :param mrt: mean residence time years
-      :param mrt_p1: mean residence time of the first pathway years
-      :param frac_p1: fraction of the first pathway
-      :param f_p1:  ratio of the exponential volume to the total volume pathway 1
-      :param f_p2:  ratio of the exponential volume to the total volume pathway 2
-      :param initial_conc: initial concentration
-      :param target_conc: target concentration
-      :param prev_slope: previous slope of the concentration data
-      :param max_conc: maximum concentration limit user specified or None here the maximum concentration is specified as the maximum concentration of the source (before temporal mixing)
-      :param min_conc: minimum concentration limit user specified, the lowest concentration for the source
-      :param samp_per_year: samples per year
-      :param samp_years: number of years to sample
-      :param implementation_time: number of years to implement reductions
-      :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01
-      :param return_extras: return extra variables for debugging
-      :return: true timeseries, max_conc, max_conc_time, frac_p2
-
-
-   .. py:method:: truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years, implementation_time)
-      :staticmethod:
-
-      piston flow model for the mean residence time
-
-      :param mrt: mean residence time
-      :param initial_conc: initial concentration
-      :param target_conc: target concentration
-      :param prev_slope: previous slope of the concentration data mg/l/yr
-      :param max_conc: maximum concentration limit user specified or None
-      :param samp_per_year: samples per year
-      :param samp_years: number of years to sample
-      :param implementation_time: number of years to implement reductions
-      :return: true timeseries, max_conc, max_conc_time, frac_p2
 
 
 

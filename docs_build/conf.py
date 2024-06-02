@@ -8,7 +8,7 @@
 import sys
 from pathlib import Path
 project = 'komanawa-gw-detect-power'
-copyright = '2024, Komanawa Solutions Ltd.'
+copyright = '2024, Kо̄manawa Solutions Ltd.'
 light_name = 'gw-detect-power'
 project_dirname='gw_detect_power'
 author = 'Matt Dumont'
@@ -81,7 +81,7 @@ html_theme_options = {
             "type": "fontawesome",
         },
         {
-            "name": "Komanawa Solutions Ltd.",
+            "name": "Kо̄manawa Solutions Ltd.",
             "url": "https://www.komanawa.com",
             "icon": "_static/just_symbol.png",
             "type": "local",

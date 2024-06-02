@@ -18,23 +18,23 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="../../../../_static/documentation_options.js?v=0e7b1b85"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
@@ -53,27 +53,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -95,12 +91,17 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class=" navbar-header-items__start">
@@ -136,12 +137,12 @@
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../index.html">
-                        Code documentation
-                      </a>
-                    </li>
-                
+<li class="nav-item pst-header-nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Code documentation
+  </a>
+</li>
+
   </ul>
 </nav></div>
       
@@ -200,7 +201,7 @@
           
           
           
-          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+          <a href="https://www.komanawa.com" title="Kо̄manawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/just_symbol.png" class="icon-link-image" alt="Kо̄manawa Solutions Ltd."/></a>
         </li>
 </ul></div>
       
@@ -224,9 +225,9 @@
   
 
   
-    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+    <button class="sidebar-toggle secondary-toggle" aria-label="On this page">
       <span class="fa-solid fa-outdent"></span>
-    </label>
+    </button>
   
 </div>
 
@@ -247,18 +248,21 @@
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item">
+          
+          
+            <div class="navbar-item">
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../index.html">
-                        Code documentation
-                      </a>
-                    </li>
-                
+<li class="nav-item pst-header-nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Code documentation
+  </a>
+</li>
+
   </ul>
 </nav></div>
+          
         
       </div>
     
@@ -301,7 +305,7 @@
           
           
           
-          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+          <a href="https://www.komanawa.com" title="Kо̄manawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/just_symbol.png" class="icon-link-image" alt="Kо̄manawa Solutions Ltd."/></a>
         </li>
 </ul></div>
         
@@ -318,13 +322,13 @@
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -333,7 +337,7 @@
 
 
 
-<nav aria-label="Breadcrumb">
+<nav aria-label="Breadcrumb" class="d-print-none">
   <ul class="bd-breadcrumbs">
     
     <li class="breadcrumb-item breadcrumb-home">
@@ -342,9 +346,9 @@
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power</span></code></a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">komanawa.gw_detect_power</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><code...</li>
+    <li class="breadcrumb-item active" aria-current="page">komanawa.gw_...</li>
   </ul>
 </nav>
 </div>
@@ -362,20 +366,168 @@
                 <article class="bd-article">
                   
   <section id="module-komanawa.gw_detect_power.timetest_slope">
-<span id="komanawa-gw-detect-power-timetest-slope"></span><h1><a class="reference internal" href="#module-komanawa.gw_detect_power.timetest_slope" title="komanawa.gw_detect_power.timetest_slope"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.timetest_slope</span></code></a><a class="headerlink" href="#module-komanawa.gw_detect_power.timetest_slope" title="Link to this heading">#</a></h1>
+<span id="komanawa-gw-detect-power-timetest-slope"></span><h1>komanawa.gw_detect_power.timetest_slope<a class="headerlink" href="#module-komanawa.gw_detect_power.timetest_slope" title="Link to this heading">#</a></h1>
 <p>created matt_dumont
 on: 3/10/23</p>
-<section id="module-contents">
-<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope" title="komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DetectionPowerSlope</span></code></a></p></td>
+<td><p>The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h3>
-<table class="autosummary longtable table autosummary">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#komanawa.gw_detect_power.timetest_slope.timeit_test" title="komanawa.gw_detect_power.timetest_slope.timeit_test"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeit_test</span></code></a>([methods, ndata, efficency_modes, n])</p></td>
 <td><p>run an automated timeit test, must be outside of the function definition, prints results in scientific notation</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DetectionPowerSlope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">significance_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear-regression'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expect_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficent_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nparts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_part_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_trend_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_check_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_efficent_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mpmk_window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsims_pettit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_true_conc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_noisy_conc_itters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_significant_noisy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" title="komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator</span></code></a></p>
+<div class="graphviz"><img src="../../../../_images/inheritance-b3fd8881eeed24e6c1a9310bb2f3be84600a2f84.png" alt="Inheritance diagram of komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope" usemap="#inheritance30cabd83fc" class="inheritance graphviz" /></div>
+<map id="inheritance30cabd83fc" name="inheritance30cabd83fc">
+<area shape="rect" id="node1" href="../base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator" target="_top" title="Base class for detection power calculations, provides some general methods for power calculations" alt="" coords="5,5,188,31"/>
+<area shape="rect" id="node2" href="../change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope" target="_top" title="The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing" alt="" coords="236,5,397,31"/>
+</map><p>The DetectionPowerSlope class is used to calculate the power of a change detection test based on observing
+a slope in the concentration data. The user passes a True concentration time series and the power is calculated
+by adding many noise realisations to the concentration data and then running one of multiple change detection tests on the noisy
+data.</p>
+<p>The Power is calculated as the percentage (0-100) of simulations which detect a slope.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>significance_mode</strong> – <p>significance mode to use, options:</p>
+<ul>
+<li><p>linear-regression: linear regression of the concentration data from time 0 to the end change detected if p &lt; min_p_value</p></li>
+<li><p>linear-regression-from-[max|min]: linear regression of the concentration data from the maximum concentration of the noise free concentration data to the end change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall: mann-kendall test of the concentration data from time 0 to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>mann-kendall-from-[max|min]: mann-kendall test of the concentration data from the maximum/minimum of the noise free concentration data to the end, change detected if p &lt; min_p_value</p></li>
+<li><p>n-section-mann-kendall: 2+ part mann-kendall test to identify change points. if change points are detected then a change is detected</p></li>
+<li><p>pettitt-test: pettitt test to identify change points. if change points are detected then a change is detected</p></li>
+</ul>
+</p></li>
+<li><p><strong>nsims</strong> – number of noise simulations to run for each change detection (e.g. nsims=1000, power= number of detected changes/1000 noise simulations)</p></li>
+<li><p><strong>min_p_value</strong> – minimum p value to consider a change detected</p></li>
+<li><p><strong>min_samples</strong> – minimum number of samples required, less than this number of samples will raise an exception</p></li>
+<li><p><strong>expect_slope</strong> – <p>expected slope of the concentration data, use depends on significance mode:</p>
+<ul>
+<li><p>linear-regression, linear-regression-from-max, mann-kendall, or mann-kendall-from-max:
+* one of 1 (increasing), -1 (decreasing), or ‘auto’ will match the slope of the concentration data before noise is added</p></li>
+<li><p>n-section-mann-kendall: expected trend in each part of the time series (1 increasing, -1 decreasing, 0 no trend)</p></li>
+<li><p>pettitt-test: not used.</p></li>
+</ul>
+</p></li>
+<li><p><strong>efficent_mode</strong> – <p>bool, default = True, if True then</p>
+<ul>
+<li><p>For linear regression and MannKendall based tests:  run the test on the noise free data to see if any change can be detected, if no change is detected then the test will not be on the noisy data</p></li>
+<li><p>For MultiPartMannKendall test: the test will be run on the noise free data to detect best change points and then the test will be run on the noisy data for a smaller window centered on the True change point see: * mpmk_efficent_min, * mpmk_window</p></li>
+<li><p>For Pettitt Test:  Not implemented, will be ignored and a waring passed</p></li>
+</ul>
+</p></li>
+<li><p><strong>nparts</strong> – number of parts to use for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>min_part_size</strong> – minimum number of samples in each part for the n-section-mann-kendall test (not used for other tests)</p></li>
+<li><p><strong>no_trend_alpha</strong> – alpha value to use for the no trend sections in the n-section-mann-kendall test trendless sections are only accepted if p &gt; no_trend_alpha (not used for other tests)</p></li>
+<li><p><strong>mpmk_check_step</strong> – int or function, default = 1, number of samples to check for a change point in the MultiPartMannKendall test, used in both efficent_mode=True and efficent_mode=False if mpmk is a function it must take a single argument (n, number of samples) and return an integer check step</p></li>
+<li><p><strong>mpmk_efficent_min</strong> – int, default = 10, minimum number of possible change points to assess only used if efficent_mode = True  The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step). You can specify the exact number of breakpoints to check by setting mpmk_efficent_min=n breakpoints and setting mpmk_window=0</p></li>
+<li><p><strong>mpmk_window</strong> – float, default = 0.05, define the window around the true detected change point to run the MultiPartMannKendall.  The detction window is defined as: (cp - mpmk_window*n, cp + mpmk_window*n) where cp is the detected change <cite>point and n is the number of samples in the time series Whe`re both a mpmk_window and a check_step&gt;1 is passed the mpmk_window will be used to de`fine the window size and the check_step</cite> will be used to define the step size within the window.`</p></li>
+<li><p><strong>nsims_pettit</strong> – number of simulations to run for calc`ulating the pvalue of the pettitt test (not used for other tests)</p></li>
+<li><p><strong>ncores</strong> – number of cores to use for multiprocessing, None will use all available cores</p></li>
+<li><p><strong>log_level</strong> – logging level for multiprocessing subprocesses</p></li>
+<li><p><strong>return_true_conc</strong> – return the true concentration time series for each simulation with power calcs (not supported with multiprocessing power calcs)</p></li>
+<li><p><strong>return_noisy_conc_itters</strong> – int &lt;= nsims, default = 0 Number of noisy simulations to return. if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</p></li>
+<li><p><strong>only_significant_noisy</strong> – bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</p></li>
+<li><p><strong>print_freq</strong> – None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.mulitprocess_power_calcs">
+<span class="sig-name descname"><span class="pre">mulitprocess_power_calcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{Path,</span> <span class="pre">None,</span> <span class="pre">str}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idv_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">float}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_ts_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">list}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_vals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{np.ndarray,</span> <span class="pre">int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.mulitprocess_power_calcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.mulitprocess_power_calcs" title="Link to this definition">#</a></dt>
+<dd><p>multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column ‘python_error’ if ‘python_error’ is None then the run was successful to change the number of cores used pass n_cores to the constructor init</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outpath</strong> – path to save results to or None (no save)</p></li>
+<li><p><strong>idv_vals</strong> – id values for each simulation</p></li>
+</ul>
+</dd>
+</dl>
+<p>All values from here on out should be either a single value or an array of values with the same shape as id_vals</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>error_vals</strong> – standard deviation of noise to add for each simulation</p></li>
+<li><p><strong>true_conc_ts_vals</strong> – the true concentration time series for each simulation, note that this can be a list of arrays of different lengths for each simulation, as Numpy does not support jagged arrays</p></li>
+<li><p><strong>seed</strong> – ndarray (integer seeds), None (no seeds), or int (1 seed for all simulations)</p></li>
+<li><p><strong>run</strong> – if True run the simulations, if False just build  the run_dict and print the number of simulations</p></li>
+<li><p><strong>debug_mode</strong> – if True run as single process to allow for easier debugging</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output dataframe</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe with input data and the results of all of the power calcs. note power is percent 0-100</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.plot_iteration">
+<span class="sig-name descname"><span class="pre">plot_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.plot_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.plot_iteration" title="Link to this definition">#</a></dt>
+<dd><p>plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y0</strong> – noisy concentration data</p></li>
+<li><p><strong>true_conc</strong> – true concentration data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, ax</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.power_calc">
+<span class="sig-name descname"><span class="pre">power_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_conc_ts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">{int,</span> <span class="pre">None}</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testnitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/change_detection_slope.html#DetectionPowerSlope.power_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.power_calc" title="Link to this definition">#</a></dt>
+<dd><p>calculate the slope detection power of a given concentration time series, note the power is calculated using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling frequency then you should resample the true_conc_ts before passing it to this function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idv</strong> – identifiers for the power calc sites, passed straight through to the output</p></li>
+<li><p><strong>error</strong> – standard deviation of the noise</p></li>
+<li><p><strong>true_conc_ts</strong> – the true concentration timeseries for the power calc</p></li>
+<li><p><strong>seed</strong> – int or None for random seed</p></li>
+<li><p><strong>testnitter</strong> – None (usually) or a different nitter then self.niter for testing run times</p></li>
+<li><p><strong>kwargs</strong> – any other kwargs to pass directly to the output Series</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.Series with the power calc results note power is percent 0-100</p>
+</dd>
+</dl>
+<p>Possible other dataframes if self.return_true_conc is True or self.return_noisy_conc_itters &gt; 0 in which case a dictionary will be returned:</p>
+<p>{‘power’: power_df, # always
+‘true_conc’: true_conc_ts, if self.return_true_conc is True
+‘noisy_conc’ : noisy_conc_ts, if self.return_noisy_conc_itters &gt; 0
+}</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="komanawa.gw_detect_power.timetest_slope.timeit_test">
 <span class="sig-name descname"><span class="pre">timeit_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methods</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">methods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ndata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ndata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficency_modes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">efficency_modes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/komanawa/gw_detect_power/timetest_slope.html#timeit_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#komanawa.gw_detect_power.timetest_slope.timeit_test" title="Link to this definition">#</a></dt>
@@ -398,7 +550,6 @@ units are seconds</p>
 
 </section>
 </section>
-</section>
 
 
                 </article>
@@ -407,7 +558,7 @@ units are seconds</p>
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -416,7 +567,7 @@ units are seconds</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.lookup_table_inits</span></code></p>
+        <p class="prev-next-title">komanawa.gw_detect_power.lookup_table_inits</p>
       </div>
     </a>
     <a class="right-next"
@@ -424,7 +575,7 @@ units are seconds</p>
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><code class="xref py py-mod docutils literal notranslate"><span class="pre">komanawa.gw_detect_power.version</span></code></p>
+        <p class="prev-next-title">komanawa.gw_detect_power.version</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -446,11 +597,16 @@ units are seconds</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes">Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.timeit_test"><code class="docutils literal notranslate"><span class="pre">timeit_test()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope"><code class="docutils literal notranslate"><span class="pre">DetectionPowerSlope</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.mulitprocess_power_calcs"><code class="docutils literal notranslate"><span class="pre">mulitprocess_power_calcs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.plot_iteration"><code class="docutils literal notranslate"><span class="pre">plot_iteration()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.power_calc"><code class="docutils literal notranslate"><span class="pre">power_calc()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#komanawa.gw_detect_power.timetest_slope.timeit_test"><code class="docutils literal notranslate"><span class="pre">timeit_test()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -469,8 +625,8 @@ units are seconds</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../../../../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -481,7 +637,7 @@ units are seconds</p>
 
   <p class="copyright">
     
-      © Copyright 2024, Komanawa Solutions Ltd..
+      © Copyright 2024, Kо̄manawa Solutions Ltd..
       <br/>
     
   </p>
@@ -503,7 +659,7 @@ units are seconds</p>
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.3.
 </p></div>
       
     </div>

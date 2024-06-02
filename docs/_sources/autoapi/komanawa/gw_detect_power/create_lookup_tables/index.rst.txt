@@ -1,5 +1,5 @@
-:py:mod:`komanawa.gw_detect_power.create_lookup_tables`
-=======================================================
+komanawa.gw_detect_power.create_lookup_tables
+=============================================
 
 .. py:module:: komanawa.gw_detect_power.create_lookup_tables
 
@@ -10,12 +10,8 @@
 
 
 
-Module Contents
----------------
-
-
 Functions
-~~~~~~~~~
+---------
 
 .. autoapisummary::
 
@@ -23,6 +19,8 @@ Functions
    komanawa.gw_detect_power.create_lookup_tables.piston_flow_lag_table
 
 
+Module Contents
+---------------
 
 .. py:function:: no_lag_table(test_size=False)
 

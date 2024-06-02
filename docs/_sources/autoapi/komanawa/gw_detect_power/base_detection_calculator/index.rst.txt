@@ -1,5 +1,5 @@
-:py:mod:`komanawa.gw_detect_power.base_detection_calculator`
-============================================================
+komanawa.gw_detect_power.base_detection_calculator
+==================================================
 
 .. py:module:: komanawa.gw_detect_power.base_detection_calculator
 
@@ -10,23 +10,21 @@
 
 
 
-Module Contents
----------------
-
 Classes
-~~~~~~~
+-------
 
 .. autoapisummary::
 
    komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator
 
 
-
+Module Contents
+---------------
 
 .. py:class:: BaseDetectionCalculator
 
-
    Base class for detection power calculations, provides some general methods for power calculations
+
 
    .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
 
@@ -37,8 +35,10 @@ Classes
       :return: None
 
 
+
    .. py:method:: truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2, initial_conc, target_conc, prev_slope, max_conc, min_conc, samp_per_year, samp_years, implementation_time, past_source_data=None, return_extras=False, low_mem=False, precision=2)
       :staticmethod:
+
 
       create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc
 
@@ -60,8 +60,10 @@ Classes
       :return: true timeseries, max_conc, max_conc_time, frac_p2
 
 
+
    .. py:method:: truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years, implementation_time)
       :staticmethod:
+
 
       piston flow model for the mean residence time
 
