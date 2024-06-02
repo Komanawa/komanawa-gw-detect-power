@@ -17,23 +17,23 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="_static/documentation_options.js?v=0e7b1b85"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -50,27 +50,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -92,12 +88,17 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
+  <button class="sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
-  </label>
+  </button>
   
   
   <div class=" navbar-header-items__start">
@@ -133,12 +134,12 @@
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autoapi/komanawa/gw_detect_power/index.html">
-                        Code documentation
-                      </a>
-                    </li>
-                
+<li class="nav-item pst-header-nav-item">
+  <a class="nav-link nav-internal" href="autoapi/komanawa/gw_detect_power/index.html">
+    Code documentation
+  </a>
+</li>
+
   </ul>
 </nav></div>
       
@@ -197,7 +198,7 @@
           
           
           
-          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+          <a href="https://www.komanawa.com" title="Kо̄manawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="_static/just_symbol.png" class="icon-link-image" alt="Kо̄manawa Solutions Ltd."/></a>
         </li>
 </ul></div>
       
@@ -242,18 +243,21 @@
     
       <div class="sidebar-header-items__center">
         
-          <div class="navbar-item">
+          
+          
+            <div class="navbar-item">
 <nav class="navbar-nav">
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autoapi/komanawa/gw_detect_power/index.html">
-                        Code documentation
-                      </a>
-                    </li>
-                
+<li class="nav-item pst-header-nav-item">
+  <a class="nav-link nav-internal" href="autoapi/komanawa/gw_detect_power/index.html">
+    Code documentation
+  </a>
+</li>
+
   </ul>
 </nav></div>
+          
         
       </div>
     
@@ -296,7 +300,7 @@
           
           
           
-          <a href="https://www.komanawa.com" title="Komanawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="_static/just_symbol.png" class="icon-link-image" alt="Komanawa Solutions Ltd."/></a>
+          <a href="https://www.komanawa.com" title="Kо̄manawa Solutions Ltd." class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="_static/just_symbol.png" class="icon-link-image" alt="Kо̄manawa Solutions Ltd."/></a>
         </li>
 </ul></div>
         
@@ -313,13 +317,13 @@
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
+              <div class="bd-header-article d-print-none"></div>
               
               
               
@@ -366,7 +370,13 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator">BaseDetectionCalculator (class in komanawa.gw_detect_power.base_detection_calculator)</a>
+
+      <ul>
+        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.BaseDetectionCalculator">(class in komanawa.gw_detect_power.change_detection_counterfactual)</a>
 </li>
+        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.BaseDetectionCalculator">(class in komanawa.gw_detect_power.change_detection_slope)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -391,6 +401,8 @@
 
       <ul>
         <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope">(class in komanawa.gw_detect_power.change_detection_slope)</a>
+</li>
+        <li><a href="autoapi/komanawa/gw_detect_power/timetest_slope/index.html#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope">(class in komanawa.gw_detect_power.timetest_slope)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -493,7 +505,7 @@
 </li>
         <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.mulitprocess_power_calcs">(DetectionPowerCounterFactual method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.mulitprocess_power_calcs">[1]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.mulitprocess_power_calcs">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.mulitprocess_power_calcs">[1]</a>
+        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.mulitprocess_power_calcs">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.mulitprocess_power_calcs">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/timetest_slope/index.html#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.mulitprocess_power_calcs">[2]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -519,7 +531,7 @@
 </li>
         <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.plot_iteration">(DetectionPowerCounterFactual method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.plot_iteration">[1]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.plot_iteration">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.plot_iteration">[1]</a>
+        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.plot_iteration">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.plot_iteration">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/timetest_slope/index.html#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.plot_iteration">[2]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -531,7 +543,7 @@
 </li>
         <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.power_calc">(DetectionPowerCounterFactual method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.power_calc">[1]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.power_calc">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.power_calc">[1]</a>
+        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.power_calc">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.power_calc">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/timetest_slope/index.html#komanawa.gw_detect_power.timetest_slope.DetectionPowerSlope.power_calc">[2]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -552,46 +564,16 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.time_test_power_calc_itter">time_test_power_calc_itter() (AutoDetectionPowerCounterFactual method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.time_test_power_calc_itter">[1]</a>
-
-      <ul>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.time_test_power_calc_itter">(AutoDetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerSlope.time_test_power_calc_itter">[1]</a>
+      <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">time_test_power_calc_itter() (BaseDetectionCalculator method)</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.BaseDetectionCalculator.time_test_power_calc_itter">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.BaseDetectionCalculator.time_test_power_calc_itter">[2]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">(BaseDetectionCalculator method)</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.time_test_power_calc_itter">(DetectionPowerCounterFactual method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.time_test_power_calc_itter">[1]</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.time_test_power_calc_itter">(DetectionPowerSlope method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.time_test_power_calc_itter">[1]</a>
-</li>
-      </ul></li>
       <li><a href="autoapi/komanawa/gw_detect_power/timetest_slope/index.html#komanawa.gw_detect_power.timetest_slope.timeit_test">timeit_test() (in module komanawa.gw_detect_power.timetest_slope)</a>
 </li>
-      <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">truets_from_binary_exp_piston_flow() (AutoDetectionPowerCounterFactual static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[1]</a>
-
-      <ul>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">(AutoDetectionPowerSlope static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_binary_exp_piston_flow">[1]</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">(BaseDetectionCalculator static method)</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">(DetectionPowerCounterFactual static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_binary_exp_piston_flow">[1]</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_binary_exp_piston_flow">(DetectionPowerSlope static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_binary_exp_piston_flow">[1]</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.AutoDetectionPowerCounterFactual.truets_from_piston_flow">truets_from_piston_flow() (AutoDetectionPowerCounterFactual static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerCounterFactual.truets_from_piston_flow">[1]</a>
-
-      <ul>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.AutoDetectionPowerSlope.truets_from_piston_flow">(AutoDetectionPowerSlope static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.AutoDetectionPowerSlope.truets_from_piston_flow">[1]</a>
+      <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">truets_from_binary_exp_piston_flow() (BaseDetectionCalculator static method)</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">[2]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_piston_flow">(BaseDetectionCalculator static method)</a>
+      <li><a href="autoapi/komanawa/gw_detect_power/base_detection_calculator/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_piston_flow">truets_from_piston_flow() (BaseDetectionCalculator static method)</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.BaseDetectionCalculator.truets_from_piston_flow">[1]</a>, <a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.BaseDetectionCalculator.truets_from_piston_flow">[2]</a>
 </li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_counterfactual/index.html#komanawa.gw_detect_power.change_detection_counterfactual.DetectionPowerCounterFactual.truets_from_piston_flow">(DetectionPowerCounterFactual static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerCounterFactual.truets_from_piston_flow">[1]</a>
-</li>
-        <li><a href="autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.change_detection_slope.DetectionPowerSlope.truets_from_piston_flow">(DetectionPowerSlope static method)</a>, <a href="autoapi/komanawa/gw_detect_power/index.html#komanawa.gw_detect_power.DetectionPowerSlope.truets_from_piston_flow">[1]</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -603,7 +585,7 @@
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
 </div>
@@ -612,8 +594,6 @@
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>
@@ -626,8 +606,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -638,7 +618,7 @@
 
   <p class="copyright">
     
-      © Copyright 2024, Komanawa Solutions Ltd..
+      © Copyright 2024, Kо̄manawa Solutions Ltd..
       <br/>
     
   </p>
@@ -660,7 +640,7 @@
       
         <div class="footer-item">
 <p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.3.
 </p></div>
       
     </div>

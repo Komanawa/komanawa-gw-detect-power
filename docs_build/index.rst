@@ -1,4 +1,4 @@
-Komanawa Groundwater Detection Power Calculator
+Kо̄manawa Groundwater Detection Power Calculator
 ######################################################
 
 .. figure:: ../figures/high_vs_low_detection_power.png
