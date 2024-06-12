@@ -76,6 +76,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
     :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return. if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs
     :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
     :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)
+    :param raise_from_minmax_nsamples: bool, if True then raise an exception if the maximum concentration is too far along the time series to be detected, if False then return 0 power and no change detected
     """
 
     implemented_mrt_models = ()
@@ -95,8 +96,8 @@ class DetectionPowerSlope(BaseDetectionCalculator):
                  mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05,
                  nsims_pettit=2000,
                  ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0,
-                 only_significant_noisy=False, print_freq=None):
-
+                 only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True):
+        self.raise_from_minmax_nsamples = raise_from_minmax_nsamples
         assert print_freq is None or isinstance(print_freq, int), 'print_freq must be None or an integer'
         self.print_freq = print_freq
         assert significance_mode in self.implemented_significance_modes, (f'significance_mode {significance_mode} not '
@@ -272,9 +273,15 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             y = y[:, imin:]
             true_data = true_data[imin:]
         n_sims, n_samples = y.shape
-        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
-                                               'raised here that means that the max concentration is too far along'
-                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
+        if n_samples < self.min_samples:
+            if self.raise_from_minmax_nsamples:
+                raise ValueError('n_samples must be greater than min_samples, '
+                                 'raised here that means that the max concentration is too far along'
+                                 f'the timeseries to be detected: {imax=}, {n_samples0}')
+            else:
+                if return_slope:
+                    return 0., np.zeros(n_sims, dtype=bool), 0.
+                return 0., np.zeros(n_sims, dtype=bool)
         x = np.arange(n_samples)
         p_val = []
         slopes = []
@@ -328,9 +335,15 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             y = y[:, imin:]
             true_data = true_data[imin:]
         n_sims, n_samples = y.shape
-        assert n_samples >= self.min_samples, ('n_samples must be greater than min_samples, '
-                                               'raised here that means that the max concentration is too far along'
-                                               f'the timeseries to be detected: {imax=}, {n_samples0}')
+        if n_samples < self.min_samples:
+            if self.raise_from_minmax_nsamples:
+                raise ValueError('n_samples must be greater than min_samples, '
+                                 'raised here that means that the max concentration is too far along'
+                                 f'the timeseries to be detected: {imax=}, {n_samples0}')
+            else:
+                if return_slope:
+                    return 0., np.zeros(n_sims, dtype=bool), 0.
+                return 0., np.zeros(n_sims, dtype=bool)
 
         if self.efficent_mode and not return_slope:
             mk = MannKendall(data=true_data, alpha=self.min_p_value)
