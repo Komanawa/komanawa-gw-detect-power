@@ -1,4 +1,4 @@
 Kо̄manawa Groundwater Detection Power Calculator
 ##################################################
 
-Documentation is available at: https://komanawa-solutions-ltd.github.io/komanawa-gw-detect-power/
+Documentation is available at: https://komanawa.github.io/komanawa-gw-detect-power/
