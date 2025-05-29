@@ -135,6 +135,9 @@ class BaseDetectionCalculator:
                                             logging_level=self.log_level)
         result_data = pd.DataFrame(result_data)
         result_data.set_index('idv', inplace=True)
+        # todo ensure constant index with or without python errors
+        # todo ensure that the same columns are returned in the same order regardless of python errors
+        # todo numpy 2.0
 
         if outpath is not None:
             print(f'saving results to: {outpath}')
@@ -144,6 +147,9 @@ class BaseDetectionCalculator:
 
     def _run_multiprocess_auto(self, outpath, idv_vals, run, debug_mode, use_kwargs):
         outpath, idv_vals, use_kwargs = self._multiprocess_checks(outpath, idv_vals, **use_kwargs)
+        # todo ensure constant index with or without python errors
+        # todo ensure that the same columns are returned in the same order regardless of python errors
+        # todo numpy 2.0
 
         # make runs
         runs = []
