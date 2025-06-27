@@ -28,7 +28,7 @@ dependencies = [
     "tables>=3.8.0",
     'psutil>=5.9.5',
     'komanawa-kendall-stats>=2.0.0',
-    'komanawa-gw-age-tools>=2.0.0',
+    'komanawa-gw-age-tools>=2.1.2',
     'pyhomogeneity>=1.1.0',
 ]
 
