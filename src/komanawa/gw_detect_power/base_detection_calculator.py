@@ -350,7 +350,7 @@ class BaseDetectionCalculator:
                 use_ages = (t - ages).round(precision)
                 temp_out = total_source_conc.loc[use_ages.min() - 1:use_ages.max() + 2]
                 temp_out = pd.concat((temp_out,
-                                      pd.Series(index=use_ages[~np.in1d(use_ages, temp_out.index)], data=np.nan)))
+                                      pd.Series(index=use_ages[~np.isin(use_ages, temp_out.index)], data=np.nan)))
                 temp_out = temp_out.sort_index()
                 temp_out = temp_out.interpolate(method='linear')
                 out_conc[i] = (temp_out.loc[(t - ages).round(precision)] * age_fractions).sum()
@@ -504,7 +504,7 @@ class BaseDetectionCalculator:
                 mrt_model_vals = np.array([mrt_model_vals] * len(id_vals))
             mrt_model_vals = np.atleast_1d(mrt_model_vals)
             assert mrt_model_vals.shape == id_vals.shape, f'mrt_model_vals and mrt_vals must have the same shape'
-            assert np.in1d(mrt_model_vals, self.implemented_mrt_models).all(), (
+            assert np.isin(mrt_model_vals, self.implemented_mrt_models).all(), (
                 f'mrt_model_vals must be one of {self.implemented_mrt_models} '
                 f'got {np.unique(mrt_model_vals)}')
 

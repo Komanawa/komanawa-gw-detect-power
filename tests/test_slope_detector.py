@@ -6,12 +6,14 @@ import unittest
 import itertools
 import time
 from copy import deepcopy
+
+import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from komanawa.gw_detect_power import DetectionPowerSlope, AutoDetectionPowerSlope
-
+matplotlib.use("Agg")
 
 class SlopeDetectionPowerTester(unittest.TestCase):
 
@@ -630,9 +632,13 @@ class SlopeDetectionPowerTester(unittest.TestCase):
         if write_test_data:
             save_path.unlink(missing_ok=True)
             for k, v in all_out['both_dp'].items():
+                if isinstance(v, np.ndarray):
+                    v = pd.Series(v, name=k)
                 v.to_hdf(save_path, k)
         else:
             for k, v in all_out['both_dp'].items():
+                if isinstance(v, np.ndarray):
+                    v = pd.Series(v, name=k)
                 if isinstance(v, pd.DataFrame):
                     true = pd.read_hdf(save_path, k)
                     assert isinstance(true, pd.DataFrame)

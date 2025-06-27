@@ -69,9 +69,9 @@ Install from Github
     conda activate gw_detect
 
     pip install pyhomogeneity
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats.git
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-age-tools
-    pip install git+https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power
+    pip install git+https://github.com/Komanawa/komanawa-kendall-stats.git
+    pip install git+https://github.com/Komanawa/komanawa-gw-age-tools
+    pip install git+https://github.com/Komanawa/komanawa-gw-detect-power
 
 
 Dependencies
