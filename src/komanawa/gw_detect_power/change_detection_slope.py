@@ -176,7 +176,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             assert isinstance(efficent_mode, bool), 'efficent_mode must be a boolean'
             if efficent_mode:
                 warnings.warn('efficent_mode not implemented for pettitt test, setting efficent_mode=False')
-            self.efficent_mode = False  # TODO long term fix this if needed
+            self.efficent_mode = False  # todo longterm fix this if needed
             self.power_test = self._power_test_pettitt
         else:
             raise NotImplementedError(f'significance_mode {significance_mode} not implemented, shouldnt get here')

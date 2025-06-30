@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>komanawa.gw_detect_power.change_detection_slope &#8212; komanawa-gw-detect-power v2.0.1 documentation</title>
+    <title>komanawa.gw_detect_power.change_detection_slope &#8212; komanawa-gw-detect-power v2.0.2 documentation</title>
   
   
   
@@ -35,7 +35,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0e7b1b85"></script>
+    <script src="../../../_static/documentation_options.js?v=398391ef"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/komanawa/gw_detect_power/change_detection_slope';</script>
@@ -120,7 +120,7 @@
     <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
   
   
-    <p class="title logo__title">Gw-Detect-Power v2.0.1 Overview</p>
+    <p class="title logo__title">Gw-Detect-Power v2.0.2 Overview</p>
   
 </a></div>
     
@@ -444,6 +444,7 @@
 <span class="sd">    :param return_noisy_conc_itters: int &lt;= nsims, default = 0 Number of noisy simulations to return. if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs</span>
 <span class="sd">    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned</span>
 <span class="sd">    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)</span>
+<span class="sd">    :param raise_from_minmax_nsamples: bool, if True then raise an exception if the maximum concentration is too far along the time series to be detected, if False then return 0 power and no change detected</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">implemented_mrt_models</span> <span class="o">=</span> <span class="p">()</span>
@@ -463,8 +464,8 @@
                  <span class="n">mpmk_check_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mpmk_efficent_min</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mpmk_window</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
                  <span class="n">nsims_pettit</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
                  <span class="n">ncores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">return_true_conc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_noisy_conc_itters</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">only_significant_noisy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
+                 <span class="n">only_significant_noisy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">print_freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raise_from_minmax_nsamples</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raise_from_minmax_nsamples</span> <span class="o">=</span> <span class="n">raise_from_minmax_nsamples</span>
         <span class="k">assert</span> <span class="n">print_freq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">print_freq</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;print_freq must be None or an integer&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">print_freq</span> <span class="o">=</span> <span class="n">print_freq</span>
         <span class="k">assert</span> <span class="n">significance_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented_significance_modes</span><span class="p">,</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;significance_mode </span><span class="si">{</span><span class="n">significance_mode</span><span class="si">}</span><span class="s1"> not &#39;</span>
@@ -543,7 +544,7 @@
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">efficent_mode</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> <span class="s1">&#39;efficent_mode must be a boolean&#39;</span>
             <span class="k">if</span> <span class="n">efficent_mode</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;efficent_mode not implemented for pettitt test, setting efficent_mode=False&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">efficent_mode</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># TODO long term fix this if needed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">efficent_mode</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># todo longterm fix this if needed</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">power_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power_test_pettitt</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;significance_mode </span><span class="si">{</span><span class="n">significance_mode</span><span class="si">}</span><span class="s1"> not implemented, shouldnt get here&#39;</span><span class="p">)</span>
@@ -646,9 +647,15 @@
             <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">imin</span><span class="p">:]</span>
             <span class="n">true_data</span> <span class="o">=</span> <span class="n">true_data</span><span class="p">[</span><span class="n">imin</span><span class="p">:]</span>
         <span class="n">n_sims</span><span class="p">,</span> <span class="n">n_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;n_samples must be greater than min_samples, &#39;</span>
-                                               <span class="s1">&#39;raised here that means that the max concentration is too far along&#39;</span>
-                                               <span class="sa">f</span><span class="s1">&#39;the timeseries to be detected: </span><span class="si">{</span><span class="n">imax</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">n_samples0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_from_minmax_nsamples</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n_samples must be greater than min_samples, &#39;</span>
+                                 <span class="s1">&#39;raised here that means that the max concentration is too far along&#39;</span>
+                                 <span class="sa">f</span><span class="s1">&#39;the timeseries to be detected: </span><span class="si">{</span><span class="n">imax</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">n_samples0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">return_slope</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="mf">0.</span>
+                <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
         <span class="n">p_val</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">slopes</span> <span class="o">=</span> <span class="p">[]</span>
@@ -702,9 +709,15 @@
             <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">imin</span><span class="p">:]</span>
             <span class="n">true_data</span> <span class="o">=</span> <span class="n">true_data</span><span class="p">[</span><span class="n">imin</span><span class="p">:]</span>
         <span class="n">n_sims</span><span class="p">,</span> <span class="n">n_samples</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;n_samples must be greater than min_samples, &#39;</span>
-                                               <span class="s1">&#39;raised here that means that the max concentration is too far along&#39;</span>
-                                               <span class="sa">f</span><span class="s1">&#39;the timeseries to be detected: </span><span class="si">{</span><span class="n">imax</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">n_samples0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">raise_from_minmax_nsamples</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n_samples must be greater than min_samples, &#39;</span>
+                                 <span class="s1">&#39;raised here that means that the max concentration is too far along&#39;</span>
+                                 <span class="sa">f</span><span class="s1">&#39;the timeseries to be detected: </span><span class="si">{</span><span class="n">imax</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">n_samples0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">return_slope</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span> <span class="mf">0.</span>
+                <span class="k">return</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_sims</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">efficent_mode</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_slope</span><span class="p">:</span>
             <span class="n">mk</span> <span class="o">=</span> <span class="n">MannKendall</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">true_data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_p_value</span><span class="p">)</span>

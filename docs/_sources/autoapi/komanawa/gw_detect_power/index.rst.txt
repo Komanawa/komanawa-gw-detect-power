@@ -206,7 +206,7 @@ Package Contents
 
 
 
-.. py:class:: AutoDetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None)
+.. py:class:: AutoDetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
 
    Bases: :py:obj:`DetectionPowerSlope`
 
@@ -492,7 +492,7 @@ Package Contents
 
 
 
-.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None)
+.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
 
    Bases: :py:obj:`komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator`
 
@@ -546,6 +546,7 @@ Package Contents
    :param return_noisy_conc_itters: int <= nsims, default = 0 Number of noisy simulations to return. if 0 then no noisy simulations are returned, not supported with multiprocessing power calcs
    :param only_significant_noisy: bool if True then only return noisy simulations where a change was detected if there are fewer noisy simulations with changes detected than return_noisy_conc_itters all significant simulations will be returned. if there are no noisy simulations with changes detected then and empty dataframe is returned
    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)
+   :param raise_from_minmax_nsamples: bool, if True then raise an exception if the maximum concentration is too far along the time series to be detected, if False then return 0 power and no change detected
 
 
    .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, true_conc_ts_vals: {np.ndarray, list}, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)

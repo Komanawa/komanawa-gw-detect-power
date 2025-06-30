@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>komanawa.gw_detect_power.base_detection_calculator &#8212; komanawa-gw-detect-power v2.0.1 documentation</title>
+    <title>komanawa.gw_detect_power.base_detection_calculator &#8212; komanawa-gw-detect-power v2.0.2 documentation</title>
   
   
   
@@ -35,7 +35,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
   <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0e7b1b85"></script>
+    <script src="../../../_static/documentation_options.js?v=398391ef"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/komanawa/gw_detect_power/base_detection_calculator';</script>
@@ -120,7 +120,7 @@
     <script>document.write(`<img src="" class="logo__image only-dark" alt=""/>`);</script>
   
   
-    <p class="title logo__title">Gw-Detect-Power v2.0.1 Overview</p>
+    <p class="title logo__title">Gw-Detect-Power v2.0.2 Overview</p>
   
 </a></div>
     
@@ -500,6 +500,9 @@
                                             <span class="n">logging_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_level</span><span class="p">)</span>
         <span class="n">result_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
         <span class="n">result_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;idv&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># todo ensure constant index with or without python errors</span>
+        <span class="c1"># todo ensure that the same columns are returned in the same order regardless of python errors</span>
+        <span class="c1"># todo numpy 2.0</span>
 
         <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saving results to: </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -509,6 +512,9 @@
 
     <span class="k">def</span> <span class="nf">_run_multiprocess_auto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">debug_mode</span><span class="p">,</span> <span class="n">use_kwargs</span><span class="p">):</span>
         <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">use_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiprocess_checks</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">use_kwargs</span><span class="p">)</span>
+        <span class="c1"># todo ensure constant index with or without python errors</span>
+        <span class="c1"># todo ensure that the same columns are returned in the same order regardless of python errors</span>
+        <span class="c1"># todo numpy 2.0</span>
 
         <span class="c1"># make runs</span>
         <span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -711,7 +717,7 @@
                 <span class="n">use_ages</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span>
                 <span class="n">temp_out</span> <span class="o">=</span> <span class="n">total_source_conc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">use_ages</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="n">use_ages</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
                 <span class="n">temp_out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">temp_out</span><span class="p">,</span>
-                                      <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">use_ages</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">use_ages</span><span class="p">,</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">index</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)))</span>
+                                      <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">use_ages</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">use_ages</span><span class="p">,</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">index</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)))</span>
                 <span class="n">temp_out</span> <span class="o">=</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
                 <span class="n">temp_out</span> <span class="o">=</span> <span class="n">temp_out</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
                 <span class="n">out_conc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">temp_out</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ages</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">precision</span><span class="p">)]</span> <span class="o">*</span> <span class="n">age_fractions</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -872,7 +878,7 @@
                 <span class="n">mrt_model_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">mrt_model_vals</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_vals</span><span class="p">))</span>
             <span class="n">mrt_model_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">mrt_model_vals</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">id_vals</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;mrt_model_vals and mrt_vals must have the same shape&#39;</span>
-            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;mrt_model_vals must be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">implemented_mrt_models</span><span class="si">}</span><span class="s1"> &#39;</span>
                 <span class="sa">f</span><span class="s1">&#39;got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mrt_model_vals</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
