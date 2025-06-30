@@ -15,7 +15,7 @@ import sys
 import warnings
 
 from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, \
-        check_age_inputs
+    check_age_inputs
 
 
 class BaseDetectionCalculator:
@@ -137,7 +137,6 @@ class BaseDetectionCalculator:
         result_data.set_index('idv', inplace=True)
         # todo ensure constant index with or without python errors
         # todo ensure that the same columns are returned in the same order regardless of python errors
-        # todo numpy 2.0
 
         if outpath is not None:
             print(f'saving results to: {outpath}')
@@ -149,7 +148,6 @@ class BaseDetectionCalculator:
         outpath, idv_vals, use_kwargs = self._multiprocess_checks(outpath, idv_vals, **use_kwargs)
         # todo ensure constant index with or without python errors
         # todo ensure that the same columns are returned in the same order regardless of python errors
-        # todo numpy 2.0
 
         # make runs
         runs = []
@@ -463,6 +461,26 @@ class BaseDetectionCalculator:
                 'idv': kwargs['idv'],
                 'python_error': traceback.format_exc(),
             }
+            if self._counterfactual:
+                out.update({
+
+                    'power': np.nan,
+                    'error_base': np.nan,
+                    'error_alt': np.nan,
+                    'seed_base': 0,
+                    'seed_alt': 0,
+
+                })
+
+            else:
+                out.update({
+                    'power': np.nan,
+                    'max_conc': np.nan,
+                    'max_conc_time': np.nan,
+                    'error': np.nan,
+                    'seed': 0,
+                })
+
             for k in kwargs:
                 if k not in ['true_conc_ts', 'true_conc_base', 'true_conc_alt', 'idv']:
                     out[k] = kwargs[k]
