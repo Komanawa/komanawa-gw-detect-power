@@ -354,7 +354,7 @@
 <dd class="field-odd"><p>v2.0.2</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>Jun 27, 2025</p>
+<dd class="field-even"><p>Jul 25, 2025</p>
 </dd>
 </dl>
 <div class="toctree-wrapper compound">
@@ -366,9 +366,9 @@ there is also support for understanding statistical power in the context of grou
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).</p>
 <section id="python-package-usage">
 <h2>Python Package usage<a class="headerlink" href="#python-package-usage" title="Link to this heading">#</a></h2>
-<p><a class="reference external" href="autoapi/gw_detect_power/index.html">Class and Method details</a></p>
+<p><a class="reference external" href="autoapi/komanawa/gw_detect_power/index.html">Class and Method details</a></p>
 <p>In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at <a class="github reference external" href="https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples">Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples</a>.</p>
+This repo is available at <a class="github reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples">Komanawa/komanawa-gw-detect-power-worked-examples</a>.</p>
 </section>
 <section id="supporting-documents">
 <h2>Supporting Documents<a class="headerlink" href="#supporting-documents" title="Link to this heading">#</a></h2>
@@ -467,16 +467,16 @@ b. If the historical concentration data does not have a statistically robust tre
 <ol class="arabic simple">
 <li><dl class="simple">
 <dt>Locate and download the right table (decision tree):</dt><dd><ol class="arabic simple">
-<li><p><a class="reference external" href="lookup_tables/no_lag_table.xlsx">if you are not interested in the effect of lag</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/no_lag_table.xlsx">if you are not interested in the effect of lag</a></p></li>
 <li><dl class="simple">
 <dt>if you are interested in the effect of lag, then download the table for the appropriate implementation time:</dt><dd><ul class="simple">
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_5.xlsx">5 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_10.xlsx">10 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_20.xlsx">20 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_30.xlsx">30 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_50.xlsx">50 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_75.xlsx">75 year implementation time</a></p></li>
-<li><p><a class="reference external" href="lookup_tables/piston_flow_lag_table_imp_100.xlsx">100 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_5.xlsx">5 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_10.xlsx">10 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_20.xlsx">20 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_30.xlsx">30 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_50.xlsx">50 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_75.xlsx">75 year implementation time</a></p></li>
+<li><p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_100.xlsx">100 year implementation time</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -521,7 +521,7 @@ b. If the historical concentration data does not have a statistically robust tre
 <li><p>Linear regression from the [max|min] point to the last point (detection is a significant slope in the expected direction)</p></li>
 <li><p>Mann-Kendall test from the first point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)</p></li>
 <li><p>Mann-Kendall test from the [max|min] point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)</p></li>
-<li><p>MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires komanawa-kendall-stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See <a class="reference external" href="https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats#multipartkendall">komanawa-kendall-stats</a> for more details</p></li>
+<li><p>MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires komanawa-kendall-stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See <a class="reference external" href="https://github.com/Komanawa/komanawa-kendall-stats#multipartkendall">komanawa-kendall-stats</a> for more details</p></li>
 </ul>
 <section id="pettitt-test-requires-pyhomogeneity-optional-dependency">
 <h4>Pettitt test (requires pyhomogeneity optional dependency)<a class="headerlink" href="#pettitt-test-requires-pyhomogeneity-optional-dependency" title="Link to this heading">#</a></h4>
@@ -576,7 +576,7 @@ identify slow decreases in concentration.  However, the Pettitt test is included
 <li><p>the minimum number of breakpoints to test (mpmk_efficent_min)</p></li>
 <li><p>or as a fraction of the length of the full time series (mpmk_window).</p></li>
 </ul>
-<p>Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the <a class="reference external" href="https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats">komanawa-kendall-stats repo</a>. Where both a mpmk_window and a check_step&gt;1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).</p>
+<p>Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the <a class="reference external" href="https://github.com/Komanawa/komanawa-kendall-stats">komanawa-kendall-stats repo</a>. Where both a mpmk_window and a check_step&gt;1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).</p>
 <p>For the Pettitt test the efficiency mode is not yet implemented.</p>
 <section id="memory-requirements">
 <h3>Memory Requirements<a class="headerlink" href="#memory-requirements" title="Link to this heading">#</a></h3>
