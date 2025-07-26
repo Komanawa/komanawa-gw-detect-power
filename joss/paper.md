@@ -38,7 +38,7 @@ The goal of the package is to reduce the barriers for including detection power 
 Importantly, the package is designed to provide detection power estimates for water quality monitoring programmes with and without the effects of groundwater transport processes (lag).
 The package supports multiple detection methodologies including linear regression, Mann-Kendall and Multipart-Mann-Kendall tests, as well as counterfactual analysis (pairwise comparisons) for parametric and non-parametric data with Paired Student-T and Wilcoxon tests, respectively.
 Finally, the package provides links to worked examples (in a separate repository), a webinar, and other supporting documentation. 
-Further details on the package can in the package documentation at https://komanawa.github.io/komanawa-gw-detect-power/.
+Further details on the package can be found on the [package documentation webpage](https://komanawa.github.io/komanawa-gw-detect-power/).
 
 # Statement of need
 
