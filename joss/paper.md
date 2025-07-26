@@ -35,7 +35,7 @@ Understanding the level of monitoring that is required to detect land management
 Despite this need, detection power analysis is often excluded from monitoring programme design and freshwater management plans.
 We present a Python package to predict the probability of detecting changes in water quality (detection power) due to prescribed improvements in surface and groundwater contaminant concentrations resulting from land management changes for a given sampling frequency and duration.
 The goal of the package is to reduce the barriers for including detection power analysis in the design of water quality management and monitoring programmes.
-Importantly the package is designed to provide detection power estimates for water quality monitoring programmes with and without the effects of groundwater transport processes (lag).
+Importantly, the package is designed to provide detection power estimates for water quality monitoring programmes with and without the effects of groundwater transport processes (lag).
 The package supports multiple detection methodologies including linear regression, Mann-Kendall and Multipart-Mann-Kendall tests, as well as counterfactual analysis (pairwise comparisons) for parametric and non-parametric data with Paired Student-T and Wilcoxon tests, respectively.
 Finally, the package provides links to worked examples (in a separate repository), a webinar, and other supporting documentation. 
 Further details on the package can in the package documentation at https://komanawa.github.io/komanawa-gw-detect-power/.
@@ -58,8 +58,8 @@ Management agencies frequently overlook detection power analysis when designing 
 When such analysis is undertaken, the effects of lag are often ignored due to the complexity of incorporating these effects.
 @ascottNeedIntegrateLegacy2021 has shown the need to integrate the effects of lag into the models and decision-making processes used to manage freshwater resources.
 This package was created to lower the difficulty of conducting detection power assessments in the context of lag. 
-It has been used to conduct a New Zealand wide analysis of the detection power of current monitoring programmes for groundwater, and to undertake multiple detailed local case studies of specific catchments(@dumontDeterminingLikelihoodCost2024, @dumont2024power, @dumontAbilityCurrentMonitoring2024).
-These studies highlight the cost and times required to detect changes in water quality, and the importance of considering lag in the design of monitoring programmes.
+It has been used to conduct a New Zealand wide analysis of the detection power of current monitoring programmes for groundwater and to undertake multiple detailed local case studies of specific catchments(@dumontDeterminingLikelihoodCost2024, @dumont2024power, @dumontAbilityCurrentMonitoring2024).
+These studies highlight the cost and times required to detect changes in water quality and the importance of considering lag in the design of monitoring programmes.
 
 
 # Acknowledgements
