@@ -378,7 +378,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> \
-        <span class="n">check_age_inputs</span>
+    <span class="n">check_age_inputs</span>
 
 
 <div class="viewcode-block" id="BaseDetectionCalculator">
@@ -502,7 +502,6 @@
         <span class="n">result_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;idv&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># todo ensure constant index with or without python errors</span>
         <span class="c1"># todo ensure that the same columns are returned in the same order regardless of python errors</span>
-        <span class="c1"># todo numpy 2.0</span>
 
         <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;saving results to: </span><span class="si">{</span><span class="n">outpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -514,7 +513,6 @@
         <span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="n">use_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multiprocess_checks</span><span class="p">(</span><span class="n">outpath</span><span class="p">,</span> <span class="n">idv_vals</span><span class="p">,</span> <span class="o">**</span><span class="n">use_kwargs</span><span class="p">)</span>
         <span class="c1"># todo ensure constant index with or without python errors</span>
         <span class="c1"># todo ensure that the same columns are returned in the same order regardless of python errors</span>
-        <span class="c1"># todo numpy 2.0</span>
 
         <span class="c1"># make runs</span>
         <span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -837,6 +835,26 @@
                 <span class="s1">&#39;idv&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;idv&#39;</span><span class="p">],</span>
                 <span class="s1">&#39;python_error&#39;</span><span class="p">:</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">(),</span>
             <span class="p">}</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counterfactual</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+
+                    <span class="s1">&#39;power&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;error_base&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;error_alt&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;seed_base&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;seed_alt&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+
+                <span class="p">})</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="s1">&#39;power&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;max_conc&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;max_conc_time&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                    <span class="s1">&#39;seed&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="p">})</span>
+
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;true_conc_ts&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_base&#39;</span><span class="p">,</span> <span class="s1">&#39;true_conc_alt&#39;</span><span class="p">,</span> <span class="s1">&#39;idv&#39;</span><span class="p">]:</span>
                     <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>

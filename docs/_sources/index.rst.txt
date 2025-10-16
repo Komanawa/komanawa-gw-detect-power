@@ -26,10 +26,10 @@ and groundwater temporal dispersion (e.g. mixing of different aged waters via a 
 Python Package usage
 ==============================================================
 
-`Class and Method details <autoapi/gw_detect_power/index.html>`_
+`Class and Method details <autoapi/komanawa/gw_detect_power/index.html>`_
 
 In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at `https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa-Solutions-Ltd/komanawa-gw-detect-power-worked-examples>`_.
+This repo is available at `https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples>`_.
 
 Supporting Documents
 =====================
@@ -138,15 +138,15 @@ The piston flow lag includes mean residence times of 1, 3, 5, 7, 10, 12, 15 year
 To use these tables:
 
 1. Locate and download the right table (decision tree):
-    1. `if you are not interested in the effect of lag <lookup_tables/no_lag_table.xlsx>`_
+    1. `if you are not interested in the effect of lag <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/no_lag_table.xlsx>`_
     2. if you are interested in the effect of lag, then download the table for the appropriate implementation time:
-        * `5 year implementation time <lookup_tables/piston_flow_lag_table_imp_5.xlsx>`_
-        * `10 year implementation time <lookup_tables/piston_flow_lag_table_imp_10.xlsx>`_
-        * `20 year implementation time <lookup_tables/piston_flow_lag_table_imp_20.xlsx>`_
-        * `30 year implementation time <lookup_tables/piston_flow_lag_table_imp_30.xlsx>`_
-        * `50 year implementation time <lookup_tables/piston_flow_lag_table_imp_50.xlsx>`_
-        * `75 year implementation time <lookup_tables/piston_flow_lag_table_imp_75.xlsx>`_
-        * `100 year implementation time <lookup_tables/piston_flow_lag_table_imp_100.xlsx>`_
+        * `5 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_5.xlsx>`_
+        * `10 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_10.xlsx>`_
+        * `20 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_20.xlsx>`_
+        * `30 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_30.xlsx>`_
+        * `50 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_50.xlsx>`_
+        * `75 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_75.xlsx>`_
+        * `100 year implementation time <https://github.com/Komanawa/komanawa-gw-detect-power/blob/main/lookup_tables/piston_flow_lag_table_imp_100.xlsx>`_
 2. open the table in a spreadsheet program (e.g. excel)
 3. Locate the row that corresponds to the closest:
     * sampling duration (samp_years)
@@ -180,7 +180,7 @@ These are listed in the order of increasing computational cost.
 * Linear regression from the [max|min] point to the last point (detection is a significant slope in the expected direction)
 * Mann-Kendall test from the first point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)
 * Mann-Kendall test from the [max|min] point to the last point (requires komanawa-kendall-stats optional dependency) (detection is a significant slope in the expected direction)
-* MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires komanawa-kendall-stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See `komanawa-kendall-stats <https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats#multipartkendall>`_ for more details
+* MultiPart Mann Kendall/Multipart Seasonal Mann Kendall (requires komanawa-kendall-stats optional dependency) here if the process identifies any significant breakpoints (within the alpha, no_trend_alpha, and expected slopes) the test records detection. See `komanawa-kendall-stats <https://github.com/Komanawa/komanawa-kendall-stats#multipartkendall>`_ for more details
 
 Pettitt test (requires pyhomogeneity optional dependency)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -241,7 +241,7 @@ For the MultiPart Mann-Kendall efficiency mode both calculates the trend detecti
 * the minimum number of breakpoints to test (mpmk_efficent_min)
 * or as a fraction of the length of the full time series (mpmk_window).
 
-Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `komanawa-kendall-stats repo <https://github.com/Komanawa-Solutions-Ltd/komanawa-kendall-stats>`_. Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).
+Note that you can also and independently set the step size of the breakpoints (mpmk_check_step) (e.g a step size of 1 will test every possible breakpoint, a step size of 2 will test every second breakpoint etc.).  For more information see the docstring, the docstring of the MultiPartMannKendall class, and the `komanawa-kendall-stats repo <https://github.com/Komanawa/komanawa-kendall-stats>`_. Where both a mpmk_window and a check_step>1 is passed the mpmk_window will be used to define the window size and the check_step will be used to define the step size within the window. The minimum number of breakpoints to test (mpmk_efficent_min) is always respected (i.e. if the window size is less than the minimum number of breakpoints to test, then the window size will be increased to the minimum number of breakpoints to test, but the space between breakpoints will still be defined by check_step).
 
 For the Pettitt test the efficiency mode is not yet implemented.
 
@@ -416,8 +416,11 @@ Pettitt test
    :align: center
 
 
-Further Improvements
+Contributions
 ======================
 
-If you have any suggestions for improvements please let us know by raising an issue on the github repo.
+We welcome contributions to the code.
+For bug fixes, features, or documentation improvements please raise a github issue and then ideally fork the repository and raise a pull request.
+Any bug fixes or features should include tests (via the unitest framework).
+For significant contributions please contact us first to discuss your plans.
 
