@@ -416,8 +416,11 @@ Pettitt test
    :align: center
 
 
-Further Improvements
+Contributions
 ======================
 
-If you have any suggestions for improvements please let us know by raising an issue on the github repo.
+We welcome contributions to the code.
+For bug fixes, features, or documentation improvements please raise a github issue and then ideally fork the repository and raise a pull request.
+Any bug fixes or features should include tests (via the unitest framework).
+For significant contributions please contact us first to discuss your plans.
 
