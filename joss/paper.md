@@ -15,7 +15,7 @@ authors:
     affiliation: 2
   - name: Richard McDowell
     orcid: 0000-0003-3911-4825
-    affiliation: ['3', '4']
+    affiliation: "3, 4"
 affiliations:
  - name: Komanawa Solutions Ltd, Christchurch, New Zealand
    index: 1
