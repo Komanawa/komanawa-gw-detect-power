@@ -3,11 +3,15 @@ created matt_dumont
 on: 25/01/24
 """
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
 import warnings
 import logging
+from numbers import Number
+from typing import Union, Optional, Tuple, Literal, Sequence
 from komanawa.gw_detect_power.base_detection_calculator import BaseDetectionCalculator
 
 
@@ -62,11 +66,11 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
     _scipy_alternatives = ('two-sided', 'less', 'greater')
 
     def __init__(self,
-                 significance_mode,
-                 nsims=1000,
-                 p_value=0.05,
-                 min_samples=10,
-                 alternative='alt!=base',
+                 significance_mode: Literal['paired-t-test', 'wilcoxon-signed-rank-test'],
+                 nsims: int = 1000,
+                 p_value: float = 0.05,
+                 min_samples: int = 10,
+                 alternative: Literal['alt!=base', 'alt<base', 'alt>base'] = 'alt!=base',
                  wx_zero_method='wilcox', wx_correction=False, wx_method='auto',
                  ncores=None,
                  log_level=logging.INFO,
@@ -122,7 +126,8 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y0_base, y0_alt, true_conc_base, true_conc_alt, ax=None):
+    def plot_iteration(self, y0_base: Sequence, y0_alt: Sequence, true_conc_base: Sequence, true_conc_alt: Sequence,
+                       ax: Optional[plt.Axes] = None) -> Tuple[plt.Figure, plt.Axes]:
         """
         plot the concentration data itteration and the true concentration data
 
@@ -257,12 +262,12 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
     def power_calc(self, idv, error_base: float,
                    true_conc_base: np.ndarray,
                    true_conc_alt: np.ndarray,
-                   error_alt: {float, None} = None,
-                   seed_base: {int, None} = None,
-                   seed_alt: {int, None} = None,
+                   error_alt: Optional[float] = None,
+                   seed_base: Optional[int] = None,
+                   seed_alt: Optional[int] = None,
                    testnitter=None,
                    **kwargs
-                   ):
+                   )-> Union[pd.Series, dict]:
 
         """
         calculate the counterfactual detection power of a pair of concentration time series note the power is calculated using the sampling frequency of the true_conc_base/alt, if you want to test the power at a different sampling frequency then you should resample the true_conc_base/alt before passing it to this function
@@ -301,15 +306,15 @@ class DetectionPowerCounterFactual(BaseDetectionCalculator):
             self,
             outpath: {Path, None, str},
             idv_vals: np.ndarray,
-            true_conc_base_vals: {np.ndarray, list},
-            true_conc_alt_vals: {np.ndarray, list},
-            error_base_vals: {np.ndarray, None, float},
-            error_alt_vals: {np.ndarray, None, float} = None,
-            seed_alt_vals_vals: {np.ndarray, int, None} = None,
-            seed_base_vals_vals: {np.ndarray, int, None} = None,
+            true_conc_base_vals: Sequence,
+            true_conc_alt_vals: Sequence,
+            error_base_vals: Union[Sequence, float],
+            error_alt_vals: Optional[Union[Sequence, float]] = None,
+            seed_alt_vals_vals: Optional[Union[Sequence[int], int]] = None,
+            seed_base_vals_vals: Optional[Union[Sequence[int], int]] = None,
             run=True, debug_mode=False,
             **kwargs
-    ):
+    )-> pd.DataFrame:
         """
         multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
 
@@ -400,17 +405,17 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     condensed_mode = False
 
     def set_condensed_mode(self,
-                           target_conc_per=1,
-                           initial_conc_per=1,
-                           error_per=2,
-                           prev_slope_per=2,
-                           max_conc_lim_per=1,
-                           min_conc_lim_per=1,
-                           mrt_per=0,
-                           mrt_p1_per=2,
-                           frac_p1_per=2,
-                           f_p1_per=2,
-                           f_p2_per=2):
+                           target_conc_per: int = 1,
+                           initial_conc_per: int = 1,
+                           error_per: int = 2,
+                           prev_slope_per: int = 2,
+                           max_conc_lim_per: int = 1,
+                           min_conc_lim_per: int = 1,
+                           mrt_per: int = 0,
+                           mrt_p1_per: int = 2,
+                           frac_p1_per: int = 2,
+                           f_p1_per: int = 2,
+                           f_p2_per: int = 2):
         """
         set calculator to condense the number of runs based by rounding the inputs to a specified precision
 
@@ -459,24 +464,24 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
             min_conc_lim: float,
             mrt: float = 0,
 
-            target_conc_base: {float, None} = None,
-            implementation_time_base: {int, None} = None,
-            error_alt: {float, None} = None,
-            delay_years: {int} = 0,
+            target_conc_base: Optional[float] = None,
+            implementation_time_base: Optional[int] = None,
+            error_alt: Optional[float] = None,
+            delay_years: int = 0,
 
             # options for binary_exponential_piston_flow model
-            mrt_p1: {float, None} = None,
-            frac_p1: {float, None} = None,
-            f_p1: {float, None} = None,
-            f_p2: {float, None} = None,
+            mrt_p1: Optional[float] = None,
+            frac_p1: Optional[float] = None,
+            f_p1: Optional[float] = None,
+            f_p2: Optional[float] = None,
 
             # options for the model run
-            seed_base: {int, None} = None,
-            seed_alt: {int, None} = None,
+            seed_base: Optional[int] = None,
+            seed_alt: Optional[int] = None,
             testnitter=None,
             **kwargs
 
-    ):
+    )-> Union[pd.Series, dict]:
         """
         calculate the counterfactual detection power of auto created concentration time series
 
@@ -649,29 +654,29 @@ class AutoDetectionPowerCounterFactual(DetectionPowerCounterFactual):
     def mulitprocess_power_calcs(self,
                                  outpath: {Path, None, str},
                                  idv_vals: np.ndarray,
-                                 error_base_vals: {np.ndarray, float},
-                                 samp_years_vals: {np.ndarray, int},
-                                 samp_per_year_vals: {np.ndarray, int},
-                                 implementation_time_alt_vals: {np.ndarray, int},
-                                 initial_conc_vals: {np.ndarray, float},
-                                 target_conc_alt_vals: {np.ndarray, float},
-                                 prev_slope_vals: {np.ndarray, float},
-                                 max_conc_lim_vals: {np.ndarray, float},
-                                 min_conc_lim_vals: {np.ndarray, float},
-                                 mrt_model_vals: {np.ndarray, str},
-                                 mrt_vals: {np.ndarray, float},
-                                 target_conc_base_vals: {np.ndarray, float, None} = None,
-                                 implementation_time_base_vals: {np.ndarray, int, None} = None,
-                                 error_alt_vals: {np.ndarray, float, None} = None,
-                                 delay_years_vals: {np.ndarray, int, None} = None,
-                                 mrt_p1_vals: {np.ndarray, float, None} = None,
-                                 frac_p1_vals: {np.ndarray, float, None} = None,
-                                 f_p1_vals: {np.ndarray, float, None} = None,
-                                 f_p2_vals: {np.ndarray, float, None} = None,
-                                 seed_alt_vals: {np.ndarray, int, None} = None,
-                                 seed_base_vals: {np.ndarray, int, None} = None,
+                                 error_base_vals: Union[Sequence[Number], Number],
+                                 samp_years_vals: Union[Sequence[int], int],
+                                 samp_per_year_vals: Union[Sequence[int], int],
+                                 implementation_time_alt_vals: Union[Sequence[int], int],
+                                 initial_conc_vals: Union[Sequence[Number], Number],
+                                 target_conc_alt_vals: Union[Sequence[Number], Number],
+                                 prev_slope_vals: Union[Sequence[Number], Number],
+                                 max_conc_lim_vals: Union[Sequence[Number], Number],
+                                 min_conc_lim_vals: Union[Sequence[Number], Number],
+                                 mrt_model_vals: Union[Sequence[str], str],
+                                 mrt_vals: Union[Sequence[Number], Number],
+                                 target_conc_base_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 implementation_time_base_vals: Optional[Union[Sequence[int], int]] = None,
+                                 error_alt_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 delay_years_vals: Optional[Union[Sequence[int], int]] = None,
+                                 mrt_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 frac_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 f_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 f_p2_vals: Optional[Union[Sequence[Number], Number]] = None,
+                                 seed_alt_vals: Optional[Union[Sequence[int], int]] = None,
+                                 seed_base_vals: Optional[Union[Sequence[int], int]] = None,
                                  run=True, debug_mode=False, **kwargs
-                                 ):
+                                 )-> pd.DataFrame:
         """
         multiprocessing wrapper for power_calc, see power_calc for details
 

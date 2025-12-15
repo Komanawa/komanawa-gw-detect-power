@@ -13,7 +13,8 @@ import os
 import psutil
 import sys
 import warnings
-
+from numbers import Number
+from typing import Union, Optional, Tuple
 from komanawa.gw_age_tools import binary_exp_piston_flow_cdf, predict_historical_source_conc, make_age_dist, \
     check_age_inputs
 
@@ -268,11 +269,15 @@ class BaseDetectionCalculator:
         return x
 
     @staticmethod
-    def truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2,
-                                           initial_conc, target_conc, prev_slope, max_conc, min_conc,
-                                           samp_per_year, samp_years, implementation_time, past_source_data=None,
-                                           return_extras=False, low_mem=False,
-                                           precision=2):
+    def truets_from_binary_exp_piston_flow(
+            mrt: Number, mrt_p1: Number, frac_p1: Number, f_p1: Number, f_p2: Number,
+            initial_conc: Number, target_conc: Number, prev_slope: Number, max_conc: Number, min_conc: Number,
+            samp_per_year: int, samp_years: int, implementation_time: int,
+            past_source_data: Optional[pd.Series] = None,
+            return_extras: bool = False, low_mem: bool = False,
+            precision: int = 2) -> Union[
+        Tuple[np.ndarray, Number, Number, Number],
+        Tuple[np.ndarray, Number, Number, Number, pd.Series, np.ndarray, np.ndarray, np.ndarray, pd.Series]]:
         """
         create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc
 
@@ -291,7 +296,8 @@ class BaseDetectionCalculator:
         :param implementation_time: number of years to implement reductions
         :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01
         :param return_extras: return extra variables for debugging
-        :return: true timeseries, max_conc, max_conc_time, frac_p2
+        :return: (return_extras=False) true timeseries, max_conc, max_conc_time, frac_p2
+        :return: (return_extras=True) true timeseries, max_conc, max_conc_time, frac_p2, total_source_conc, age_fractions, out_years, ages, past_conc
         """
         mrt, mrt_p2 = check_age_inputs(mrt=mrt, mrt_p1=mrt_p1, mrt_p2=None, frac_p1=frac_p1,
                                        precision=precision, f_p1=f_p1, f_p2=f_p2)
@@ -372,10 +378,11 @@ class BaseDetectionCalculator:
         return out_conc, conc_max, max_conc_time, mrt_p2
 
     @staticmethod
-    def truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years,
-                                implementation_time):
+    def truets_from_piston_flow(mrt: Number, initial_conc: Number, target_conc: Number, prev_slope: Number,
+                                max_conc: Number, samp_per_year:int, samp_years:int,
+                                implementation_time:int) -> Tuple[np.ndarray, Number, Number, None]:
         """
-        piston flow model for the mean residence time
+        True time series from a piston flow model for the mean residence time
 
         :param mrt: mean residence time
         :param initial_conc: initial concentration
@@ -421,7 +428,7 @@ class BaseDetectionCalculator:
         frac_p2 = None  # dummy value
         return true_conc_ts, max_conc, max_conc_time, frac_p2
 
-    def time_test_power_calc_itter(self, testnitter=10, **kwargs):
+    def time_test_power_calc_itter(self, testnitter:int=10, **kwargs):
         """
         run a test power calc iteration to check for errors
 

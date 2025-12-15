@@ -4,7 +4,11 @@ power calcs
 created matt_dumont
 on: 18/05/23
 """
+import os
+from numbers import Number
 from pathlib import Path
+from typing import Optional, Union, Sequence
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -91,7 +95,9 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         'pettitt-test',
     )
 
-    def __init__(self, significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10,
+    def __init__(self,
+                 significance_mode='linear-regression',
+                 nsims:int=1000, min_p_value:float=0.05, min_samples:int=10,
                  expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.50,
                  mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05,
                  nsims_pettit=2000,
@@ -198,7 +204,7 @@ class DetectionPowerSlope(BaseDetectionCalculator):
         self.log_level = log_level
         self.significance_mode = significance_mode
 
-    def plot_iteration(self, y0, true_conc, ax=None):
+    def plot_iteration(self, y0:np.ndarray, true_conc:np.ndarray, ax:Optional[plt.Axes]=None)->tuple[plt.Figure, plt.Axes]:
         """
         plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
 
@@ -532,8 +538,8 @@ class DetectionPowerSlope(BaseDetectionCalculator):
             out_data = out_data['power']
         return out_data
 
-    def power_calc(self, idv, error: float, true_conc_ts: np.ndarray,
-                   seed: {int, None} = None, testnitter=None, **kwargs):
+    def power_calc(self, idv, error: Number, true_conc_ts: np.ndarray,
+                   seed: Optional[int]= None, testnitter=None, **kwargs) -> {pd.Series, dict}:
         """
         calculate the slope detection power of a given concentration time series, note the power is calculated using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling frequency then you should resample the true_conc_ts before passing it to this function
 
@@ -579,12 +585,12 @@ class DetectionPowerSlope(BaseDetectionCalculator):
     def mulitprocess_power_calcs(self,
                                  outpath: {Path, None, str},
                                  idv_vals: np.ndarray,
-                                 error_vals: {np.ndarray, float},
+                                 error_vals: Union[Sequence[Number], Number],
                                  true_conc_ts_vals: {np.ndarray, list},
-                                 seed_vals: {np.ndarray, int, None} = None,
+                                 seed_vals: Optional[Union[Sequence[int], int]] = None,
                                  run=True, debug_mode=False,
                                  **kwargs
-                                 ):
+                                 )-> pd.DataFrame:
         """
         multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
 
@@ -668,17 +674,17 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
     condensed_mode = False
 
     def set_condensed_mode(self,
-                           target_conc_per=1,
-                           initial_conc_per=1,
-                           error_per=2,
-                           prev_slope_per=2,
-                           max_conc_lim_per=1,
-                           min_conc_lim_per=1,
-                           mrt_per=0,
-                           mrt_p1_per=2,
-                           frac_p1_per=2,
-                           f_p1_per=2,
-                           f_p2_per=2):
+                           target_conc_per:int=1,
+                           initial_conc_per:int=1,
+                           error_per:int=2,
+                           prev_slope_per:int=2,
+                           max_conc_lim_per:int=1,
+                           min_conc_lim_per:int=1,
+                           mrt_per:int=0,
+                           mrt_p1_per:int=2,
+                           frac_p1_per:int=2,
+                           f_p1_per:int=2,
+                           f_p2_per:int=2):
         """
         set calculator to condense the number of runs based by rounding the inputs to a specified precision
 
@@ -710,16 +716,17 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
         self.f_p1_per = f_p1_per
         self.f_p2_per = f_p2_per
 
-    def power_calc(self, idv, error: float, mrt_model: str, samp_years: int, samp_per_year: int,
-                   implementation_time: int, initial_conc: float, target_conc: float, prev_slope: float,
-                   max_conc_lim: float, min_conc_lim: float, mrt: float = 0,
+    def power_calc(self, idv, error: Number, mrt_model: str, samp_years: int, samp_per_year: int,
+                   implementation_time: int, initial_conc: Number, target_conc: Number, prev_slope: Number,
+                   max_conc_lim: Number, min_conc_lim: Number, mrt: Number = 0,
+
                    # options for binary_exponential_piston_flow model
-                   mrt_p1: {float, None} = None, frac_p1: {float, None} = None, f_p1: {float, None} = None,
-                   f_p2: {float, None} = None,
+                   mrt_p1: Optional[Number] = None, frac_p1: Optional[Number] = None, f_p1: Optional[Number] = None,
+                   f_p2:Optional[Number] = None,
                    # options for the model run
-                   seed: {int, None} = None,
+                   seed: Optional[int] = None,
                    testnitter=None,
-                   **kwargs):
+                   **kwargs) -> Union[pd.Series, dict]:
         """
 
         calculate the detection power for a given set of parameters
@@ -845,26 +852,26 @@ class AutoDetectionPowerSlope(DetectionPowerSlope):
 
     def mulitprocess_power_calcs(
             self,
-            outpath: {Path, None, str},
+            outpath: Optional[os.PathLike],
             idv_vals: np.ndarray,
-            error_vals: {np.ndarray, float},
-            samp_years_vals: {np.ndarray, int},
-            samp_per_year_vals: {np.ndarray, int},
-            implementation_time_vals: {np.ndarray, int},
-            initial_conc_vals: {np.ndarray, float},
-            target_conc_vals: {np.ndarray, float},
-            prev_slope_vals: {np.ndarray, float},
-            max_conc_lim_vals: {np.ndarray, float},
-            min_conc_lim_vals: {np.ndarray, float},
-            mrt_model_vals: {np.ndarray, str},
-            mrt_vals: {np.ndarray, float},
-            mrt_p1_vals: {np.ndarray, float, None} = None,
-            frac_p1_vals: {np.ndarray, float, None} = None,
-            f_p1_vals: {np.ndarray, float, None} = None,
-            f_p2_vals: {np.ndarray, float, None} = None,
-            seed_vals: {np.ndarray, int, None} = None,
+            error_vals: Union[Sequence[Number], Number],
+            samp_years_vals: Union[Sequence[int], int],
+            samp_per_year_vals: Union[Sequence[int], int],
+            implementation_time_vals: Union[Sequence[int], int],
+            initial_conc_vals: Union[Sequence[Number], Number],
+            target_conc_vals: Union[Sequence[Number], Number],
+            prev_slope_vals: Union[Sequence[Number], Number],
+            max_conc_lim_vals: Union[Sequence[Number], Number],
+            min_conc_lim_vals: Union[Sequence[Number], Number],
+            mrt_model_vals: Union[Sequence[str], str],
+            mrt_vals: Union[Sequence[Number], Number],
+            mrt_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+            frac_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+            f_p1_vals: Optional[Union[Sequence[Number], Number]] = None,
+            f_p2_vals: Optional[Union[Sequence[Number], Number]] = None,
+            seed_vals: Optional[Union[Sequence[int], int]] = None,
             run=True, debug_mode=False, **kwargs
-    ):
+    )-> pd.DataFrame:
         """
         multiprocessing wrapper for power_calc, see power_calc for details
 
