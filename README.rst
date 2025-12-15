@@ -1,7 +1,9 @@
 Kо̄manawa Groundwater Detection Power Calculator
 ##################################################
 
-Full documentation including API is available at: https://komanawa-solutions-ltd.github.io/komanawa-gw-detect-power/
+Full documentation including API Documentation is available at: https://komanawa-solutions-ltd.github.io/komanawa-gw-detect-power/
+
+API Documentation link: https://komanawa.github.io/komanawa-gw-detect-power/autoapi/komanawa/gw_detect_power/index.html
 
 Installation
 ==================
@@ -49,6 +51,7 @@ Optional Dependencies
 Quickstart
 ==================
 
+To be added... for now please see the worked examples below.
 .. todo add a quickstart example... once get details from reviewer.
 
 Further Worked Examples
@@ -56,4 +59,3 @@ Further Worked Examples
 
 A set of worked examples (both Jupyter Notebooks and pure python scripts) are available in the `worked_examples
 <worked_examples>`_ directory of the repository.  These examples are not included in the package installation but can be downloaded/cloned from the repository.
-.. todo check link
