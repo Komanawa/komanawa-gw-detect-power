@@ -48,9 +48,7 @@ On the 19th of February 2024 we held a webinar on the detection power calculator
 Installation
 ==================
 
-This package is currently held as a simple github repo,
-but the intention is to make it available on PyPI in the future, It also sources other repos that are only hosted on
-github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
+The easiest way to install is to use pip and install directly from github.  This will ensure that
 all dependencies are installed.
 
 Install from PyPI
