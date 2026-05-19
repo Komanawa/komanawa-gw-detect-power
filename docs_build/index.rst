@@ -16,6 +16,10 @@ Kо̄manawa Groundwater Detection Power Calculator
 
    Code documentation<autoapi/komanawa/gw_detect_power/index>
 
+Too often management decisions (e.g., plans to change land use to reduce nitrate concentrations in streams and groundwater) are made without considering whether the monitoring program in place can detect the modelled changes in concentration.
+Measurement noise (or unexplained variability) and groundwater lag can obfuscate impacts and leave managers with insufficient data collection to assess the effectiveness of their management actions.
+This package supports the calculation of detection power for a range of statistical tests (e.g. Mann-Kendall, Pettitt, etc.) and can help managers and scientists to design monitoring programs that are fit for purpose and can detect the changes in concentration that are expected from management actions.
+
 **NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
@@ -23,13 +27,19 @@ depending on sampling duration, sampling frequency, 'true' receptor concentratio
 there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).
 
+Quickstart
+==================
+
+`A quickstart Jupyter notebook example <https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples/quickstart.ipynb>`_
+
+
 Python Package usage
 ==============================================================
 
 `Class and Method details <autoapi/komanawa/gw_detect_power/index.html>`_
 
-In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at `https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples>`_.
+In addition to the documentation, `we have a number of worked examples in Jupyter notebooks <https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples>`_.
+An overview of these worked examples is in the readme file of the linked directory (please scroll to the bottom of the github page to see the readme file).
 
 Supporting Documents
 =====================

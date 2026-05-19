@@ -2,11 +2,9 @@
 # todo delete when done with review
 This holds the comments made by hassaniazi as a working document for things to address...
 
+# todo when done kill the worked examples repo...
 
-Overview comment
-===============================================
-
-The paper/package would benefit from the inclusion of a quick-starter notebook to demonstrate a complete example run case and add corresponding text in the manuscript. This should include data loading, parameter specification, model execution sequencing, and example outputs and interpretation of outputs. Providing such a notebook would substantially improve accessibility, reproducibility, and usability for new users.  # todo --> asked for clarification on what is wanted here
+https://github.com/openjournals/joss-reviews/issues/9390#issuecomment-3651567676
 
 
 
@@ -22,40 +20,6 @@ installation procedures and dependencies, and usability considerations for diffe
 visual outputs or screenshots illustrating typical results
 These additions would significantly strengthen the paper’s value as a reference for applied researchers and practitioners.
 
-Code -- DONE
-===============================================
-
-Below are the comments on unchecked items:
-===============================================
-
-Data sharing: If the paper contains original data, data are accessible to the reviewers. If the paper contains no original data, please check this item.
-------------------------------------------------
-
-    I did not find any data but think it’s important to provide some for example cases. I do see test data.
-
-Reproducibility: If the paper contains original results, results are entirely reproducible by reviewers. If the paper contains no original results, please check this item.
-------------------------------------------------
-
-    Hard to verify reproducibility without data or example cases. Tests do run.
-
-Functionality: Have the functional claims of the software been confirmed?
-------------------------------------------------
-
-    Same point as reproducibility
-
-A statement of need: Do the authors clearly state what problems the software is designed to solve and who the target audience is?
-------------------------------------------------
-
-    Statement of need not present in documentation.
-
-Example usage: Do the authors include examples of how to use the software (ideally to solve real-world analysis problems).
-------------------------------------------------
-
-    Absent. Suggest including
-
-Functionality documentation: Is the core functionality of the software documented to a satisfactory level (e.g., API method documentation)?
-------------------------------------------------
-    Missing. I am interpreting it as the sequence of launching scripts. Suggest adding it to the documentation as well, along with the example.  # todo asked for details from reviewer
 
 State of the field: Do the authors describe how this software compares to other commonly-used packages?
 ------------------------------------------------
