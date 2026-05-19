@@ -73,7 +73,7 @@ Install from Github
 
 .. code-block:: bash
 
-    conda create -c conda-forge --name gw_detect  python=3.11 pandas=2.0.3 numpy=1.25.2 matplotlib=3.7.2 scipy=1.11.2 pytables=3.8.0 psutil=5.9.5
+    conda create -c conda-forge --name gw_detect  python pandas numpy matplotlib scipy pytables psutil
     conda activate gw_detect
 
     pip install pyhomogeneity
@@ -91,8 +91,8 @@ Dependencies
 * tables>=3.8.0
 * psutil>=5.9.5
 
-Optional Dependencies
-----------------------
+Optional Dependencies (automatically installed if you install via PyPI)
+----------------------------------------------------------------------------
 
 * pyhomogeneity (for the Pettitt test)
 * komanawa-kendall-stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
@@ -432,3 +432,22 @@ For bug fixes, features, or documentation improvements please raise a github iss
 Any bug fixes or features should include tests (via the unitest framework).
 For significant contributions please contact us first to discuss your plans.
 
+Development installation
+---------------------------
+
+To install the package in development model first clone the development branch of the repository:
+We would suggest creating a fork of the repository and then cloning your fork to your local machine.  This will allow you to make changes and then push those changes to your fork and raise a pull request to the main repository.
+Note the development branch is where we are actively developing the package. To clone the development branch use the following command:
+
+.. code-block:: bash
+
+    git clone -b development [your fork url here]
+
+To create the correct python environment for development either follow the installation instructions above or use the provided toml file to create the environment:
+
+.. code-block:: bash
+
+    cd [path to cloned repo]
+
+    pip install .  # install the package and the dependencies
+    pip uninstall -y komanawa-gw-detect-power  # uninstall the package to ensure that you are using the local version of the package, yes there is an issue to solve this in pip, but not yet...
