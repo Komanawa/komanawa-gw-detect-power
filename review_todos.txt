@@ -24,3 +24,6 @@ These additions would significantly strengthen the paper’s value as a referenc
 State of the field: Do the authors describe how this software compares to other commonly-used packages?
 ------------------------------------------------
     Not present in the paper.
+
+
+.. todo regen docs when done with reviewer comments and then pull to main.
