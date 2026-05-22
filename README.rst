@@ -21,6 +21,8 @@ all dependencies are installed.
 Install from PyPI
 ----------------------
 
+`PyPi package <https://pypi.org/project/komanawa-gw-detect-power/>`_ is available for installation using pip.
+
 .. code-block:: bash
 
     pip install komanawa-gw-detect-power
