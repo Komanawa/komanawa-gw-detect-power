@@ -26,7 +26,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: AutoDetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
+.. py:class:: AutoDetectionPowerSlope(significance_mode='linear-regression', nsims: int = 1000, min_p_value: float = 0.05, min_samples: int = 10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
 
    Bases: :py:obj:`DetectionPowerSlope`
 
@@ -82,7 +82,7 @@ Module Contents
    :param print_freq: None or int:  if None then no progress will be printed, if int then progress will be printed every print_freq simulations (n%print_freq==0)
 
 
-   .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, samp_years_vals: {np.ndarray, int}, samp_per_year_vals: {np.ndarray, int}, implementation_time_vals: {np.ndarray, int}, initial_conc_vals: {np.ndarray, float}, target_conc_vals: {np.ndarray, float}, prev_slope_vals: {np.ndarray, float}, max_conc_lim_vals: {np.ndarray, float}, min_conc_lim_vals: {np.ndarray, float}, mrt_model_vals: {np.ndarray, str}, mrt_vals: {np.ndarray, float}, mrt_p1_vals: {np.ndarray, float, None} = None, frac_p1_vals: {np.ndarray, float, None} = None, f_p1_vals: {np.ndarray, float, None} = None, f_p2_vals: {np.ndarray, float, None} = None, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)
+   .. py:method:: mulitprocess_power_calcs(outpath: Optional[os.PathLike], idv_vals: numpy.ndarray, error_vals: Union[Sequence[numbers.Number], numbers.Number], samp_years_vals: Union[Sequence[int], int], samp_per_year_vals: Union[Sequence[int], int], implementation_time_vals: Union[Sequence[int], int], initial_conc_vals: Union[Sequence[numbers.Number], numbers.Number], target_conc_vals: Union[Sequence[numbers.Number], numbers.Number], prev_slope_vals: Union[Sequence[numbers.Number], numbers.Number], max_conc_lim_vals: Union[Sequence[numbers.Number], numbers.Number], min_conc_lim_vals: Union[Sequence[numbers.Number], numbers.Number], mrt_model_vals: Union[Sequence[str], str], mrt_vals: Union[Sequence[numbers.Number], numbers.Number], mrt_p1_vals: Optional[Union[Sequence[numbers.Number], numbers.Number]] = None, frac_p1_vals: Optional[Union[Sequence[numbers.Number], numbers.Number]] = None, f_p1_vals: Optional[Union[Sequence[numbers.Number], numbers.Number]] = None, f_p2_vals: Optional[Union[Sequence[numbers.Number], numbers.Number]] = None, seed_vals: Optional[Union[Sequence[int], int]] = None, run=True, debug_mode=False, **kwargs) -> pandas.DataFrame
 
       multiprocessing wrapper for power_calc, see power_calc for details
 
@@ -116,7 +116,7 @@ Module Contents
 
 
 
-   .. py:method:: plot_iteration(y0, true_conc, ax=None)
+   .. py:method:: plot_iteration(y0: numpy.ndarray, true_conc: numpy.ndarray, ax: Optional[matplotlib.pyplot.Axes] = None) -> tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
 
       plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
 
@@ -126,7 +126,7 @@ Module Contents
 
 
 
-   .. py:method:: power_calc(idv, error: float, mrt_model: str, samp_years: int, samp_per_year: int, implementation_time: int, initial_conc: float, target_conc: float, prev_slope: float, max_conc_lim: float, min_conc_lim: float, mrt: float = 0, mrt_p1: {float, None} = None, frac_p1: {float, None} = None, f_p1: {float, None} = None, f_p2: {float, None} = None, seed: {int, None} = None, testnitter=None, **kwargs)
+   .. py:method:: power_calc(idv, error: numbers.Number, mrt_model: str, samp_years: int, samp_per_year: int, implementation_time: int, initial_conc: numbers.Number, target_conc: numbers.Number, prev_slope: numbers.Number, max_conc_lim: numbers.Number, min_conc_lim: numbers.Number, mrt: numbers.Number = 0, mrt_p1: Optional[numbers.Number] = None, frac_p1: Optional[numbers.Number] = None, f_p1: Optional[numbers.Number] = None, f_p2: Optional[numbers.Number] = None, seed: Optional[int] = None, testnitter=None, **kwargs) -> Union[pandas.Series, dict]
 
       calculate the detection power for a given set of parameters
 
@@ -168,7 +168,7 @@ Module Contents
 
 
 
-   .. py:method:: set_condensed_mode(target_conc_per=1, initial_conc_per=1, error_per=2, prev_slope_per=2, max_conc_lim_per=1, min_conc_lim_per=1, mrt_per=0, mrt_p1_per=2, frac_p1_per=2, f_p1_per=2, f_p2_per=2)
+   .. py:method:: set_condensed_mode(target_conc_per: int = 1, initial_conc_per: int = 1, error_per: int = 2, prev_slope_per: int = 2, max_conc_lim_per: int = 1, min_conc_lim_per: int = 1, mrt_per: int = 0, mrt_p1_per: int = 2, frac_p1_per: int = 2, f_p1_per: int = 2, f_p2_per: int = 2)
 
       set calculator to condense the number of runs based by rounding the inputs to a specified precision
 
@@ -192,7 +192,7 @@ Module Contents
    Base class for detection power calculations, provides some general methods for power calculations
 
 
-   .. py:method:: time_test_power_calc_itter(testnitter=10, **kwargs)
+   .. py:method:: time_test_power_calc_itter(testnitter: int = 10, **kwargs)
 
       run a test power calc iteration to check for errors
 
@@ -202,7 +202,7 @@ Module Contents
 
 
 
-   .. py:method:: truets_from_binary_exp_piston_flow(mrt, mrt_p1, frac_p1, f_p1, f_p2, initial_conc, target_conc, prev_slope, max_conc, min_conc, samp_per_year, samp_years, implementation_time, past_source_data=None, return_extras=False, low_mem=False, precision=2)
+   .. py:method:: truets_from_binary_exp_piston_flow(mrt: numbers.Number, mrt_p1: numbers.Number, frac_p1: numbers.Number, f_p1: numbers.Number, f_p2: numbers.Number, initial_conc: numbers.Number, target_conc: numbers.Number, prev_slope: numbers.Number, max_conc: numbers.Number, min_conc: numbers.Number, samp_per_year: int, samp_years: int, implementation_time: int, past_source_data: Optional[pandas.Series] = None, return_extras: bool = False, low_mem: bool = False, precision: int = 2) -> Union[Tuple[numpy.ndarray, numbers.Number, numbers.Number, numbers.Number], Tuple[numpy.ndarray, numbers.Number, numbers.Number, numbers.Number, pandas.Series, numpy.ndarray, numpy.ndarray, numpy.ndarray, pandas.Series]]
       :staticmethod:
 
 
@@ -223,15 +223,16 @@ Module Contents
       :param implementation_time: number of years to implement reductions
       :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01
       :param return_extras: return extra variables for debugging
-      :return: true timeseries, max_conc, max_conc_time, frac_p2
+      :return: (return_extras=False) true timeseries, max_conc, max_conc_time, frac_p2
+      :return: (return_extras=True) true timeseries, max_conc, max_conc_time, frac_p2, total_source_conc, age_fractions, out_years, ages, past_conc
 
 
 
-   .. py:method:: truets_from_piston_flow(mrt, initial_conc, target_conc, prev_slope, max_conc, samp_per_year, samp_years, implementation_time)
+   .. py:method:: truets_from_piston_flow(mrt: numbers.Number, initial_conc: numbers.Number, target_conc: numbers.Number, prev_slope: numbers.Number, max_conc: numbers.Number, samp_per_year: int, samp_years: int, implementation_time: int) -> Tuple[numpy.ndarray, numbers.Number, numbers.Number, None]
       :staticmethod:
 
 
-      piston flow model for the mean residence time
+      True time series from a piston flow model for the mean residence time
 
       :param mrt: mean residence time
       :param initial_conc: initial concentration
@@ -254,7 +255,7 @@ Module Contents
    :param kwargs: dummy
 
 
-.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
+.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims: int = 1000, min_p_value: float = 0.05, min_samples: int = 10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
 
    Bases: :py:obj:`komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator`
 
@@ -311,7 +312,7 @@ Module Contents
    :param raise_from_minmax_nsamples: bool, if True then raise an exception if the maximum concentration is too far along the time series to be detected, if False then return 0 power and no change detected
 
 
-   .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, true_conc_ts_vals: {np.ndarray, list}, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)
+   .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: Union[Sequence[numbers.Number], numbers.Number], true_conc_ts_vals: {np.ndarray, list}, seed_vals: Optional[Union[Sequence[int], int]] = None, run=True, debug_mode=False, **kwargs) -> pandas.DataFrame
 
       multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
 
@@ -330,7 +331,7 @@ Module Contents
 
 
 
-   .. py:method:: plot_iteration(y0, true_conc, ax=None)
+   .. py:method:: plot_iteration(y0: numpy.ndarray, true_conc: numpy.ndarray, ax: Optional[matplotlib.pyplot.Axes] = None) -> tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
 
       plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
 
@@ -340,7 +341,7 @@ Module Contents
 
 
 
-   .. py:method:: power_calc(idv, error: float, true_conc_ts: numpy.ndarray, seed: {int, None} = None, testnitter=None, **kwargs)
+   .. py:method:: power_calc(idv, error: numbers.Number, true_conc_ts: numpy.ndarray, seed: Optional[int] = None, testnitter=None, **kwargs) -> {pd.Series, dict}
 
       calculate the slope detection power of a given concentration time series, note the power is calculated using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling frequency then you should resample the true_conc_ts before passing it to this function
 

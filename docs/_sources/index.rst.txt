@@ -16,6 +16,10 @@ Kо̄manawa Groundwater Detection Power Calculator
 
    Code documentation<autoapi/komanawa/gw_detect_power/index>
 
+Too often management decisions (e.g., plans to change land use to reduce nitrate concentrations in streams and groundwater) are made without considering whether the monitoring program in place can detect the modelled changes in concentration.
+Measurement noise (or unexplained variability) and groundwater lag can obfuscate impacts and leave managers with insufficient data collection to assess the effectiveness of their management actions.
+This package supports the calculation of detection power for a range of statistical tests (e.g. Mann-Kendall, Pettitt, etc.) and can help managers and scientists to design monitoring programs that are fit for purpose and can detect the changes in concentration that are expected from management actions.
+
 **NOTE**: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.
 
 This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
@@ -23,13 +27,19 @@ depending on sampling duration, sampling frequency, 'true' receptor concentratio
 there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).
 
+Quickstart
+==================
+
+`A quickstart Jupyter notebook example <https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples/quickstart.ipynb>`_
+
+
 Python Package usage
 ==============================================================
 
 `Class and Method details <autoapi/komanawa/gw_detect_power/index.html>`_
 
-In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at `https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples <https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples>`_.
+In addition to the documentation, `we have a number of worked examples in Jupyter notebooks <https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples>`_.
+An overview of these worked examples is in the readme file of the linked directory (please scroll to the bottom of the github page to see the readme file).
 
 Supporting Documents
 =====================
@@ -48,9 +58,7 @@ On the 19th of February 2024 we held a webinar on the detection power calculator
 Installation
 ==================
 
-This package is currently held as a simple github repo,
-but the intention is to make it available on PyPI in the future, It also sources other repos that are only hosted on
-github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
+The easiest way to install is to use pip and install directly from github.  This will ensure that
 all dependencies are installed.
 
 Install from PyPI
@@ -65,7 +73,7 @@ Install from Github
 
 .. code-block:: bash
 
-    conda create -c conda-forge --name gw_detect  python=3.11 pandas=2.0.3 numpy=1.25.2 matplotlib=3.7.2 scipy=1.11.2 pytables=3.8.0 psutil=5.9.5
+    conda create -c conda-forge --name gw_detect  python pandas numpy matplotlib scipy pytables psutil
     conda activate gw_detect
 
     pip install pyhomogeneity
@@ -83,8 +91,8 @@ Dependencies
 * tables>=3.8.0
 * psutil>=5.9.5
 
-Optional Dependencies
-----------------------
+Optional Dependencies (automatically installed if you install via PyPI)
+----------------------------------------------------------------------------
 
 * pyhomogeneity (for the Pettitt test)
 * komanawa-kendall-stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)
@@ -424,3 +432,22 @@ For bug fixes, features, or documentation improvements please raise a github iss
 Any bug fixes or features should include tests (via the unitest framework).
 For significant contributions please contact us first to discuss your plans.
 
+Development installation
+---------------------------
+
+To install the package in development model first clone the development branch of the repository:
+We would suggest creating a fork of the repository and then cloning your fork to your local machine.  This will allow you to make changes and then push those changes to your fork and raise a pull request to the main repository.
+Note the development branch is where we are actively developing the package. To clone the development branch use the following command:
+
+.. code-block:: bash
+
+    git clone -b development [your fork url here]
+
+To create the correct python environment for development either follow the installation instructions above or use the provided toml file to create the environment:
+
+.. code-block:: bash
+
+    cd [path to cloned repo]
+
+    pip install .  # install the package and the dependencies
+    pip uninstall -y komanawa-gw-detect-power  # uninstall the package to ensure that you are using the local version of the package, yes there is an issue to solve this in pip, but not yet...

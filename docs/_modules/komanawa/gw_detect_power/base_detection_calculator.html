@@ -376,7 +376,8 @@
 <span class="kn">import</span> <span class="nn">psutil</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">komanawa.gw_age_tools</span> <span class="kn">import</span> <span class="n">binary_exp_piston_flow_cdf</span><span class="p">,</span> <span class="n">predict_historical_source_conc</span><span class="p">,</span> <span class="n">make_age_dist</span><span class="p">,</span> \
     <span class="n">check_age_inputs</span>
 
@@ -635,11 +636,15 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BaseDetectionCalculator.truets_from_binary_exp_piston_flow">
 <a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_binary_exp_piston_flow">[docs]</a>
-    <span class="k">def</span> <span class="nf">truets_from_binary_exp_piston_flow</span><span class="p">(</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="p">,</span> <span class="n">frac_p1</span><span class="p">,</span> <span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="p">,</span>
-                                           <span class="n">initial_conc</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">,</span> <span class="n">min_conc</span><span class="p">,</span>
-                                           <span class="n">samp_per_year</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">,</span> <span class="n">implementation_time</span><span class="p">,</span> <span class="n">past_source_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                           <span class="n">return_extras</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">low_mem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                           <span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">truets_from_binary_exp_piston_flow</span><span class="p">(</span>
+            <span class="n">mrt</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">frac_p1</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">f_p1</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">f_p2</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span>
+            <span class="n">initial_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">min_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span>
+            <span class="n">samp_per_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">implementation_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">past_source_data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">return_extras</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">low_mem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">precision</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">],</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create a true concentration time series using binary piston flow model for the mean residence time note that this can be really slow for large runs and it may be better to create the source data first and then pass it to the power calcs via pass_true_conc</span>
 
@@ -658,7 +663,8 @@
 <span class="sd">        :param implementation_time: number of years to implement reductions</span>
 <span class="sd">        :param past_source_data: past source data, if None will use the initial concentration and the previous slope to estimate the past source data, this is only set as an option to allow users to preclude re-running the source data calculations if they have already been done so.  Suggest that users only pass results from get_source_initial_conc_bepm with age_step = 0.01</span>
 <span class="sd">        :param return_extras: return extra variables for debugging</span>
-<span class="sd">        :return: true timeseries, max_conc, max_conc_time, frac_p2</span>
+<span class="sd">        :return: (return_extras=False) true timeseries, max_conc, max_conc_time, frac_p2</span>
+<span class="sd">        :return: (return_extras=True) true timeseries, max_conc, max_conc_time, frac_p2, total_source_conc, age_fractions, out_years, ages, past_conc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p2</span> <span class="o">=</span> <span class="n">check_age_inputs</span><span class="p">(</span><span class="n">mrt</span><span class="o">=</span><span class="n">mrt</span><span class="p">,</span> <span class="n">mrt_p1</span><span class="o">=</span><span class="n">mrt_p1</span><span class="p">,</span> <span class="n">mrt_p2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frac_p1</span><span class="o">=</span><span class="n">frac_p1</span><span class="p">,</span>
                                        <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span> <span class="n">f_p1</span><span class="o">=</span><span class="n">f_p1</span><span class="p">,</span> <span class="n">f_p2</span><span class="o">=</span><span class="n">f_p2</span><span class="p">)</span>
@@ -742,10 +748,11 @@
     <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="BaseDetectionCalculator.truets_from_piston_flow">
 <a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.truets_from_piston_flow">[docs]</a>
-    <span class="k">def</span> <span class="nf">truets_from_piston_flow</span><span class="p">(</span><span class="n">mrt</span><span class="p">,</span> <span class="n">initial_conc</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">,</span> <span class="n">max_conc</span><span class="p">,</span> <span class="n">samp_per_year</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">,</span>
-                                <span class="n">implementation_time</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">truets_from_piston_flow</span><span class="p">(</span><span class="n">mrt</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">initial_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">target_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">prev_slope</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span>
+                                <span class="n">max_conc</span><span class="p">:</span> <span class="n">Number</span><span class="p">,</span> <span class="n">samp_per_year</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">samp_years</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+                                <span class="n">implementation_time</span><span class="p">:</span><span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        piston flow model for the mean residence time</span>
+<span class="sd">        True time series from a piston flow model for the mean residence time</span>
 
 <span class="sd">        :param mrt: mean residence time</span>
 <span class="sd">        :param initial_conc: initial concentration</span>
@@ -794,7 +801,7 @@
 
 <div class="viewcode-block" id="BaseDetectionCalculator.time_test_power_calc_itter">
 <a class="viewcode-back" href="../../../autoapi/komanawa/gw_detect_power/change_detection_slope/index.html#komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator.time_test_power_calc_itter">[docs]</a>
-    <span class="k">def</span> <span class="nf">time_test_power_calc_itter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testnitter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">time_test_power_calc_itter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testnitter</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        run a test power calc iteration to check for errors</span>
 
