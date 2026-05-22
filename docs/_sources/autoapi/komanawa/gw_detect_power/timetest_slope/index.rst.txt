@@ -29,7 +29,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims=1000, min_p_value=0.05, min_samples=10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
+.. py:class:: DetectionPowerSlope(significance_mode='linear-regression', nsims: int = 1000, min_p_value: float = 0.05, min_samples: int = 10, expect_slope='auto', efficent_mode=True, nparts=None, min_part_size=10, no_trend_alpha=0.5, mpmk_check_step=1, mpmk_efficent_min=10, mpmk_window=0.05, nsims_pettit=2000, ncores=None, log_level=logging.INFO, return_true_conc=False, return_noisy_conc_itters=0, only_significant_noisy=False, print_freq=None, raise_from_minmax_nsamples=True)
 
    Bases: :py:obj:`komanawa.gw_detect_power.base_detection_calculator.BaseDetectionCalculator`
 
@@ -86,7 +86,7 @@ Module Contents
    :param raise_from_minmax_nsamples: bool, if True then raise an exception if the maximum concentration is too far along the time series to be detected, if False then return 0 power and no change detected
 
 
-   .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: {np.ndarray, float}, true_conc_ts_vals: {np.ndarray, list}, seed_vals: {np.ndarray, int, None} = None, run=True, debug_mode=False, **kwargs)
+   .. py:method:: mulitprocess_power_calcs(outpath: {Path, None, str}, idv_vals: numpy.ndarray, error_vals: Union[Sequence[numbers.Number], numbers.Number], true_conc_ts_vals: {np.ndarray, list}, seed_vals: Optional[Union[Sequence[int], int]] = None, run=True, debug_mode=False, **kwargs) -> pandas.DataFrame
 
       multiprocessing wrapper for power_calc, see power_calc for details note that if a given run raises and exception the traceback for the exception will be included in the returned dataset under the column 'python_error' if 'python_error' is None then the run was successful to change the number of cores used pass n_cores to the constructor init
 
@@ -105,7 +105,7 @@ Module Contents
 
 
 
-   .. py:method:: plot_iteration(y0, true_conc, ax=None)
+   .. py:method:: plot_iteration(y0: numpy.ndarray, true_conc: numpy.ndarray, ax: Optional[matplotlib.pyplot.Axes] = None) -> tuple[matplotlib.pyplot.Figure, matplotlib.pyplot.Axes]
 
       plot the concentration data itteration and the true concentration data if provided as well as the power test results and any predictions from the power test (e.g. the slope of the line used)
 
@@ -115,7 +115,7 @@ Module Contents
 
 
 
-   .. py:method:: power_calc(idv, error: float, true_conc_ts: numpy.ndarray, seed: {int, None} = None, testnitter=None, **kwargs)
+   .. py:method:: power_calc(idv, error: numbers.Number, true_conc_ts: numpy.ndarray, seed: Optional[int] = None, testnitter=None, **kwargs) -> {pd.Series, dict}
 
       calculate the slope detection power of a given concentration time series, note the power is calculated using the sampling frequency of the true_conc_ts, if you want to test the power at a different sampling frequency then you should resample the true_conc_ts before passing it to this function
 

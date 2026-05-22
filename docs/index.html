@@ -354,21 +354,28 @@
 <dd class="field-odd"><p>v2.0.2</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>Oct 16, 2025</p>
+<dd class="field-even"><p>May 22, 2026</p>
 </dd>
 </dl>
 <div class="toctree-wrapper compound">
 </div>
+<p>Too often management decisions (e.g., plans to change land use to reduce nitrate concentrations in streams and groundwater) are made without considering whether the monitoring program in place can detect the modelled changes in concentration.
+Measurement noise (or unexplained variability) and groundwater lag can obfuscate impacts and leave managers with insufficient data collection to assess the effectiveness of their management actions.
+This package supports the calculation of detection power for a range of statistical tests (e.g. Mann-Kendall, Pettitt, etc.) and can help managers and scientists to design monitoring programs that are fit for purpose and can detect the changes in concentration that are expected from management actions.</p>
 <p><strong>NOTE</strong>: while this repo was designed for groundwater calculations it is applicable to surface water as well you just have to consider the assumptions around MRT in the surface water.  Typically N-NO3 for instance will be dominantly from base flow, which is often sourced from groundwater.</p>
 <p>This package is designed to calculate the statistical power of detecting a change in groundwater/surface concentration
 depending on sampling duration, sampling frequency, ‘true’ receptor concentration and the noise in the receptor.
 there is also support for understanding statistical power in the context of groundwater travel times (e.g. lag)
 and groundwater temporal dispersion (e.g. mixing of different aged waters via a binary piston flow lag model).</p>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples/quickstart.ipynb">A quickstart Jupyter notebook example</a></p>
+</section>
 <section id="python-package-usage">
 <h2>Python Package usage<a class="headerlink" href="#python-package-usage" title="Link to this heading">#</a></h2>
 <p><a class="reference external" href="autoapi/komanawa/gw_detect_power/index.html">Class and Method details</a></p>
-<p>In addition to the documentation, we have create a repository with a number of worked examples in Jupyter notebooks
-This repo is available at <a class="github reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power-worked-examples">Komanawa/komanawa-gw-detect-power-worked-examples</a>.</p>
+<p>In addition to the documentation, <a class="reference external" href="https://github.com/Komanawa/komanawa-gw-detect-power/tree/main/worked_examples">we have a number of worked examples in Jupyter notebooks</a>.
+An overview of these worked examples is in the readme file of the linked directory (please scroll to the bottom of the github page to see the readme file).</p>
 </section>
 <section id="supporting-documents">
 <h2>Supporting Documents<a class="headerlink" href="#supporting-documents" title="Link to this heading">#</a></h2>
@@ -381,9 +388,7 @@ This repo is available at <a class="github reference external" href="https://git
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>This package is currently held as a simple github repo,
-but the intention is to make it available on PyPI in the future, It also sources other repos that are only hosted on
-github.  Therefore, the easiest way to install is to use pip and install directly from github.  This will ensure that
+<p>The easiest way to install is to use pip and install directly from github.  This will ensure that
 all dependencies are installed.</p>
 <section id="install-from-pypi">
 <h3>Install from PyPI<a class="headerlink" href="#install-from-pypi" title="Link to this heading">#</a></h3>
@@ -393,7 +398,7 @@ all dependencies are installed.</p>
 </section>
 <section id="install-from-github">
 <h3>Install from Github<a class="headerlink" href="#install-from-github" title="Link to this heading">#</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>--name<span class="w"> </span>gw_detect<span class="w">  </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span><span class="nv">pandas</span><span class="o">=</span><span class="m">2</span>.0.3<span class="w"> </span><span class="nv">numpy</span><span class="o">=</span><span class="m">1</span>.25.2<span class="w"> </span><span class="nv">matplotlib</span><span class="o">=</span><span class="m">3</span>.7.2<span class="w"> </span><span class="nv">scipy</span><span class="o">=</span><span class="m">1</span>.11.2<span class="w"> </span><span class="nv">pytables</span><span class="o">=</span><span class="m">3</span>.8.0<span class="w"> </span><span class="nv">psutil</span><span class="o">=</span><span class="m">5</span>.9.5
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>--name<span class="w"> </span>gw_detect<span class="w">  </span>python<span class="w"> </span>pandas<span class="w"> </span>numpy<span class="w"> </span>matplotlib<span class="w"> </span>scipy<span class="w"> </span>pytables<span class="w"> </span>psutil
 conda<span class="w"> </span>activate<span class="w"> </span>gw_detect
 
 pip<span class="w"> </span>install<span class="w"> </span>pyhomogeneity
@@ -413,8 +418,8 @@ pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com
 <li><p>tables&gt;=3.8.0</p></li>
 <li><p>psutil&gt;=5.9.5</p></li>
 </ul>
-<section id="optional-dependencies">
-<h3>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">#</a></h3>
+<section id="optional-dependencies-automatically-installed-if-you-install-via-pypi">
+<h3>Optional Dependencies (automatically installed if you install via PyPI)<a class="headerlink" href="#optional-dependencies-automatically-installed-if-you-install-via-pypi" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>pyhomogeneity (for the Pettitt test)</p></li>
 <li><p>komanawa-kendall-stats (for the Mann Kendall / MultiPart Mann Kendall / Multipart Seasonal Mann Kendall)</p></li>
@@ -825,6 +830,22 @@ identify slow decreases in concentration.  However, the Pettitt test is included
 For bug fixes, features, or documentation improvements please raise a github issue and then ideally fork the repository and raise a pull request.
 Any bug fixes or features should include tests (via the unitest framework).
 For significant contributions please contact us first to discuss your plans.</p>
+<section id="development-installation">
+<h3>Development installation<a class="headerlink" href="#development-installation" title="Link to this heading">#</a></h3>
+<p>To install the package in development model first clone the development branch of the repository:
+We would suggest creating a fork of the repository and then cloning your fork to your local machine.  This will allow you to make changes and then push those changes to your fork and raise a pull request to the main repository.
+Note the development branch is where we are actively developing the package. To clone the development branch use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>-b<span class="w"> </span>development<span class="w"> </span><span class="o">[</span>your<span class="w"> </span>fork<span class="w"> </span>url<span class="w"> </span>here<span class="o">]</span>
+</pre></div>
+</div>
+<p>To create the correct python environment for development either follow the installation instructions above or use the provided toml file to create the environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span><span class="o">[</span>path<span class="w"> </span>to<span class="w"> </span>cloned<span class="w"> </span>repo<span class="o">]</span>
+
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </span><span class="c1"># install the package and the dependencies</span>
+pip<span class="w"> </span>uninstall<span class="w"> </span>-y<span class="w"> </span>komanawa-gw-detect-power<span class="w">  </span><span class="c1"># uninstall the package to ensure that you are using the local version of the package, yes there is an issue to solve this in pip, but not yet...</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -865,6 +886,7 @@ For significant contributions please contact us first to discuss your plans.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickstart">Quickstart</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-package-usage">Python Package usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supporting-documents">Supporting Documents</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#webinar-2024-02-19">Webinar (2024-02-19)</a></li>
@@ -876,7 +898,7 @@ For significant contributions please contact us first to discuss your plans.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies">Optional Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies-automatically-installed-if-you-install-via-pypi">Optional Dependencies (automatically installed if you install via PyPI)</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-definitions">Key definitions</a></li>
@@ -909,7 +931,10 @@ For significant contributions please contact us first to discuss your plans.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pettitt-test">Pettitt test</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributions">Contributions</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#development-installation">Development installation</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 

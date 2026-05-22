@@ -1,0 +1,33 @@
+
+# todo delete when done with review
+This holds the comments made by hassaniazi as a working document for things to address...
+
+# todo when done kill the worked examples repo...
+
+https://github.com/openjournals/joss-reviews/issues/9390#issuecomment-3651567676
+
+
+
+Manuscript -- # todo
+===============================================
+Line 11 - Correct in-text citation format
+
+Line 26 - Writing could be improved, e.g., the opening sentence could be restructured for broader appeal and ease to follow: “Reducing the loss of nutrients (e.g., nitrogen) from land into surface and groundwater environments takes considerable time and financial investment...”. Starting from "land-based mitigation" might tune out people not in your area of expertise. Similar stylistic refinements would improve clarity throughout the manuscript.
+
+
+Line 34 - The manuscript should improve the flow of the argument to more clearly articulate the need, e.g., starting from why detecting changes is important. Making the connections clear and making them flow logically is important, e.g., nutrient losses from land to freshwater contamination, changes in freshwater contaminant levels to water quality and ecosystem health, the challenges of detecting these changes due to time lags, monitoring costs, and uncertainty, resulting in the need for rapid, robust, and standardized tools, hence the package… Making this logical progression explicit would better justify the development and application of the package.
+
+In its current form, the paper does not provide sufficient detail to function as a comprehensive software or methods publication. The authors should substantially expand the description of: - broader theory, background, and practices currently in the area; the underlying methods and statistical assumptions
+overall code architecture and design rationale; key modules and files within the package
+typical workflows and use cases; expected inputs and outputs (including data formats)
+installation procedures and dependencies, and usability considerations for different user groups
+visual outputs or screenshots illustrating typical results
+These additions would significantly strengthen the paper’s value as a reference for applied researchers and practitioners.
+
+
+State of the field: Do the authors describe how this software compares to other commonly-used packages?
+------------------------------------------------
+    Not present in the paper.
+
+
+.. todo regen docs when done with reviewer comments and then pull to main.

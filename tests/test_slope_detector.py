@@ -13,9 +13,19 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from komanawa.gw_detect_power import DetectionPowerSlope, AutoDetectionPowerSlope
+import warnings
 matplotlib.use("Agg")
 
+
 class SlopeDetectionPowerTester(unittest.TestCase):
+
+    def setUp(self):
+        # filter mean of empty slice warnings, this is expected behavior for some tests
+        warnings.filterwarnings('ignore', category=RuntimeWarning, message='Mean of empty slice')
+
+
+    def tearDown(self):
+        warnings.resetwarnings()
 
     @staticmethod
     def make_power_calc_kwargs(error_val, samp_years=20):
@@ -181,7 +191,15 @@ class SlopeDetectionPowerTester(unittest.TestCase):
             seed_vals=np.array([r.get('seed') for r in ts_runs]),
         )
         print(f'elapsed time for mp (non-auto): {time.time() - t}')
-        out = pd.concat([mp_data_auto, mp_data])
+
+
+        if mp_data_auto.empty or mp_data_auto.isna().all().all():
+            out = mp_data
+        elif mp_data.empty or mp_data.isna().all().all():
+            out = mp_data_auto
+        else:
+            out = pd.concat([mp_data_auto, mp_data])
+
         assert 'min_conc' not in out.columns
         assert 'mrt_p2' in out.columns
         assert 'true_conc_ts_none' not in out.columns
