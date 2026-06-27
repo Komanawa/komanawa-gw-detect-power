@@ -1,5 +1,5 @@
 ---
-title: 'Gw-detect-power: A Python Package to predict the detectability of land management changes on freshwater contaminants despite lag.'
+title: 'Gw-detect-power: A Python Package to Predict the Detectability of Land Management Changes on Freshwater Contaminants Despite Lag.'
 tags:
   - Python
   - monitoring
@@ -38,28 +38,28 @@ We present a Python package to predict the probability of detecting changes in w
 The goal of the package is to reduce the barriers for including detection power analysis in the design of water quality management and monitoring programmes.
 Importantly, the package is designed to provide detection power estimates for water quality monitoring programmes with and without the effects of groundwater transport processes (lag).
 The package supports multiple detection methodologies including linear regression, Mann-Kendall and Multipart-Mann-Kendall tests, as well as counterfactual analysis (pairwise comparisons) for parametric and non-parametric data with Paired Student-T and Wilcoxon tests, respectively.
-Finally, the package includes worked examples and linkes to a webinar and other supporting documentation. 
+Finally, the package includes worked examples and links to a webinar and other supporting documentation. 
 Further details on the package can be found on the [package documentation webpage](https://komanawa.github.io/komanawa-gw-detect-power/).
 
 # Statement of need
 
-Contaminant management in freshwater environments is a major challenge globally and in New Zealand, particularly from diffuse sources such as agricuture.
+Contaminant management in freshwater environments is a major challenge globally and in New Zealand, particularly from diffuse sources such as agriculture.
 Land-based mitigation actions to address diffuse contaminant sources require considerable time and financial investment to reduce the loss of nutrients (e.g., nitrogen) from land into surface and groundwater environments.
 Monitoring the effectiveness of these actions is a statutory requirement in New Zealand and is essential to maintain stakeholder confidence, ensure compliance, and effectively manage the natural environment.
-Assuming effective mitigations, their detection are often hampered by the lag between the implementation of land-based mitigation actions and the resulting improvements in water quality as well as the variability of water quality measurements due to natural processes.
+Assuming effective mitigations have been implemeted, their detection is often hampered by the lag between the implementation of land-based mitigation actions and the resulting improvements in water quality as well as the variability of water quality measurements due to natural processes.
 This leaves managers and stakeholders with a fundamental conflict -- have the mitigations been ineffective or has the monitoring programme been unable to detect the improvements in water quality?
 
 There is an inherent trade-off between the cost and probability of detecting changes in water quality.
 Very frequent monitoring is expensive, but can also more quickly and accurately detect changes in water quality.
 Less frequent monitoring is cheaper, but may not detect changes in water quality for many years if the changes are small relative to the natural variability.
-In addition, groundwater transport processes can delay the arrival of contaminants and mix groundwater with of different ages.
+In addition, groundwater transport processes can delay the arrival of contaminants and mix groundwater of different ages.
 These processes (referred to as lag) can delay and decrease the rate of change making it harder to detect.
 Ignoring these tradeoffs risks creating unrealistic metrics for the success of land management actions, over-investing in monitoring that is not needed, or under-investing in monitoring and failing to detect improvements in water quality for many years after the implementation of mitigations.
 
 Management agencies frequently overlook detection power analysis when designing monitoring programmes due to perceived effort and/or lack of familiarity with these techniques [@weiserTrendPowerToolLookupTool2021].
 When such analysis is undertaken, the effects of lag are often ignored due to the complexity of incorporating these effects.
 @ascottNeedIntegrateLegacy2021 has shown the need to integrate the effects of lag into the models and decision-making processes used to manage freshwater resources.
-To our knowledge, most assessments of detection power are conducted using custom code and/or does not include the effects of lag.
+To our knowledge, most assessments of detection power are conducted using custom code and/or do not include the effects of lag.
 This package was created to lower the difficulty of conducting detection power assessments in the context of lag. 
 It has been used to conduct a New Zealand wide analysis of the detection power of current monitoring programmes for groundwater and to undertake multiple detailed local case studies of specific catchments[@dumontDeterminingLikelihoodCost2024; @dumont2024power; @dumontAbilityCurrentMonitoring2024].
 These studies highlight the cost and times required to detect changes in water quality and the importance of considering lag in the design of monitoring programmes.
